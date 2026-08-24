@@ -9,160 +9,214 @@
 {
   "@context": "https://schema.org",
   "@type": "Recipe",
-  "name": "Einkauf diese Woche (Shakshuka mit Avocado, Veggie Burrito, Sweet-Chili-/Teriyaki-Bowl mit Aubergine & knusprigem Tofu (Air Fryer))",
+  "name": "Einkauf diese Woche (Amatriciana, Gochujang-Reis-Bowl mit Kimchi Gurkensalat, Perfektes Rührei mit Spinat)",
   "recipeYield": "1 Einkauf",
   "recipeIngredient": [
-    "1 Dose gehackte Tomaten (oder 4 frische)",
-    "1 Paprika",
-    "1 Zwiebel",
-    "2 Knoblauchzehen",
-    "1–2 Eier pro Person",
-    "1 Avocado",
-    "1–2 TL Chili (Flocken oder frisch) 🌶️",
-    "2 TL Kreuzkümmel",
-    "1 TL Paprikapulver (geräuchert wenn möglich)",
-    "Olivenöl",
-    "Salz & Pfeffer",
-    "Feta oder Joghurt",
-    "frische Petersilie oder Koriander",
-    "½ Zucchini",
+    "160–180 g Spaghetti",
+    "80 g Guanciale (oder Pancetta als Ersatz)",
+    "1 kleine Zwiebel",
+    "1–2 Knoblauchzehen",
+    "Frischer Basilikum",
+    "200 g gehackte Tomaten (Dose oder frisch)",
+    "30–40 g Pecorino Romano (frisch gerieben)",
+    "1 kleine Handvoll frischer Basilikum",
+    "1 Prise Chili (für leichte Schärfe)",
+    "150–200 g Reis",
+    "1 Zucchini oder Paprika",
     "1 Karotte",
-    "½ Zwiebel",
+    "1 Frühlingszwiebel",
+    "2 Eier (oder Tofu)",
     "1 Knoblauchzehe",
-    "½ Dose schwarze Bohnen",
-    "1 kleine Dose Texas Mix",
-    "1 TL Tomatenmark",
-    "1 EL Öl",
-    "1 TL Kreuzkümmel",
-    "1 TL geräuchertes Paprikapulver",
-    "½ TL normales Paprikapulver",
-    "Chili oder Cayenne nach Geschmack",
-    "Salz",
-    "Schwarzer Pfeffer",
-    "etwas Limetten- oder Zitronensaft",
-    "geriebener Käse",
-    "frischer Koriander",
-    "Wraps/Tortillas",
-    "Sour Cream oder Joghurt",
-    "150 g Basmatireis",
-    "300–400 g grüne Bohnen",
-    "1 Gurke",
-    "1 EL Essig",
-    "1 TL Zucker/Honig",
-    "Chili",
-    "1 Aubergine",
-    "200–250 g Naturtofu",
-    "3–4 EL Teriyaki-Sauce",
-    "1 TL Stärke (optional, aber besser)",
-    "1 TL Öl",
-    "Sriracha-Mayo (fertig)",
-    "Frühlingszwiebel oder Sesam (optional)"
+    "1 TL frischer Ingwer (fein gehackt)",
+    "1–2 EL Gochujang",
+    "1 EL Misopaste",
+    "1 EL Sojasauce",
+    "1 TL Reisessig oder Limettensaft",
+    "1 TL Kimchi-Saft",
+    "1 TL Mayo",
+    "2–3 EL Kimchi",
+    "Sesam, Gurke (für Frische)",
+    "4 Eier",
+    "1 Handvoll frischer Spinat (oder TK, gut ausgedrückt)",
+    "1 kleine Knoblauchzehe (optional)",
+    "1 EL Butter",
+    "2 EL Milch oder Sahne (optional, für mehr Cremigkeit)",
+    "Muskatnuss, Parmesan oder Feta"
   ]
 }
 </script>
 <style>
   :root { color-scheme: light dark; }
   * { box-sizing: border-box; }
-  body {
-    font-family: -apple-system, system-ui, sans-serif;
-    margin: 0; padding: 1.25rem;
-    max-width: 640px; margin-inline: auto;
-    line-height: 1.5;
-    background: Canvas; color: CanvasText;
-  }
+  body { font-family: -apple-system, system-ui, sans-serif; margin: 0; padding: 1.25rem;
+    max-width: 640px; margin-inline: auto; line-height: 1.5; background: Canvas; color: CanvasText; }
   h1 { font-size: 1.5rem; margin: .2rem 0 .1rem; }
   .sub { color: color-mix(in oklab, CanvasText 55%, Canvas); margin-top: 0; }
-  .bring {
-    display: block; width: 100%; text-align: center;
-    background: #4caf2a; color: #fff; text-decoration: none;
-    font-weight: 700; font-size: 1.15rem;
-    padding: 1rem; border-radius: 14px; margin: 1.25rem 0;
-    box-shadow: 0 4px 14px rgba(0,0,0,.18);
-  }
+  .bring { display: block; width: 100%; text-align: center; background: #4caf2a; color: #fff;
+    text-decoration: none; font-weight: 700; font-size: 1.15rem; padding: 1rem; border-radius: 14px;
+    margin: 1.25rem 0 .4rem; box-shadow: 0 4px 14px rgba(0,0,0,.18); }
   .bring:active { transform: translateY(1px); }
+  .brnote { font-size: .8rem; color: color-mix(in oklab, CanvasText 50%, Canvas); margin: 0 0 1rem; }
   .count { font-weight: 600; }
   .recipe h3 { margin: 1.1rem 0 .3rem; font-size: 1rem;
     color: color-mix(in oklab, CanvasText 70%, Canvas); }
-  ul { margin: .2rem 0 .6rem; padding-left: 1.25rem; }
-  li { margin: .15rem 0; }
+  ul { margin: .2rem 0 .6rem; padding-left: 0; list-style: none; }
+  .recipe li { margin: .1rem 0; }
+  .recipe label { display: flex; gap: .6rem; align-items: baseline; cursor: pointer; padding: .15rem 0; }
+  .recipe input { width: 1.15rem; height: 1.15rem; }
+  li.done span { text-decoration: line-through; opacity: .4; }
+  .pantry { margin: 1rem 0; padding: .5rem .75rem; border-radius: 10px;
+    background: color-mix(in oklab, CanvasText 6%, Canvas); }
+  .pantry summary { cursor: pointer; font-size: .95rem; }
+  .pantry ul { padding-left: 1.1rem; list-style: disc; }
+  .pantry li { color: color-mix(in oklab, CanvasText 55%, Canvas); }
+  .hint { font-size: .8rem; color: color-mix(in oklab, CanvasText 50%, Canvas); }
+  #haveBox { margin: 1rem 0; padding: .6rem .8rem; border-radius: 10px;
+    background: color-mix(in oklab, #4caf2a 14%, Canvas); display: none; }
+  #haveBox h4 { margin: .1rem 0 .4rem; font-size: .95rem; }
+  #haveBox ul { padding-left: 1.1rem; list-style: disc; }
+  #haveBox button { font: inherit; padding: .35rem .7rem; border-radius: 8px; border: 1px solid;
+    background: transparent; color: inherit; cursor: pointer; margin-top: .3rem; }
   .warn { color: #b26a00; font-size: .9rem; }
-  footer { margin-top: 2rem; font-size: .8rem;
-    color: color-mix(in oklab, CanvasText 45%, Canvas); }
+  footer { margin-top: 2rem; font-size: .8rem; color: color-mix(in oklab, CanvasText 45%, Canvas); }
 </style>
 </head>
 <body>
   <h1>🛒 Einkauf diese Woche</h1>
-  <p class="sub">Shakshuka mit Avocado, Veggie Burrito, Sweet-Chili-/Teriyaki-Bowl mit Aubergine &amp; knusprigem Tofu (Air Fryer)</p>
+  <p class="sub">Amatriciana, Gochujang-Reis-Bowl mit Kimchi Gurkensalat, Perfektes Rührei mit Spinat</p>
 
   <a class="bring" href="https://api.getbring.com/rest/bringrecipes/deeplink?url=https%3A%2F%2Ffizzcarraldo.github.io%2Fhaushalt-einkauf%2F&amp;source=web">Zu Bring! hinzufügen</a>
+  <p class="brnote">Übernimmt die Liste unten (ohne Vorrat). „Hab ich"-Haken sind nur fürs Handy
+    und ändern die Bring-Liste nicht.</p>
   
 
-  <p><span class="count">45</span> Zutaten insgesamt:</p>
+  <p><span class="count" id="count">30</span> zu kaufen
+     <span class="hint">— tippe an, was du schon hast</span></p>
+
+  <div id="haveBox">
+    <h4>🧺 Hab ich schon (<span id="haveCount">0</span>)</h4>
+    <ul id="haveList"></ul>
+    <button id="copyHave" type="button">Liste kopieren</button>
+    <p class="hint">Immer vorrätig? Schick mir diese Liste, dann merke ich sie dauerhaft –
+      dann fliegt sie auch bei Bring raus.</p>
+  </div>
+
     <section class="recipe">
-      <h3>Shakshuka mit Avocado</h3>
+      <h3>Amatriciana</h3>
       <ul>
-      <li>1 Dose gehackte Tomaten (oder 4 frische)</li>
-      <li>1 Paprika</li>
-      <li>1 Zwiebel</li>
-      <li>2 Knoblauchzehen</li>
-      <li>1–2 Eier pro Person</li>
-      <li>1 Avocado</li>
-      <li>1–2 TL Chili (Flocken oder frisch) 🌶️</li>
-      <li>2 TL Kreuzkümmel</li>
-      <li>1 TL Paprikapulver (geräuchert wenn möglich)</li>
-      <li>Olivenöl</li>
-      <li>Salz &amp; Pfeffer</li>
-      <li>Feta oder Joghurt</li>
-      <li>frische Petersilie oder Koriander</li>
+        <li><label><input type="checkbox" class="have" data-item="160–180 g Spaghetti"><span>160–180 g Spaghetti</span></label></li>
+        <li><label><input type="checkbox" class="have" data-item="80 g Guanciale (oder Pancetta als Ersatz)"><span>80 g Guanciale (oder Pancetta als Ersatz)</span></label></li>
+        <li><label><input type="checkbox" class="have" data-item="1 kleine Zwiebel"><span>1 kleine Zwiebel</span></label></li>
+        <li><label><input type="checkbox" class="have" data-item="1–2 Knoblauchzehen"><span>1–2 Knoblauchzehen</span></label></li>
+        <li><label><input type="checkbox" class="have" data-item="Frischer Basilikum"><span>Frischer Basilikum</span></label></li>
+        <li><label><input type="checkbox" class="have" data-item="200 g gehackte Tomaten (Dose oder frisch)"><span>200 g gehackte Tomaten (Dose oder frisch)</span></label></li>
+        <li><label><input type="checkbox" class="have" data-item="30–40 g Pecorino Romano (frisch gerieben)"><span>30–40 g Pecorino Romano (frisch gerieben)</span></label></li>
+        <li><label><input type="checkbox" class="have" data-item="1 kleine Handvoll frischer Basilikum"><span>1 kleine Handvoll frischer Basilikum</span></label></li>
+        <li><label><input type="checkbox" class="have" data-item="1 Prise Chili (für leichte Schärfe)"><span>1 Prise Chili (für leichte Schärfe)</span></label></li>
       </ul>
     </section>
     <section class="recipe">
-      <h3>Veggie Burrito</h3>
+      <h3>Gochujang-Reis-Bowl mit Kimchi Gurkensalat</h3>
       <ul>
-      <li>½ Zucchini</li>
-      <li>1 Karotte</li>
-      <li>½ Zwiebel</li>
-      <li>1 Knoblauchzehe</li>
-      <li>½ Dose schwarze Bohnen</li>
-      <li>1 kleine Dose Texas Mix</li>
-      <li>1 TL Tomatenmark</li>
-      <li>1 EL Öl</li>
-      <li>1 TL Kreuzkümmel</li>
-      <li>1 TL geräuchertes Paprikapulver</li>
-      <li>½ TL normales Paprikapulver</li>
-      <li>Chili oder Cayenne nach Geschmack</li>
+        <li><label><input type="checkbox" class="have" data-item="150–200 g Reis"><span>150–200 g Reis</span></label></li>
+        <li><label><input type="checkbox" class="have" data-item="1 Zucchini oder Paprika"><span>1 Zucchini oder Paprika</span></label></li>
+        <li><label><input type="checkbox" class="have" data-item="1 Karotte"><span>1 Karotte</span></label></li>
+        <li><label><input type="checkbox" class="have" data-item="1 Frühlingszwiebel"><span>1 Frühlingszwiebel</span></label></li>
+        <li><label><input type="checkbox" class="have" data-item="2 Eier (oder Tofu)"><span>2 Eier (oder Tofu)</span></label></li>
+        <li><label><input type="checkbox" class="have" data-item="1 Knoblauchzehe"><span>1 Knoblauchzehe</span></label></li>
+        <li><label><input type="checkbox" class="have" data-item="1 TL frischer Ingwer (fein gehackt)"><span>1 TL frischer Ingwer (fein gehackt)</span></label></li>
+        <li><label><input type="checkbox" class="have" data-item="1–2 EL Gochujang"><span>1–2 EL Gochujang</span></label></li>
+        <li><label><input type="checkbox" class="have" data-item="1 EL Misopaste"><span>1 EL Misopaste</span></label></li>
+        <li><label><input type="checkbox" class="have" data-item="1 EL Sojasauce"><span>1 EL Sojasauce</span></label></li>
+        <li><label><input type="checkbox" class="have" data-item="1 TL Reisessig oder Limettensaft"><span>1 TL Reisessig oder Limettensaft</span></label></li>
+        <li><label><input type="checkbox" class="have" data-item="1 TL Kimchi-Saft"><span>1 TL Kimchi-Saft</span></label></li>
+        <li><label><input type="checkbox" class="have" data-item="1 TL Mayo"><span>1 TL Mayo</span></label></li>
+        <li><label><input type="checkbox" class="have" data-item="2–3 EL Kimchi"><span>2–3 EL Kimchi</span></label></li>
+        <li><label><input type="checkbox" class="have" data-item="Sesam, Gurke (für Frische)"><span>Sesam, Gurke (für Frische)</span></label></li>
+      </ul>
+    </section>
+    <section class="recipe">
+      <h3>Perfektes Rührei mit Spinat</h3>
+      <ul>
+        <li><label><input type="checkbox" class="have" data-item="4 Eier"><span>4 Eier</span></label></li>
+        <li><label><input type="checkbox" class="have" data-item="1 Handvoll frischer Spinat (oder TK, gut ausgedrückt)"><span>1 Handvoll frischer Spinat (oder TK, gut ausgedrückt)</span></label></li>
+        <li><label><input type="checkbox" class="have" data-item="1 kleine Knoblauchzehe (optional)"><span>1 kleine Knoblauchzehe (optional)</span></label></li>
+        <li><label><input type="checkbox" class="have" data-item="1 EL Butter"><span>1 EL Butter</span></label></li>
+        <li><label><input type="checkbox" class="have" data-item="2 EL Milch oder Sahne (optional, für mehr Cremigkeit)"><span>2 EL Milch oder Sahne (optional, für mehr Cremigkeit)</span></label></li>
+        <li><label><input type="checkbox" class="have" data-item="Muskatnuss, Parmesan oder Feta"><span>Muskatnuss, Parmesan oder Feta</span></label></li>
+      </ul>
+    </section>
+
+  <details class="pantry">
+    <summary>🧺 Im Vorrat – kommt nicht auf Bring (8)</summary>
+    <ul>
+      <li>1–2 EL Olivenöl</li>
       <li>Salz</li>
       <li>Schwarzer Pfeffer</li>
-      <li>etwas Limetten- oder Zitronensaft</li>
-      <li>geriebener Käse</li>
-      <li>frischer Koriander</li>
-      <li>Wraps/Tortillas</li>
-      <li>Sour Cream oder Joghurt</li>
-      </ul>
-    </section>
-    <section class="recipe">
-      <h3>Sweet-Chili-/Teriyaki-Bowl mit Aubergine &amp; knusprigem Tofu (Air Fryer)</h3>
-      <ul>
-      <li>150 g Basmatireis</li>
-      <li>300–400 g grüne Bohnen</li>
-      <li>1 Gurke</li>
-      <li>1 EL Essig</li>
-      <li>1 TL Zucker/Honig</li>
-      <li>Salz</li>
-      <li>Chili</li>
-      <li>1 Aubergine</li>
-      <li>200–250 g Naturtofu</li>
-      <li>3–4 EL Teriyaki-Sauce</li>
-      <li>1 TL Stärke (optional, aber besser)</li>
-      <li>1 TL Öl</li>
-      <li>Sriracha-Mayo (fertig)</li>
-      <li>Frühlingszwiebel oder Sesam (optional)</li>
-      </ul>
-    </section>
+      <li>1 TL Honig oder Zucker</li>
+      <li>1 TL Sesamöl (optional)</li>
+      <li>2 EL Heißes Wasser</li>
+      <li>etwas Öl (Pflanzenöl z.b. Sonnenblume) zum Braten</li>
+      <li>Salz &amp; Pfeffer</li>
+    </ul>
+    <p class="hint">Fehlt dir davon doch etwas? Sag mir Bescheid, dann nehme ich es diese Woche wieder auf.</p>
+  </details>
 
   <footer>
     Automatisch erzeugt aus deinen Notion-Rezepten.
     Der Button nutzt Brings offiziellen Rezept-Import (kein Login nötig).
   </footer>
+
+<script>
+(function () {
+  var KEY = "einkauf_have_v1";
+  function norm(s) {
+    return s.toLowerCase()
+      .replace(/\([^)]*\)/g, "")
+      .replace(/[0-9¼½¾–\-\/.,]+/g, " ")
+      .replace(/\b(g|kg|ml|l|el|tl|dose|dosen|bund|prise|kugel|scheibe|scheiben|handvoll|zehe|zehen|st(ü|u)ck|pack|packung|pkg|x|ca|etwas|frisch|frischer|frische)\b/g, " ")
+      .replace(/\s+/g, " ").trim();
+  }
+  function load() { try { return new Set(JSON.parse(localStorage.getItem(KEY) || "[]")); } catch (e) { return new Set(); } }
+  function save(set) { localStorage.setItem(KEY, JSON.stringify(Array.from(set))); }
+  var have = load();
+  var boxes = Array.prototype.slice.call(document.querySelectorAll("input.have"));
+  var haveList = document.getElementById("haveList");
+  var haveBox = document.getElementById("haveBox");
+  var haveCount = document.getElementById("haveCount");
+  var count = document.getElementById("count");
+
+  function refresh() {
+    var buy = 0, names = [];
+    boxes.forEach(function (b) {
+      var li = b.closest("li");
+      var isHave = have.has(norm(b.dataset.item));
+      b.checked = isHave;
+      li.classList.toggle("done", isHave);
+      if (isHave) names.push(b.dataset.item); else buy++;
+    });
+    count.textContent = buy;
+    haveCount.textContent = names.length;
+    haveBox.style.display = names.length ? "block" : "none";
+    haveList.innerHTML = names.map(function (n) {
+      return "<li>" + n.replace(/[&<>]/g, function (c) { return {"&":"&amp;","<":"&lt;",">":"&gt;"}[c]; }) + "</li>";
+    }).join("");
+  }
+  boxes.forEach(function (b) {
+    b.addEventListener("change", function () {
+      var k = norm(b.dataset.item);
+      if (b.checked) have.add(k); else have.delete(k);
+      save(have); refresh();
+    });
+  });
+  document.getElementById("copyHave").addEventListener("click", function () {
+    var txt = Array.prototype.map.call(haveList.querySelectorAll("li"), function (li) { return li.textContent; }).join("\n");
+    if (navigator.clipboard) navigator.clipboard.writeText(txt);
+    this.textContent = "kopiert ✓";
+    var self = this; setTimeout(function () { self.textContent = "Liste kopieren"; }, 1500);
+  });
+  refresh();
+})();
+</script>
 </body>
 </html>
