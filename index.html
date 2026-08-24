@@ -3,8 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Einkauf diese Woche</title>
+<title>Unser Essensplan – diese Woche · 24.–30.08.</title>
+<meta name="description" content="Essensplan &amp; Einkaufsliste für die Woche – ein Tipp und alles ist in Bring!">
 <link rel="canonical" href="https://fizzcarraldo.github.io/haushalt-einkauf/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Unser Essensplan – diese Woche · 24.–30.08.">
+<meta property="og:description" content="Essensplan &amp; Einkaufsliste für die Woche – ein Tipp und alles ist in Bring!">
+<meta property="og:url" content="https://fizzcarraldo.github.io/haushalt-einkauf/">
+<meta name="twitter:card" content="summary">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -39,41 +45,62 @@
   * { box-sizing: border-box; }
   body { font-family: -apple-system, system-ui, sans-serif; margin: 0; padding: 1.25rem;
     max-width: 640px; margin-inline: auto; line-height: 1.5; background: Canvas; color: CanvasText; }
-  h1 { font-size: 1.5rem; margin: .2rem 0 .1rem; }
+  h1 { font-size: 1.55rem; margin: .2rem 0 .1rem; }
+  h2 { font-size: 1.15rem; margin: 1.6rem 0 .5rem; }
   .sub { color: color-mix(in oklab, CanvasText 55%, Canvas); margin-top: 0; }
+  .planwrap { margin-top: 1rem; }
+  ul.plan { list-style: none; padding: 0; margin: .3rem 0; }
+  ul.plan li { display: flex; gap: .6rem; padding: .45rem .6rem; border-radius: 10px; align-items: baseline; }
+  ul.plan li:nth-child(odd) { background: color-mix(in oklab, CanvasText 6%, Canvas); }
+  .pday { flex: 0 0 5.4rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .pdish { flex: 1; }
+  .lunch { color: color-mix(in oklab, CanvasText 45%, Canvas); font-size: .85em; }
+  .pnote { font-size: .9rem; color: color-mix(in oklab, CanvasText 60%, Canvas);
+    background: color-mix(in oklab, #4caf2a 12%, Canvas); padding: .5rem .7rem; border-radius: 10px; }
   .bring { display: block; width: 100%; text-align: center; background: #4caf2a; color: #fff;
     text-decoration: none; font-weight: 700; font-size: 1.15rem; padding: 1rem; border-radius: 14px;
-    margin: 1.25rem 0 .4rem; box-shadow: 0 4px 14px rgba(0,0,0,.18); }
+    margin: .6rem 0 .4rem; box-shadow: 0 4px 14px rgba(0,0,0,.18); }
   .bring:active { transform: translateY(1px); }
   .brnote { font-size: .8rem; color: color-mix(in oklab, CanvasText 50%, Canvas); margin: 0 0 1rem; }
   .count { font-weight: 600; }
-  .recipe h3 { margin: 1.1rem 0 .3rem; font-size: 1rem;
-    color: color-mix(in oklab, CanvasText 70%, Canvas); }
+  .recipe h3 { margin: 1.1rem 0 .3rem; font-size: 1rem; color: color-mix(in oklab, CanvasText 70%, Canvas); }
   ul { margin: .2rem 0 .6rem; padding-left: 0; list-style: none; }
   .recipe li { margin: .1rem 0; }
   .recipe label { display: flex; gap: .6rem; align-items: baseline; cursor: pointer; padding: .15rem 0; }
   .recipe input { width: 1.15rem; height: 1.15rem; }
   li.done span { text-decoration: line-through; opacity: .4; }
-  .pantry { margin: 1rem 0; padding: .5rem .75rem; border-radius: 10px;
-    background: color-mix(in oklab, CanvasText 6%, Canvas); }
+  .pantry { margin: 1rem 0; padding: .5rem .75rem; border-radius: 10px; background: color-mix(in oklab, CanvasText 6%, Canvas); }
   .pantry summary { cursor: pointer; font-size: .95rem; }
   .pantry ul { padding-left: 1.1rem; list-style: disc; }
   .pantry li { color: color-mix(in oklab, CanvasText 55%, Canvas); }
   .hint { font-size: .8rem; color: color-mix(in oklab, CanvasText 50%, Canvas); }
-  #haveBox { margin: 1rem 0; padding: .6rem .8rem; border-radius: 10px;
-    background: color-mix(in oklab, #4caf2a 14%, Canvas); display: none; }
+  #haveBox { margin: 1rem 0; padding: .6rem .8rem; border-radius: 10px; background: color-mix(in oklab, #4caf2a 14%, Canvas); display: none; }
   #haveBox h4 { margin: .1rem 0 .4rem; font-size: .95rem; }
   #haveBox ul { padding-left: 1.1rem; list-style: disc; }
-  #haveBox button { font: inherit; padding: .35rem .7rem; border-radius: 8px; border: 1px solid;
-    background: transparent; color: inherit; cursor: pointer; margin-top: .3rem; }
+  #haveBox button { font: inherit; padding: .35rem .7rem; border-radius: 8px; border: 1px solid; background: transparent; color: inherit; cursor: pointer; margin-top: .3rem; }
   .warn { color: #b26a00; font-size: .9rem; }
   footer { margin-top: 2rem; font-size: .8rem; color: color-mix(in oklab, CanvasText 45%, Canvas); }
 </style>
 </head>
 <body>
-  <h1>🛒 Einkauf diese Woche</h1>
-  <p class="sub">Amatriciana, Steak mit Gemüse, Frühstück: Skyr-Bowl</p>
+  <h1>🍽️ Unser Essensplan</h1>
+  <p class="sub">diese Woche · 24.–30.08.</p>
 
+  <section class="planwrap">
+    <h2>📅 Essensplan</h2>
+    <ul class="plan">
+      <li><span class="pday">Mo 24.08.</span><span class="pdish">Amatriciana</span></li>
+      <li><span class="pday">Di 25.08.</span><span class="pdish">Steak mit Gemüse (+ Mais) <span class="lunch">· mittags auswärts</span></span></li>
+      <li><span class="pday">Mi 26.08.</span><span class="pdish">Ofengemüse mit Feta <span class="lunch">· mittags auswärts</span></span></li>
+      <li><span class="pday">Do 27.08.</span><span class="pdish">Garnelen-Gemüse-Pfanne mit Reis</span></li>
+      <li><span class="pday">Fr 28.08.</span><span class="pdish">Veggie Burrito</span></li>
+      <li><span class="pday">Sa 29.08.</span><span class="pdish">Reste-Frittata (Kühlschrank leeren)</span></li>
+      <li><span class="pday">So 30.08.</span><span class="pdish">🧳 Urlaub – Zug-Snack: Skyr-Glas + Ei + Banane</span></li>
+    </ul>
+    <p class="pnote">Frühstück: Skyr-Bowl (Flo). Deins fehlt noch – sag, was du magst! 😊 Mi/Do mittags auswärts.</p>
+  </section>
+
+  <h2>🛒 Einkauf jetzt</h2>
   <a class="bring" href="https://api.getbring.com/rest/bringrecipes/deeplink?url=https%3A%2F%2Ffizzcarraldo.github.io%2Fhaushalt-einkauf%2F&amp;source=web">Zu Bring! hinzufügen</a>
   <p class="brnote">Übernimmt die Liste unten (ohne Vorrat). „Hab ich"-Haken sind nur fürs Handy
     und ändern die Bring-Liste nicht.</p>
@@ -86,8 +113,7 @@
     <h4>🧺 Hab ich schon (<span id="haveCount">0</span>)</h4>
     <ul id="haveList"></ul>
     <button id="copyHave" type="button">Liste kopieren</button>
-    <p class="hint">Immer vorrätig? Schick mir diese Liste, dann merke ich sie dauerhaft –
-      dann fliegt sie auch bei Bring raus.</p>
+    <p class="hint">Immer vorrätig? Sag Flo Bescheid, dann fliegt es dauerhaft raus.</p>
   </div>
 
     <section class="recipe">
@@ -132,13 +158,9 @@
       <li>Salz</li>
       <li>Schwarzer Pfeffer</li>
     </ul>
-    <p class="hint">Fehlt dir davon doch etwas? Sag mir Bescheid, dann nehme ich es diese Woche wieder auf.</p>
   </details>
 
-  <footer>
-    Automatisch erzeugt aus deinen Notion-Rezepten.
-    Der Button nutzt Brings offiziellen Rezept-Import (kein Login nötig).
-  </footer>
+  <footer>Automatisch erzeugt · Bring-Import ohne Login.</footer>
 
 <script>
 (function () {
@@ -158,18 +180,15 @@
   var haveBox = document.getElementById("haveBox");
   var haveCount = document.getElementById("haveCount");
   var count = document.getElementById("count");
-
   function refresh() {
     var buy = 0, names = [];
     boxes.forEach(function (b) {
       var li = b.closest("li");
       var isHave = have.has(norm(b.dataset.item));
-      b.checked = isHave;
-      li.classList.toggle("done", isHave);
+      b.checked = isHave; li.classList.toggle("done", isHave);
       if (isHave) names.push(b.dataset.item); else buy++;
     });
-    count.textContent = buy;
-    haveCount.textContent = names.length;
+    count.textContent = buy; haveCount.textContent = names.length;
     haveBox.style.display = names.length ? "block" : "none";
     haveList.innerHTML = names.map(function (n) {
       return "<li>" + n.replace(/[&<>]/g, function (c) { return {"&":"&amp;","<":"&lt;",">":"&gt;"}[c]; }) + "</li>";
