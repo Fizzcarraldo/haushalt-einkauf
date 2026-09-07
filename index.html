@@ -279,8 +279,23 @@
       .replace(/\s+/g, " ").trim();
   }
   function load() { try { return new Set(JSON.parse(localStorage.getItem(KEY) || "[]")); } catch (e) { return new Set(); } }
-  function save(set) { localStorage.setItem(KEY, JSON.stringify(Array.from(set))); }
-  var have = load();
+  function fromUrl() {
+    var p = new URLSearchParams(location.search).get("have");
+    if (!p) return null;
+    try { return new Set(p.split("|").filter(Boolean)); } catch (e) { return null; }
+  }
+  function toUrl(set) {
+    var u = new URL(location.href);
+    if (set.size) u.searchParams.set("have", Array.from(set).join("|"));
+    else u.searchParams.delete("have");
+    history.replaceState(null, "", u);
+  }
+  function save(set) {
+    localStorage.setItem(KEY, JSON.stringify(Array.from(set)));
+    toUrl(set);
+  }
+  var have = fromUrl() || load();
+  toUrl(have);
   var boxes = Array.prototype.slice.call(document.querySelectorAll("input.have"));
   var haveList = document.getElementById("haveList");
   var haveBox = document.getElementById("haveBox");
