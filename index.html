@@ -81,15 +81,18 @@
   * { box-sizing: border-box; }
   body { font-family: -apple-system, system-ui, sans-serif; margin: 0; padding: 1.25rem;
     max-width: 640px; margin-inline: auto; line-height: 1.5; background: Canvas; color: CanvasText; }
+  a { color: inherit; }
   h1 { font-size: 1.55rem; margin: .2rem 0 .1rem; }
   h2 { font-size: 1.15rem; margin: 1.6rem 0 .5rem; }
   .sub { color: color-mix(in oklab, CanvasText 55%, Canvas); margin-top: 0; }
-  .planwrap { margin-top: 1rem; }
+  .back { display: inline-block; margin-bottom: .4rem; font-size: .9rem;
+    color: color-mix(in oklab, CanvasText 60%, Canvas); text-decoration: none; }
   ul.plan { list-style: none; padding: 0; margin: .3rem 0; }
   ul.plan li { display: flex; gap: .6rem; padding: .45rem .6rem; border-radius: 10px; align-items: baseline; }
   ul.plan li:nth-child(odd) { background: color-mix(in oklab, CanvasText 6%, Canvas); }
   .pday { flex: 0 0 5.4rem; font-weight: 600; font-variant-numeric: tabular-nums; }
   .pdish { flex: 1; }
+  .pdish a { font-weight: 600; text-underline-offset: 2px; }
   .lunch { color: color-mix(in oklab, CanvasText 45%, Canvas); font-size: .85em; }
   .pnote { font-size: .9rem; color: color-mix(in oklab, CanvasText 60%, Canvas);
     background: color-mix(in oklab, #4caf2a 12%, Canvas); padding: .5rem .7rem; border-radius: 10px; }
@@ -99,12 +102,16 @@
   .bring:active { transform: translateY(1px); }
   .brnote { font-size: .8rem; color: color-mix(in oklab, CanvasText 50%, Canvas); margin: 0 0 1rem; }
   .count { font-weight: 600; }
-  .recipe h3 { margin: 1.1rem 0 .3rem; font-size: 1rem; color: color-mix(in oklab, CanvasText 70%, Canvas); }
+  .recipe h3 { margin: 1.1rem 0 .3rem; font-size: 1rem; }
+  .recipe h3 a { text-decoration: none; }
   ul { margin: .2rem 0 .6rem; padding-left: 0; list-style: none; }
   .recipe li { margin: .1rem 0; }
   .recipe label { display: flex; gap: .6rem; align-items: baseline; cursor: pointer; padding: .15rem 0; }
   .recipe input { width: 1.15rem; height: 1.15rem; }
   li.done span { text-decoration: line-through; opacity: .4; }
+  ol.steps { padding-left: 1.3rem; } ol.steps li { margin: .35rem 0; }
+  ul.zutaten { list-style: disc; padding-left: 1.3rem; } ul.zutaten li { margin: .15rem 0; }
+  .have-note { color: color-mix(in oklab, CanvasText 45%, Canvas); font-size: .85em; }
   .pantry { margin: 1rem 0; padding: .5rem .75rem; border-radius: 10px; background: color-mix(in oklab, CanvasText 6%, Canvas); }
   .pantry summary { cursor: pointer; font-size: .95rem; }
   .pantry ul { padding-left: 1.1rem; list-style: disc; }
@@ -114,7 +121,7 @@
   #haveBox h4 { margin: .1rem 0 .4rem; font-size: .95rem; }
   #haveBox ul { padding-left: 1.1rem; list-style: disc; }
   #haveBox button { font: inherit; padding: .35rem .7rem; border-radius: 8px; border: 1px solid; background: transparent; color: inherit; cursor: pointer; margin-top: .3rem; }
-  .warn { color: #b26a00; font-size: .9rem; }
+  .meta { color: color-mix(in oklab, CanvasText 55%, Canvas); font-size: .9rem; }
   footer { margin-top: 2rem; font-size: .8rem; color: color-mix(in oklab, CanvasText 45%, Canvas); }
 </style>
 </head>
@@ -125,21 +132,20 @@
   <section class="planwrap">
     <h2>📅 Essensplan</h2>
     <ul class="plan">
-      <li><span class="pday">Mo 07.09.</span><span class="pdish">Garnelen-Gemüse-Pfanne mit Reis</span></li>
+      <li><span class="pday">Mo 07.09.</span><span class="pdish"><a href="rezepte/garnelen-gemuese-pfanne-mit-reis.html">Garnelen-Gemüse-Pfanne mit Reis</a></span></li>
       <li><span class="pday">Di 08.09.</span><span class="pdish">🍕 Pizza essen (unterwegs)</span></li>
-      <li><span class="pday">Mi 09.09.</span><span class="pdish">Hähnchen-Gemüse aus dem Ofen</span></li>
-      <li><span class="pday">Do 10.09.</span><span class="pdish">Kichererbsen-Curry (Batch → Reste)</span></li>
-      <li><span class="pday">Fr 11.09.</span><span class="pdish">Gochujang-Reis-Bowl mit Tofu</span></li>
-      <li><span class="pday">Sa 12.09.</span><span class="pdish">Paniertes Seelachsfilet mit Kartoffelsalat</span></li>
+      <li><span class="pday">Mi 09.09.</span><span class="pdish"><a href="rezepte/haehnchen-gemuese-aus-dem-ofen.html">Hähnchen-Gemüse aus dem Ofen</a></span></li>
+      <li><span class="pday">Do 10.09.</span><span class="pdish"><a href="rezepte/kichererbsen-curry.html">Kichererbsen-Curry (Batch → Reste)</a></span></li>
+      <li><span class="pday">Fr 11.09.</span><span class="pdish"><a href="rezepte/gochujang-reis-bowl-mit-kimchi-gurkensalat.html">Gochujang-Reis-Bowl mit Tofu</a></span></li>
+      <li><span class="pday">Sa 12.09.</span><span class="pdish"><a href="rezepte/paniertes-seelachsfilet-mit-kartoffelsalat.html">Paniertes Seelachsfilet mit Kartoffelsalat</a></span></li>
       <li><span class="pday">So 13.09.</span><span class="pdish">Reste (Curry) / flexibel</span></li>
     </ul>
     <p class="pnote">Mittags jeden Tag: leichte Brotzeit (kein Kochen). Frühstück: Skyr-Bowl (Flo). Deins fehlt noch – sag Bescheid! 😊</p>
   </section>
 
-  <h2>🛒 Einkauf jetzt</h2>
+  <h2>🛒 Einkauf</h2>
   <a class="bring" href="https://api.getbring.com/rest/bringrecipes/deeplink?url=https%3A%2F%2Ffizzcarraldo.github.io%2Fhaushalt-einkauf%2F&amp;source=web">Zu Bring! hinzufügen</a>
-  <p class="brnote">Übernimmt die Liste unten (ohne Vorrat). „Hab ich"-Haken sind nur fürs Handy
-    und ändern die Bring-Liste nicht.</p>
+  <p class="brnote">Übernimmt die Liste unten (ohne Vorrat). Tipp auf ein Gericht → Rezept.</p>
   
 
   <p><span class="count" id="count">54</span> zu kaufen
@@ -153,7 +159,7 @@
   </div>
 
     <section class="recipe">
-      <h3>Garnelen-Gemüse-Pfanne mit Reis</h3>
+      <h3><a href="rezepte/garnelen-gemuese-pfanne-mit-reis.html">Garnelen-Gemüse-Pfanne mit Reis</a></h3>
       <ul>
         <li><label><input type="checkbox" class="have" data-item="250 g Garnelen (roh, geschält – TK oder frisch)"><span>250 g Garnelen (roh, geschält – TK oder frisch)</span></label></li>
         <li><label><input type="checkbox" class="have" data-item="1 Zucchini"><span>1 Zucchini</span></label></li>
@@ -166,7 +172,7 @@
       </ul>
     </section>
     <section class="recipe">
-      <h3>Hähnchen-Gemüse aus dem Ofen</h3>
+      <h3><a href="rezepte/haehnchen-gemuese-aus-dem-ofen.html">Hähnchen-Gemüse aus dem Ofen</a></h3>
       <ul>
         <li><label><input type="checkbox" class="have" data-item="400 g Hähnchenbrustfilet"><span>400 g Hähnchenbrustfilet</span></label></li>
         <li><label><input type="checkbox" class="have" data-item="1 Brokkoli"><span>1 Brokkoli</span></label></li>
@@ -178,7 +184,7 @@
       </ul>
     </section>
     <section class="recipe">
-      <h3>Kichererbsen-Curry</h3>
+      <h3><a href="rezepte/kichererbsen-curry.html">Kichererbsen-Curry</a></h3>
       <ul>
         <li><label><input type="checkbox" class="have" data-item="2 Dosen Kichererbsen"><span>2 Dosen Kichererbsen</span></label></li>
         <li><label><input type="checkbox" class="have" data-item="1 Dose gehackte Tomaten"><span>1 Dose gehackte Tomaten</span></label></li>
@@ -190,7 +196,7 @@
       </ul>
     </section>
     <section class="recipe">
-      <h3>Gochujang-Reis-Bowl mit Kimchi Gurkensalat</h3>
+      <h3><a href="rezepte/gochujang-reis-bowl-mit-kimchi-gurkensalat.html">Gochujang-Reis-Bowl mit Kimchi Gurkensalat</a></h3>
       <ul>
         <li><label><input type="checkbox" class="have" data-item="1 Zucchini oder Paprika"><span>1 Zucchini oder Paprika</span></label></li>
         <li><label><input type="checkbox" class="have" data-item="1 Karotte"><span>1 Karotte</span></label></li>
@@ -207,7 +213,7 @@
       </ul>
     </section>
     <section class="recipe">
-      <h3>Paniertes Seelachsfilet mit Kartoffelsalat</h3>
+      <h3><a href="rezepte/paniertes-seelachsfilet-mit-kartoffelsalat.html">Paniertes Seelachsfilet mit Kartoffelsalat</a></h3>
       <ul>
         <li><label><input type="checkbox" class="have" data-item="Paniertes Seelachsfilet (habt ihr schon)"><span>Paniertes Seelachsfilet (habt ihr schon)</span></label></li>
         <li><label><input type="checkbox" class="have" data-item="800 g festkochende Kartoffeln"><span>800 g festkochende Kartoffeln</span></label></li>
@@ -220,7 +226,7 @@
       </ul>
     </section>
     <section class="recipe">
-      <h3>Frühstück: Skyr-Bowl</h3>
+      <h3><a href="rezepte/fruehstueck-skyr-bowl.html">Frühstück: Skyr-Bowl</a></h3>
       <ul>
         <li><label><input type="checkbox" class="have" data-item="Skyr (großer Becher)"><span>Skyr (großer Becher)</span></label></li>
         <li><label><input type="checkbox" class="have" data-item="Beeren (kleine Packung)"><span>Beeren (kleine Packung)</span></label></li>
@@ -228,7 +234,7 @@
       </ul>
     </section>
     <section class="recipe">
-      <h3>Brotzeit / leichtes Mittag</h3>
+      <h3><a href="rezepte/brotzeit-leichtes-mittag.html">Brotzeit / leichtes Mittag</a></h3>
       <ul>
         <li><label><input type="checkbox" class="have" data-item="Vollkornbrot"><span>Vollkornbrot</span></label></li>
         <li><label><input type="checkbox" class="have" data-item="Magerer Aufschnitt (z.B. Putenbrust)"><span>Magerer Aufschnitt (z.B. Putenbrust)</span></label></li>
@@ -262,7 +268,6 @@
   </details>
 
   <footer>Automatisch erzeugt · Bring-Import ohne Login.</footer>
-
 <script>
 (function () {
   var KEY = "einkauf_have_v1";
@@ -281,6 +286,7 @@
   var haveBox = document.getElementById("haveBox");
   var haveCount = document.getElementById("haveCount");
   var count = document.getElementById("count");
+  if (!boxes.length) return;
   function refresh() {
     var buy = 0, names = [];
     boxes.forEach(function (b) {
@@ -289,11 +295,14 @@
       b.checked = isHave; li.classList.toggle("done", isHave);
       if (isHave) names.push(b.dataset.item); else buy++;
     });
-    count.textContent = buy; haveCount.textContent = names.length;
-    haveBox.style.display = names.length ? "block" : "none";
-    haveList.innerHTML = names.map(function (n) {
-      return "<li>" + n.replace(/[&<>]/g, function (c) { return {"&":"&amp;","<":"&lt;",">":"&gt;"}[c]; }) + "</li>";
-    }).join("");
+    if (count) count.textContent = buy;
+    if (haveBox) {
+      haveCount.textContent = names.length;
+      haveBox.style.display = names.length ? "block" : "none";
+      haveList.innerHTML = names.map(function (n) {
+        return "<li>" + n.replace(/[&<>]/g, function (c) { return {"&":"&amp;","<":"&lt;",">":"&gt;"}[c]; }) + "</li>";
+      }).join("");
+    }
   }
   boxes.forEach(function (b) {
     b.addEventListener("change", function () {
@@ -302,7 +311,8 @@
       save(have); refresh();
     });
   });
-  document.getElementById("copyHave").addEventListener("click", function () {
+  var copyBtn = document.getElementById("copyHave");
+  if (copyBtn) copyBtn.addEventListener("click", function () {
     var txt = Array.prototype.map.call(haveList.querySelectorAll("li"), function (li) { return li.textContent; }).join("\n");
     if (navigator.clipboard) navigator.clipboard.writeText(txt);
     this.textContent = "kopiert ✓";
