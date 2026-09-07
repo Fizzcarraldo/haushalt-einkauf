@@ -154,8 +154,8 @@
   <div id="haveBox">
     <h4>🧺 Hab ich schon (<span id="haveCount">0</span>)</h4>
     <ul id="haveList"></ul>
-    <button id="copyHave" type="button">Liste kopieren</button>
-    <p class="hint">Immer vorrätig? Sag Flo Bescheid, dann fliegt es dauerhaft raus.</p>
+    <button id="copyHave" type="button">Link kopieren (an Flo)</button>
+    <p class="hint">Schick Flo diesen Link – dann streiche ich die abgehakten Sachen auch aus dem Bring-Export. Immer vorrätig? → dauerhaft in den Vorrat.</p>
   </div>
 
     <section class="recipe">
@@ -249,7 +249,7 @@
     </section>
 
   <details class="pantry">
-    <summary>🧺 Im Vorrat – kommt nicht auf Bring (13)</summary>
+    <summary>🧺 Nicht auf Bring – Vorrat / schon da (13)</summary>
     <ul>
       <li>150 g Reis</li>
       <li>2 Knoblauchzehen</li>
@@ -328,10 +328,9 @@
   });
   var copyBtn = document.getElementById("copyHave");
   if (copyBtn) copyBtn.addEventListener("click", function () {
-    var txt = Array.prototype.map.call(haveList.querySelectorAll("li"), function (li) { return li.textContent; }).join("\n");
-    if (navigator.clipboard) navigator.clipboard.writeText(txt);
-    this.textContent = "kopiert ✓";
-    var self = this; setTimeout(function () { self.textContent = "Liste kopieren"; }, 1500);
+    if (navigator.clipboard) navigator.clipboard.writeText(location.href);
+    this.textContent = "Link kopiert ✓";
+    var self = this; setTimeout(function () { self.textContent = "Link kopieren (an Flo)"; }, 1500);
   });
   refresh();
 })();
