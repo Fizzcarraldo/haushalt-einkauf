@@ -46,7 +46,6 @@
     "1 TL Mayo",
     "2–3 EL Kimchi",
     "Sesam, Gurke (für Frische)",
-    "Paniertes Seelachsfilet (habt ihr schon)",
     "800 g festkochende Kartoffeln",
     "1 Zwiebel",
     "1 Becher/Glas Gemüsebrühe (oder Brühwürfel)",
@@ -101,6 +100,18 @@
     background: color-mix(in oklab, #4caf2a 20%, Canvas); color: inherit;
     padding: .2rem .65rem; border-radius: 999px; margin: 0 0 .35rem; }
   .bring-mini:active { transform: translateY(1px); }
+  .fc { margin: .3rem 0 1rem; padding: .7rem .85rem; border-radius: 12px; background: color-mix(in oklab, CanvasText 6%, Canvas); font-size: .92rem; }
+  .fc b { font-variant-numeric: tabular-nums; }
+  .fc .cmp { color: color-mix(in oklab, CanvasText 60%, Canvas); font-size: .86rem; margin:.35rem 0 0; }
+  .storecard { border: 1px solid color-mix(in oklab, CanvasText 14%, Canvas); border-radius: 14px; padding: .6rem .8rem; margin: .8rem 0; }
+  .storecard > h3 { margin: .1rem 0 .1rem; font-size: 1.1rem; }
+  .storecard .when { color: color-mix(in oklab, CanvasText 50%, Canvas); font-size: .82rem; margin: 0 0 .4rem; }
+  .subtot { float: right; font-weight: 600; font-size: .85rem; color: color-mix(in oklab, CanvasText 65%, Canvas); }
+  .catrow { margin: .35rem 0 0; }
+  .catrow .cathd { font-size: .8rem; color: color-mix(in oklab, CanvasText 55%, Canvas); margin: .3rem 0 .05rem; }
+  .price { color: color-mix(in oklab, CanvasText 50%, Canvas); font-size: .82em; }
+  .badge { background: #e0a100; color: #000; border-radius: 6px; padding: 0 .3rem; font-size: .72rem; font-weight: 700; }
+  .offernote { color: #b26a00; font-size: .8em; }
   ul { margin: .2rem 0 .6rem; padding-left: 0; list-style: none; }
   .recipe li { margin: .1rem 0; }
   .recipe label { display: flex; gap: .6rem; align-items: baseline; cursor: pointer; padding: .15rem 0; }
@@ -140,12 +151,12 @@
     <p class="pnote">Mittags jeden Tag: leichte Brotzeit (kein Kochen). Frühstück: Skyr-Bowl (Flo). Deins fehlt noch – sag Bescheid! 😊</p>
   </section>
 
-  <h2>🛒 Einkauf</h2>
-  <a class="bring" href="https://api.getbring.com/rest/bringrecipes/deeplink?url=https%3A%2F%2Ffizzcarraldo.github.io%2Fhaushalt-einkauf%2F&amp;source=web">Zu Bring! hinzufügen</a>
-  <p class="brnote">Übernimmt die Liste unten (ohne Vorrat). Tipp auf ein Gericht → Rezept.</p>
+  <h2>🧭 Einkaufsroute &amp; Preis</h2>
+  <a class="bring" href="https://api.getbring.com/rest/bringrecipes/deeplink?url=https%3A%2F%2Ffizzcarraldo.github.io%2Fhaushalt-einkauf%2F&amp;source=web">Alles auf einmal → Bring</a>
+  <p class="brnote">Oder pro Laden unten einzeln. Vorrat ist überall ausgenommen. Preise = grobe Schätzung.</p>
   
 
-  <p><span class="count" id="count">47</span> zu kaufen
+  <p><span class="count" id="count">45</span> zu kaufen
      <span class="hint">— tippe an, was du schon hast</span></p>
 
   <div id="haveBox">
@@ -155,88 +166,90 @@
     <p class="hint">Schick Flo diesen Link – dann streiche ich die abgehakten Sachen auch aus dem Bring-Export. Immer vorrätig? → dauerhaft in den Vorrat.</p>
   </div>
 
-    <section class="recipe">
-      <h3><a href="rezepte/haehnchen-gemuese-aus-dem-ofen.html">Hähnchen-Gemüse aus dem Ofen</a></h3>
-      <a class="bring-mini" href="https://api.getbring.com/rest/bringrecipes/deeplink?url=https%3A%2F%2Ffizzcarraldo.github.io%2Fhaushalt-einkauf%2Frezepte%2Fhaehnchen-gemuese-aus-dem-ofen.html&amp;source=web">🛒 nur dieses Gericht → Bring</a>
-      <ul>
-        <li><label><input type="checkbox" class="have" data-item="400 g Hähnchenbrustfilet"><span>400 g Hähnchenbrustfilet</span></label></li>
-        <li><label><input type="checkbox" class="have" data-item="1 Brokkoli"><span>1 Brokkoli</span></label></li>
-        <li><label><input type="checkbox" class="have" data-item="1 Paprika"><span>1 Paprika</span></label></li>
-        <li><label><input type="checkbox" class="have" data-item="1 Zucchini"><span>1 Zucchini</span></label></li>
-        <li><label><input type="checkbox" class="have" data-item="1 rote Zwiebel"><span>1 rote Zwiebel</span></label></li>
-        <li><label><input type="checkbox" class="have" data-item="1 Zitrone"><span>1 Zitrone</span></label></li>
-        <li><label><input type="checkbox" class="have" data-item="100 g Feta (optional)"><span>100 g Feta (optional)</span></label></li>
-        <li><label><input type="checkbox" class="have" data-item="Couscous (als Beilage)"><span>Couscous (als Beilage)</span></label></li>
-      </ul>
+  <div class="fc">💶 <b>Forecast: ~50,82 €–90,19 €</b> <span class="cmp">(Aufteilung Aldi Süd + HIT; grobe Schätzung)</span><p class="cmp">⚖️ alles Discounter ~47,15 €–83,60 € · alles Vollsortiment ~56,58 €–100,32 € → Aufteilung spart grob ~10,13 €</p><p class="cmp">🍂 Saison (Herbst): Kürbis/Äpfel/Pilze günstig, Beeren teurer.</p><p class="cmp">🏷️ Angebote: Lidl: geriebener Käse ab 1,39 € / Käsescheiben im Angebot</p></div>
+    <section class="storecard">
+      <span class="subtot">~28,80 €–50,65 €</span>
+      <h3>Trip 1: Aldi Süd</h3>
+      <p class="when">Wochenende – günstiger Großeinkauf</p>
+      <a class="bring-mini" href="https://api.getbring.com/rest/bringrecipes/deeplink?url=https%3A%2F%2Ffizzcarraldo.github.io%2Fhaushalt-einkauf%2Fladen%2Faldi.html&amp;source=web">🛒 Aldi Süd-Liste → Bring</a>
+        <div class="catrow"><div class="cathd">🍗 Geflügel</div>
+          <ul>
+          <li><label><input type="checkbox" class="have" data-item="400 g Hähnchenbrustfilet"><span>400 g Hähnchenbrustfilet <span class="price">~3,00 €–5,00 €</span></span></label></li>
+          </ul></div>
+        <div class="catrow"><div class="cathd">🥕 Produce</div>
+          <ul>
+          <li><label><input type="checkbox" class="have" data-item="1 Brokkoli"><span>1 Brokkoli <span class="price">~0,80 €–1,40 €</span></span></label></li>
+          <li><label><input type="checkbox" class="have" data-item="1 Gurke"><span>1 Gurke <span class="price">~0,55 €–0,85 €</span></span></label></li>
+          <li><label><input type="checkbox" class="have" data-item="1 Karotte"><span>1 Karotte <span class="price">~0,15 €–0,40 €</span></span></label></li>
+          <li><label><input type="checkbox" class="have" data-item="1 Paprika"><span>1 Paprika <span class="price">~0,50 €–0,90 €</span></span></label></li>
+          <li><label><input type="checkbox" class="have" data-item="1 rote Zwiebel"><span>1 rote Zwiebel <span class="price">~0,15 €–0,35 €</span></span></label></li>
+          <li><label><input type="checkbox" class="have" data-item="1 Zitrone"><span>1 Zitrone <span class="price">~0,30 €–0,50 €</span></span></label></li>
+          <li><label><input type="checkbox" class="have" data-item="1 Zitrone (zum Fisch)"><span>1 Zitrone (zum Fisch) <span class="price">~0,30 €–0,50 €</span></span></label></li>
+          <li><label><input type="checkbox" class="have" data-item="1 Zucchini"><span>1 Zucchini <span class="price">~0,50 €–0,90 €</span></span></label></li>
+          <li><label><input type="checkbox" class="have" data-item="1 Zucchini oder Paprika"><span>1 Zucchini oder Paprika <span class="price">~0,50 €–0,90 €</span></span></label></li>
+          <li><label><input type="checkbox" class="have" data-item="1 Zwiebel"><span>2× 1 Zwiebel <span class="price">~0,30 €–0,70 €</span></span></label></li>
+          <li><label><input type="checkbox" class="have" data-item="800 g festkochende Kartoffeln"><span>800 g festkochende Kartoffeln <span class="price">~0,90 €–1,60 €</span></span></label></li>
+          <li><label><input type="checkbox" class="have" data-item="Snackpaprika"><span>Snackpaprika <span class="price">~1,50 €–2,20 €</span></span></label></li>
+          <li><label><input type="checkbox" class="have" data-item="Tomaten"><span>Tomaten <span class="price">~1,20 €–2,00 €</span></span></label></li>
+          </ul></div>
+        <div class="catrow"><div class="cathd">🧀 Molkerei/Kühlung</div>
+          <ul>
+          <li><label><input type="checkbox" class="have" data-item="1 TL Mayo"><span>1 TL Mayo <span class="price">~0,80 €–1,60 €</span></span></label></li>
+          <li><label><input type="checkbox" class="have" data-item="100 g Feta (optional)"><span>100 g Feta (optional) <span class="price">~1,30 €–2,20 €</span></span></label></li>
+          <li><label><input type="checkbox" class="have" data-item="2 Eier (oder Tofu)"><span>2 Eier (oder Tofu) <span class="price">~1,00 €–2,20 €</span></span></label></li>
+          <li><label><input type="checkbox" class="have" data-item="6 Eier"><span>6 Eier <span class="price">~1,30 €–2,20 €</span></span></label></li>
+          <li><label><input type="checkbox" class="have" data-item="Hummus"><span>Hummus <span class="price">~1,00 €–1,80 €</span></span></label></li>
+          <li><label><input type="checkbox" class="have" data-item="Hüttenkäse"><span>Hüttenkäse <span class="price">~0,80 €–1,30 €</span> <span class="badge">🏷️ Angebot</span> <span class="offernote">Lidl: geriebener Käse ab 1,39 € / Käsescheiben im Angebot</span></span></label></li>
+          <li><label><input type="checkbox" class="have" data-item="Käse (z.B. Gouda / Emmentaler)"><span>Käse (z.B. Gouda / Emmentaler) <span class="price">~1,50 €–2,50 €</span> <span class="badge">🏷️ Angebot</span> <span class="offernote">Lidl: geriebener Käse ab 1,39 € / Käsescheiben im Angebot</span></span></label></li>
+          <li><label><input type="checkbox" class="have" data-item="Skyr (großer Becher)"><span>Skyr (großer Becher) <span class="price">~1,00 €–1,60 €</span></span></label></li>
+          </ul></div>
+        <div class="catrow"><div class="cathd">🍞 Backwaren</div>
+          <ul>
+          <li><label><input type="checkbox" class="have" data-item="Vollkornbrot"><span>Vollkornbrot <span class="price">~1,20 €–2,20 €</span></span></label></li>
+          </ul></div>
+        <div class="catrow"><div class="cathd">🥫 Trocken/Vorrat</div>
+          <ul>
+          <li><label><input type="checkbox" class="have" data-item="1 Becher/Glas Gemüsebrühe (oder Brühwürfel)"><span>1 Becher/Glas Gemüsebrühe (oder Brühwürfel) <span class="price">~0,80 €–1,60 €</span></span></label></li>
+          <li><label><input type="checkbox" class="have" data-item="1 Dose gehackte Tomaten"><span>1 Dose gehackte Tomaten <span class="price">~0,45 €–0,85 €</span></span></label></li>
+          <li><label><input type="checkbox" class="have" data-item="1 Dose Kokosmilch"><span>1 Dose Kokosmilch <span class="price">~0,90 €–1,60 €</span></span></label></li>
+          <li><label><input type="checkbox" class="have" data-item="2 Dosen Kichererbsen"><span>2 Dosen Kichererbsen <span class="price">~1,10 €–1,90 €</span></span></label></li>
+          <li><label><input type="checkbox" class="have" data-item="Couscous (als Beilage)"><span>Couscous (als Beilage) <span class="price">~0,90 €–1,50 €</span></span></label></li>
+          <li><label><input type="checkbox" class="have" data-item="mittelscharfer Senf"><span>mittelscharfer Senf <span class="price">~0,50 €–1,00 €</span></span></label></li>
+          <li><label><input type="checkbox" class="have" data-item="Nüsse (z.B. Walnüsse oder Mandeln)"><span>Nüsse (z.B. Walnüsse oder Mandeln) <span class="price">~1,80 €–3,00 €</span></span></label></li>
+          <li><label><input type="checkbox" class="have" data-item="Weißweinessig"><span>Weißweinessig <span class="price">~0,80 €–1,60 €</span></span></label></li>
+          </ul></div>
+        <div class="catrow"><div class="cathd">❄️ TK</div>
+          <ul>
+          <li><label><input type="checkbox" class="have" data-item="2 Handvoll Blattspinat (frisch oder TK)"><span>2 Handvoll Blattspinat (frisch oder TK) <span class="price">~1,00 €–1,80 €</span></span></label></li>
+          </ul></div>
     </section>
-    <section class="recipe">
-      <h3><a href="rezepte/kichererbsen-curry.html">Kichererbsen-Curry</a></h3>
-      <a class="bring-mini" href="https://api.getbring.com/rest/bringrecipes/deeplink?url=https%3A%2F%2Ffizzcarraldo.github.io%2Fhaushalt-einkauf%2Frezepte%2Fkichererbsen-curry.html&amp;source=web">🛒 nur dieses Gericht → Bring</a>
-      <ul>
-        <li><label><input type="checkbox" class="have" data-item="2 Dosen Kichererbsen"><span>2 Dosen Kichererbsen</span></label></li>
-        <li><label><input type="checkbox" class="have" data-item="1 Dose gehackte Tomaten"><span>1 Dose gehackte Tomaten</span></label></li>
-        <li><label><input type="checkbox" class="have" data-item="1 Dose Kokosmilch"><span>1 Dose Kokosmilch</span></label></li>
-        <li><label><input type="checkbox" class="have" data-item="1 Zwiebel"><span>1 Zwiebel</span></label></li>
-        <li><label><input type="checkbox" class="have" data-item="1 kleines Stück Ingwer"><span>1 kleines Stück Ingwer</span></label></li>
-        <li><label><input type="checkbox" class="have" data-item="2 EL Currypaste (oder Currypulver / Garam Masala)"><span>2 EL Currypaste (oder Currypulver / Garam Masala)</span></label></li>
-        <li><label><input type="checkbox" class="have" data-item="2 Handvoll Blattspinat (frisch oder TK)"><span>2 Handvoll Blattspinat (frisch oder TK)</span></label></li>
-      </ul>
-    </section>
-    <section class="recipe">
-      <h3><a href="rezepte/gochujang-reis-bowl-mit-kimchi-gurkensalat.html">Gochujang-Reis-Bowl mit Kimchi Gurkensalat</a></h3>
-      <a class="bring-mini" href="https://api.getbring.com/rest/bringrecipes/deeplink?url=https%3A%2F%2Ffizzcarraldo.github.io%2Fhaushalt-einkauf%2Frezepte%2Fgochujang-reis-bowl-mit-kimchi-gurkensalat.html&amp;source=web">🛒 nur dieses Gericht → Bring</a>
-      <ul>
-        <li><label><input type="checkbox" class="have" data-item="1 Zucchini oder Paprika"><span>1 Zucchini oder Paprika</span></label></li>
-        <li><label><input type="checkbox" class="have" data-item="1 Karotte"><span>1 Karotte</span></label></li>
-        <li><label><input type="checkbox" class="have" data-item="1 Frühlingszwiebel"><span>1 Frühlingszwiebel</span></label></li>
-        <li><label><input type="checkbox" class="have" data-item="2 Eier (oder Tofu)"><span>2 Eier (oder Tofu)</span></label></li>
-        <li><label><input type="checkbox" class="have" data-item="1 TL frischer Ingwer (fein gehackt)"><span>1 TL frischer Ingwer (fein gehackt)</span></label></li>
-        <li><label><input type="checkbox" class="have" data-item="1–2 EL Gochujang"><span>1–2 EL Gochujang</span></label></li>
-        <li><label><input type="checkbox" class="have" data-item="1 EL Misopaste"><span>1 EL Misopaste</span></label></li>
-        <li><label><input type="checkbox" class="have" data-item="1 TL Reisessig oder Limettensaft"><span>1 TL Reisessig oder Limettensaft</span></label></li>
-        <li><label><input type="checkbox" class="have" data-item="1 TL Kimchi-Saft"><span>1 TL Kimchi-Saft</span></label></li>
-        <li><label><input type="checkbox" class="have" data-item="1 TL Mayo"><span>1 TL Mayo</span></label></li>
-        <li><label><input type="checkbox" class="have" data-item="2–3 EL Kimchi"><span>2–3 EL Kimchi</span></label></li>
-        <li><label><input type="checkbox" class="have" data-item="Sesam, Gurke (für Frische)"><span>Sesam, Gurke (für Frische)</span></label></li>
-      </ul>
-    </section>
-    <section class="recipe">
-      <h3><a href="rezepte/paniertes-seelachsfilet-mit-kartoffelsalat.html">Paniertes Seelachsfilet mit Kartoffelsalat</a></h3>
-      <a class="bring-mini" href="https://api.getbring.com/rest/bringrecipes/deeplink?url=https%3A%2F%2Ffizzcarraldo.github.io%2Fhaushalt-einkauf%2Frezepte%2Fpaniertes-seelachsfilet-mit-kartoffelsalat.html&amp;source=web">🛒 nur dieses Gericht → Bring</a>
-      <ul>
-        <li><label><input type="checkbox" class="have" data-item="Paniertes Seelachsfilet (habt ihr schon)"><span>Paniertes Seelachsfilet (habt ihr schon)</span></label></li>
-        <li><label><input type="checkbox" class="have" data-item="800 g festkochende Kartoffeln"><span>800 g festkochende Kartoffeln</span></label></li>
-        <li><label><input type="checkbox" class="have" data-item="1 Zwiebel"><span>1 Zwiebel</span></label></li>
-        <li><label><input type="checkbox" class="have" data-item="1 Becher/Glas Gemüsebrühe (oder Brühwürfel)"><span>1 Becher/Glas Gemüsebrühe (oder Brühwürfel)</span></label></li>
-        <li><label><input type="checkbox" class="have" data-item="Weißweinessig"><span>Weißweinessig</span></label></li>
-        <li><label><input type="checkbox" class="have" data-item="mittelscharfer Senf"><span>mittelscharfer Senf</span></label></li>
-        <li><label><input type="checkbox" class="have" data-item="1 Bund Schnittlauch (optional)"><span>1 Bund Schnittlauch (optional)</span></label></li>
-        <li><label><input type="checkbox" class="have" data-item="1 Zitrone (zum Fisch)"><span>1 Zitrone (zum Fisch)</span></label></li>
-      </ul>
-    </section>
-    <section class="recipe">
-      <h3><a href="rezepte/fruehstueck-skyr-bowl.html">Frühstück: Skyr-Bowl</a></h3>
-      <a class="bring-mini" href="https://api.getbring.com/rest/bringrecipes/deeplink?url=https%3A%2F%2Ffizzcarraldo.github.io%2Fhaushalt-einkauf%2Frezepte%2Ffruehstueck-skyr-bowl.html&amp;source=web">🛒 nur dieses Gericht → Bring</a>
-      <ul>
-        <li><label><input type="checkbox" class="have" data-item="Skyr (großer Becher)"><span>Skyr (großer Becher)</span></label></li>
-        <li><label><input type="checkbox" class="have" data-item="Beeren (kleine Packung)"><span>Beeren (kleine Packung)</span></label></li>
-        <li><label><input type="checkbox" class="have" data-item="Nüsse (z.B. Walnüsse oder Mandeln)"><span>Nüsse (z.B. Walnüsse oder Mandeln)</span></label></li>
-      </ul>
-    </section>
-    <section class="recipe">
-      <h3><a href="rezepte/brotzeit-leichtes-mittag.html">Brotzeit / leichtes Mittag</a></h3>
-      <a class="bring-mini" href="https://api.getbring.com/rest/bringrecipes/deeplink?url=https%3A%2F%2Ffizzcarraldo.github.io%2Fhaushalt-einkauf%2Frezepte%2Fbrotzeit-leichtes-mittag.html&amp;source=web">🛒 nur dieses Gericht → Bring</a>
-      <ul>
-        <li><label><input type="checkbox" class="have" data-item="Vollkornbrot"><span>Vollkornbrot</span></label></li>
-        <li><label><input type="checkbox" class="have" data-item="Magerer Aufschnitt (z.B. Putenbrust)"><span>Magerer Aufschnitt (z.B. Putenbrust)</span></label></li>
-        <li><label><input type="checkbox" class="have" data-item="Käse (z.B. Gouda / Emmentaler)"><span>Käse (z.B. Gouda / Emmentaler)</span></label></li>
-        <li><label><input type="checkbox" class="have" data-item="Hüttenkäse"><span>Hüttenkäse</span></label></li>
-        <li><label><input type="checkbox" class="have" data-item="6 Eier"><span>6 Eier</span></label></li>
-        <li><label><input type="checkbox" class="have" data-item="Hummus"><span>Hummus</span></label></li>
-        <li><label><input type="checkbox" class="have" data-item="1 Gurke"><span>1 Gurke</span></label></li>
-        <li><label><input type="checkbox" class="have" data-item="Tomaten"><span>Tomaten</span></label></li>
-        <li><label><input type="checkbox" class="have" data-item="Snackpaprika"><span>Snackpaprika</span></label></li>
-      </ul>
+    <section class="storecard">
+      <span class="subtot">~22,02 €–39,54 €</span>
+      <h3>Trip 2: HIT</h3>
+      <p class="when">Mitte der Woche – frisch, große Auswahl, Spezielles</p>
+      <a class="bring-mini" href="https://api.getbring.com/rest/bringrecipes/deeplink?url=https%3A%2F%2Ffizzcarraldo.github.io%2Fhaushalt-einkauf%2Fladen%2Fhit.html&amp;source=web">🛒 HIT-Liste → Bring</a>
+        <div class="catrow"><div class="cathd">🥢 Asia/Spezial</div>
+          <ul>
+          <li><label><input type="checkbox" class="have" data-item="1 EL Misopaste"><span>1 EL Misopaste <span class="price">~3,00 €–5,40 €</span></span></label></li>
+          <li><label><input type="checkbox" class="have" data-item="1 TL Kimchi-Saft"><span>1 TL Kimchi-Saft <span class="price">~3,00 €–5,40 €</span></span></label></li>
+          <li><label><input type="checkbox" class="have" data-item="1 TL Reisessig oder Limettensaft"><span>1 TL Reisessig oder Limettensaft <span class="price">~1,80 €–3,36 €</span></span></label></li>
+          <li><label><input type="checkbox" class="have" data-item="1–2 EL Gochujang"><span>1–2 EL Gochujang <span class="price">~3,00 €–5,40 €</span></span></label></li>
+          <li><label><input type="checkbox" class="have" data-item="2 EL Currypaste (oder Currypulver / Garam Masala)"><span>2 EL Currypaste (oder Currypulver / Garam Masala) <span class="price">~1,80 €–3,60 €</span></span></label></li>
+          <li><label><input type="checkbox" class="have" data-item="2–3 EL Kimchi"><span>2–3 EL Kimchi <span class="price">~3,00 €–5,40 €</span></span></label></li>
+          <li><label><input type="checkbox" class="have" data-item="Sesam, Gurke (für Frische)"><span>Sesam, Gurke (für Frische) <span class="price">~0,66 €–1,02 €</span></span></label></li>
+          </ul></div>
+        <div class="catrow"><div class="cathd">🥩 Fleisch</div>
+          <ul>
+          <li><label><input type="checkbox" class="have" data-item="Magerer Aufschnitt (z.B. Putenbrust)"><span>Magerer Aufschnitt (z.B. Putenbrust) <span class="price">~1,56 €–2,64 €</span></span></label></li>
+          </ul></div>
+        <div class="catrow"><div class="cathd">🌿 Frische Produce</div>
+          <ul>
+          <li><label><input type="checkbox" class="have" data-item="1 Bund Schnittlauch (optional)"><span>1 Bund Schnittlauch (optional) <span class="price">~0,72 €–1,20 €</span></span></label></li>
+          <li><label><input type="checkbox" class="have" data-item="1 Frühlingszwiebel"><span>1 Frühlingszwiebel <span class="price">~0,72 €–1,08 €</span></span></label></li>
+          <li><label><input type="checkbox" class="have" data-item="1 kleines Stück Ingwer"><span>1 kleines Stück Ingwer <span class="price">~0,48 €–0,96 €</span></span></label></li>
+          <li><label><input type="checkbox" class="have" data-item="1 TL frischer Ingwer (fein gehackt)"><span>1 TL frischer Ingwer (fein gehackt) <span class="price">~0,48 €–0,96 €</span></span></label></li>
+          <li><label><input type="checkbox" class="have" data-item="Beeren (kleine Packung)"><span>Beeren (kleine Packung) <span class="price">~1,80 €–3,12 €</span></span></label></li>
+          </ul></div>
     </section>
 
   <details class="pantry">
