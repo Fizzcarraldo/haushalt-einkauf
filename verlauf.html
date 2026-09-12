@@ -3,27 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Kichererbsen-Curry</title>
-<meta name="description" content="Rezept: Kichererbsen-Curry">
-<link rel="canonical" href="https://fizzcarraldo.github.io/haushalt-einkauf/rezepte/kichererbsen-curry.html">
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Recipe",
-  "inLanguage": "de-DE",
-  "name": "Kichererbsen-Curry",
-  "recipeYield": "2–3 Portionen",
-  "recipeIngredient": [
-    "2 Dosen Kichererbsen",
-    "1 Dose gehackte Tomaten",
-    "1 Dose Kokosmilch",
-    "1 Zwiebel",
-    "1 kleines Stück Ingwer",
-    "2 EL Currypaste (oder Currypulver / Garam Masala)",
-    "2 Handvoll Blattspinat (frisch oder TK)"
-  ]
-}
-</script>
+<title>Essensplan-Verlauf</title>
+<link rel="canonical" href="https://fizzcarraldo.github.io/haushalt-einkauf/verlauf.html">
 <style>
   :root { color-scheme: light dark; }
   * { box-sizing: border-box; }
@@ -101,33 +82,50 @@
 </style>
 </head>
 <body>
-  <a class="back" href="../">← Plan &amp; Einkauf</a>
-  <h1>Kichererbsen-Curry</h1>
-  <p class="meta">2–3 Portionen</p>
-
-  <a class="bring" href="https://api.getbring.com/rest/bringrecipes/deeplink?url=https%3A%2F%2Ffizzcarraldo.github.io%2Fhaushalt-einkauf%2Frezepte%2Fkichererbsen-curry.html&amp;source=web">Nur dieses Gericht zu Bring!</a>
-  <p class="brnote">Legt die Zutaten dieses Rezepts in Bring (Vorrat ausgenommen).</p>
-
-  <h2>🛒 Zutaten</h2>
-  <ul class="zutaten">
-      <li>2 Dosen Kichererbsen</li>
-      <li>1 Dose gehackte Tomaten</li>
-      <li>1 Dose Kokosmilch</li>
-      <li>1 Zwiebel</li>
-      <li>1 kleines Stück Ingwer</li>
-      <li>2 EL Currypaste (oder Currypulver / Garam Masala)</li>
-      <li>2 Handvoll Blattspinat (frisch oder TK)</li>
-  </ul>
-
-  <h2>👨‍🍳 Zubereitung</h2>
-  <ol class="steps">
-      <li>Zwiebel, Knoblauch und Ingwer fein hacken und in Öl anbraten.</li>
-      <li>Currypaste bzw. -pulver kurz mitrösten, bis es duftet.</li>
-      <li>Kichererbsen (abgetropft), gehackte Tomaten und Kokosmilch zugeben.</li>
-      <li>10–15 Min. köcheln lassen, dann den Spinat unterrühren.</li>
-      <li>Mit Salz abschmecken und mit Reis servieren.</li>
-  </ol>
-  
-  <footer>Automatisch aus euren Rezepten erzeugt.</footer>
+  <a class="back" href="https://fizzcarraldo.github.io/haushalt-einkauf/">← zur aktuellen Woche</a>
+  <h1>📈 Essensplan-Verlauf</h1>
+  <p class="sub">Wie sich Plan &amp; Kosten über die Wochen entwickeln.</p>
+  <h2>💶 Forecast-Trend</h2>
+  <div id="trend"></div>
+  <p id="recur" class="sub"></p>
+  <h2>🗓️ Wochenpläne</h2>
+  <div id="plans"></div>
+  <footer>Automatisch erzeugt.</footer>
+<script>window.WK={weeks:"https://fizzcarraldo.github.io/haushalt-einkauf/weeks.json",home:"https://fizzcarraldo.github.io/haushalt-einkauf/"};</script>
+<script>
+(function () {
+  if (!window.WK) return;
+  fetch(WK.weeks).then(function (r) { return r.json(); }).then(function (weeks) {
+    weeks.sort(function (a, b) { return a.id < b.id ? -1 : 1; });
+    function esc(s) { return (s || '').replace(/[&<>]/g, function (c) { return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c]; }); }
+    // Forecast-Trend
+    var fc = weeks.map(function (w) { return w.forecast || 0; });
+    var max = Math.max.apply(null, fc.concat([1]));
+    var trend = '<div class="trend">' + weeks.map(function (w) {
+      var h = Math.round((w.forecast || 0) / max * 56) + 2;
+      return '<div><div class="bar" style="height:' + h + 'px" title="' + esc(w.label) + ': ~' + (w.forecast || '?') + ' €"></div><div class="lbl">' + esc(w.label) + '<br>~' + (w.forecast || '?') + '€</div></div>';
+    }).join('') + '</div>';
+    // Wie oft welches Gericht
+    var counts = {};
+    weeks.forEach(function (w) { (w.days || []).forEach(function (d) {
+      var n = (d.dinner || '').replace(/\(.*/, '').trim();
+      if (n && !/pizza|reste|urlaub|essen/i.test(n)) counts[n] = (counts[n] || 0) + 1;
+    }); });
+    var top = Object.keys(counts).sort(function (a, b) { return counts[b] - counts[a]; })
+      .map(function (k) { return esc(k) + ' ×' + counts[k]; }).slice(0, 12).join(' · ');
+    // Pläne (neueste zuerst)
+    var plans = weeks.slice().reverse().map(function (w) {
+      var rows = (w.days || []).map(function (d) {
+        return '<li><span class="pday">' + esc(d.date || '') + '</span><span class="pdish">' + esc(d.dinner || '') + '</span></li>';
+      }).join('');
+      return '<section class="vweek"><span class="fcast">~' + (w.forecast || '?') + ' €</span>' +
+        '<h3><a href="' + w.url + '">' + esc(w.label) + '</a></h3><ul class="plan">' + rows + '</ul></section>';
+    }).join('');
+    document.getElementById('trend').innerHTML = trend;
+    document.getElementById('recur').innerHTML = top ? ('🔁 Häufig: ' + top) : '';
+    document.getElementById('plans').innerHTML = plans;
+  }).catch(function (e) { document.getElementById('plans').innerHTML = '<p>Noch keine Wochen.</p>'; });
+})();
+</script>
 </body>
 </html>

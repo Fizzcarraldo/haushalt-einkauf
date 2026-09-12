@@ -1,0 +1,74 @@
+[
+  {
+    "id": "2026-08-24",
+    "label": "24.08.",
+    "url": "https://fizzcarraldo.github.io/haushalt-einkauf/wochen/2026-08-24/",
+    "forecast": 60,
+    "days": [
+      {
+        "date": "Mo 24.08.",
+        "dinner": "Amatriciana"
+      },
+      {
+        "date": "Di 25.08.",
+        "dinner": "Steak mit Gemüse (+ Mais)"
+      },
+      {
+        "date": "Mi 26.08.",
+        "dinner": "Ofengemüse mit Feta"
+      },
+      {
+        "date": "Do 27.08.",
+        "dinner": "Garnelen-Gemüse-Pfanne mit Reis"
+      },
+      {
+        "date": "Fr 28.08.",
+        "dinner": "Veggie Burrito"
+      },
+      {
+        "date": "Sa 29.08.",
+        "dinner": "Reste-Frittata"
+      },
+      {
+        "date": "So 30.08.",
+        "dinner": "🧳 Urlaub"
+      }
+    ]
+  },
+  {
+    "id": "2026-09-07",
+    "label": "07.09.",
+    "url": "https://fizzcarraldo.github.io/haushalt-einkauf/wochen/2026-09-07/",
+    "forecast": 69,
+    "days": [
+      {
+        "date": "Mo 07.09.",
+        "dinner": "Garnelen-Gemüse-Pfanne mit Reis"
+      },
+      {
+        "date": "Di 08.09.",
+        "dinner": "🍕 Pizza essen (unterwegs)"
+      },
+      {
+        "date": "Mi 09.09.",
+        "dinner": "Hähnchen-Gemüse aus dem Ofen"
+      },
+      {
+        "date": "Do 10.09.",
+        "dinner": "Kichererbsen-Curry (Batch → Reste)"
+      },
+      {
+        "date": "Fr 11.09.",
+        "dinner": "Gochujang-Reis-Bowl mit Tofu"
+      },
+      {
+        "date": "Sa 12.09.",
+        "dinner": "Paniertes Seelachsfilet mit Kartoffelsalat"
+      },
+      {
+        "date": "So 13.09.",
+        "dinner": "Reste (Curry) / flexibel"
+      }
+    ]
+  }
+]
