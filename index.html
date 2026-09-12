@@ -88,6 +88,10 @@
   .lunch { color: color-mix(in oklab, CanvasText 45%, Canvas); font-size: .85em; }
   .pnote { font-size: .9rem; color: color-mix(in oklab, CanvasText 60%, Canvas);
     background: color-mix(in oklab, #4caf2a 12%, Canvas); padding: .5rem .7rem; border-radius: 10px; }
+  .why { background: color-mix(in oklab, #4caf2a 10%, Canvas); border-radius: 12px; padding: .5rem .85rem; margin: .3rem 0 1rem; }
+  .why h2 { margin: .2rem 0 .3rem; font-size: 1.05rem; }
+  .why ul { padding-left: 1.1rem; list-style: none; margin: .2rem 0; }
+  .why li { margin: .3rem 0; font-size: .9rem; }
   .bring { display: block; width: 100%; text-align: center; background: #4caf2a; color: #fff;
     text-decoration: none; font-weight: 700; font-size: 1.15rem; padding: 1rem; border-radius: 14px;
     margin: .6rem 0 .4rem; box-shadow: 0 4px 14px rgba(0,0,0,.18); }
@@ -163,6 +167,17 @@
     <p class="pnote">Mittags jeden Tag: leichte Brotzeit (kein Kochen). Frühstück: Skyr-Bowl (Flo). Deins fehlt noch – sag Bescheid! 😊</p>
   </section>
 
+  <section class="why">
+    <h2>💡 Warum dieser Plan?</h2>
+    <ul>
+    <li>📝 Zurück aus Italien – bewusst nicht-italienisch, leicht &amp; proteinreich mit wenig rotem Fleisch.</li>
+    <li>🍂 Diese Woche liegt im Herbst – Saison haben u. a. Kürbis, Äpfel, Pilze, Kohl, Lauch, Feldsalat · saisonal schon dabei: Lauch, Karotte, Zwiebel, Kartoffel, Brokkoli.</li>
+    <li>🍽️ Proteine wechseln: Fisch/Meeresfrüchte → Geflügel → Hülsenfrüchte → Tofu → Fisch/Meeresfrüchte (Abwechslung, wenig rotes Fleisch).</li>
+    <li>♻️ ein Batch-Gericht → Reste für einen weiteren Tag; außer Haus: Di.</li>
+    <li>🏷️ Angebote – günstig &amp; im Plan: Käse günstig bei Lidl (gerieben ab 1,39 € / Scheiben) · Idee/Ergänzung: Aldi: Putenbrustfilet 7,99 €/800 g (statt 9,99 €) · Idee/Ergänzung: Aldi: Hähnchenschenkel 6,79 €/2 kg</li>
+    </ul>
+  </section>
+
   <h2>🧭 Einkaufsroute &amp; Preis</h2>
   <a class="bring" href="https://api.getbring.com/rest/bringrecipes/deeplink?url=https%3A%2F%2Ffizzcarraldo.github.io%2Fhaushalt-einkauf%2F&amp;source=web">Alles auf einmal → Bring</a>
   <p class="brnote">Oder pro Laden unten einzeln. Vorrat ist überall ausgenommen. Preise = grobe Schätzung.</p>
@@ -178,7 +193,7 @@
     <p class="hint">Schick Flo diesen Link – dann streiche ich die abgehakten Sachen auch aus dem Bring-Export. Immer vorrätig? → dauerhaft in den Vorrat.</p>
   </div>
 
-  <div class="fc">💶 <b>Forecast: ~69,27 €</b> <span class="cmp">(realistisch ~65,11 €–73,43 €; Schätzung)</span><p class="cmp">📦 davon einmalige Vorratskäufe (halten lange) ~28,28 € → „normale“ Woche ~40,99 €</p><p class="cmp">⚖️ alles Discounter ~64,20 € · Aufteilung ~69,27 € · alles Vollsortiment ~77,04 € → spart ~7,77 €</p><p class="cmp">🍂 Saison (Herbst): Kürbis/Äpfel/Pilze günstig, Beeren teurer.</p><p class="cmp">🏷️ Angebote: Lidl: geriebener Käse ab 1,39 € / Käsescheiben im Angebot</p></div>
+  <div class="fc">💶 <b>Forecast: ~69,27 €</b> <span class="cmp">(realistisch ~65,11 €–73,43 €; Schätzung)</span><p class="cmp">📦 davon einmalige Vorratskäufe (halten lange) ~28,28 € → „normale“ Woche ~40,99 €</p><p class="cmp">⚖️ alles Discounter ~64,20 € · Aufteilung ~69,27 € · alles Vollsortiment ~77,04 € → spart ~7,77 €</p><p class="cmp">🍂 Saison (Herbst): Kürbis/Äpfel/Pilze günstig, Beeren teurer.</p><p class="cmp">🏷️ Angebote: Käse günstig bei Lidl (gerieben ab 1,39 € / Scheiben); Aldi: Putenbrustfilet 7,99 €/800 g (statt 9,99 €); Aldi: Hähnchenschenkel 6,79 €/2 kg</p></div>
     <section class="storecard">
       <span class="subtot">~38,85 €</span>
       <h3>Trip 1: Aldi Süd</h3>
@@ -211,8 +226,8 @@
           <li><label><input type="checkbox" class="have" data-item="2 Eier (oder Tofu)"><span>2 Eier (oder Tofu) <span class="price">~1,55 €</span></span></label></li>
           <li><label><input type="checkbox" class="have" data-item="6 Eier"><span>6 Eier <span class="price">~1,80 €</span></span></label></li>
           <li><label><input type="checkbox" class="have" data-item="Hummus"><span>Hummus <span class="price">~1,40 €</span></span></label></li>
-          <li><label><input type="checkbox" class="have" data-item="Hüttenkäse"><span>Hüttenkäse <span class="price">~1,02 €</span> <span class="badge">🏷️ Angebot</span> <span class="offernote">Lidl: geriebener Käse ab 1,39 € / Käsescheiben im Angebot</span></span></label></li>
-          <li><label><input type="checkbox" class="have" data-item="Käse (z.B. Gouda / Emmentaler)"><span>Käse (z.B. Gouda / Emmentaler) <span class="price">~1,90 €</span> <span class="badge">🏷️ Angebot</span> <span class="offernote">Lidl: geriebener Käse ab 1,39 € / Käsescheiben im Angebot</span></span></label></li>
+          <li><label><input type="checkbox" class="have" data-item="Hüttenkäse"><span>Hüttenkäse <span class="price">~1,02 €</span> <span class="badge">🏷️ Angebot</span> <span class="offernote">Käse günstig bei Lidl (gerieben ab 1,39 € / Scheiben)</span></span></label></li>
+          <li><label><input type="checkbox" class="have" data-item="Käse (z.B. Gouda / Emmentaler)"><span>Käse (z.B. Gouda / Emmentaler) <span class="price">~1,90 €</span> <span class="badge">🏷️ Angebot</span> <span class="offernote">Käse günstig bei Lidl (gerieben ab 1,39 € / Scheiben)</span></span></label></li>
           <li><label><input type="checkbox" class="have" data-item="Skyr (großer Becher)"><span>Skyr (großer Becher) <span class="price">~1,30 €</span></span></label></li>
           </ul></div>
         <div class="catrow"><div class="cathd">🍞 Backwaren</div>
