@@ -175,6 +175,7 @@
     <li>🍽️ Proteine wechseln: Fisch/Meeresfrüchte → Geflügel → Hülsenfrüchte → Tofu → Fisch/Meeresfrüchte (Abwechslung, wenig rotes Fleisch).</li>
     <li>♻️ ein Batch-Gericht → Reste für einen weiteren Tag; außer Haus: Di.</li>
     <li>🏷️ Angebote – günstig &amp; im Plan: Käse günstig bei Lidl (gerieben ab 1,39 € / Scheiben) · Idee/Ergänzung: Aldi: Putenbrustfilet 7,99 €/800 g (statt 9,99 €) · Idee/Ergänzung: Aldi: Hähnchenschenkel 6,79 €/2 kg</li>
+    <li id="wxline" class="wxline" hidden></li>
     </ul>
   </section>
 
@@ -294,7 +295,7 @@
   </details>
 
   <footer>Automatisch erzeugt · Bring-Import ohne Login. · <a href="https://fizzcarraldo.github.io/haushalt-einkauf/verlauf.html">📈 Verlauf</a></footer>
-<script>window.WK={id:"2026-09-07",weeks:"https://fizzcarraldo.github.io/haushalt-einkauf/weeks.json",verlauf:"https://fizzcarraldo.github.io/haushalt-einkauf/verlauf.html",home:"https://fizzcarraldo.github.io/haushalt-einkauf/"};</script>
+<script>window.WK={id:"2026-09-07",weeks:"https://fizzcarraldo.github.io/haushalt-einkauf/weeks.json",verlauf:"https://fizzcarraldo.github.io/haushalt-einkauf/verlauf.html",home:"https://fizzcarraldo.github.io/haushalt-einkauf/",geo:{lat:48.457,lon:11.133}};</script>
 <script>
 (function () {
   var el = document.getElementById('wknav');
@@ -316,6 +317,33 @@
     var sel = document.getElementById('wksel');
     if (sel) sel.onchange = function () { location.href = this.value; };
   }).catch(function () { el.innerHTML = '<a href="' + WK.verlauf + '">📈 Verlauf</a>'; });
+})();
+</script>
+<script>
+(function () {
+  var line = document.getElementById('wxline');
+  if (!line || !window.WK || !WK.geo) return;
+  try {
+    var mon = new Date((WK.id || '') + 'T00:00:00');
+    var diff = (Date.now() - mon.getTime()) / 86400000;
+    if (isNaN(diff) || diff > 9 || diff < -14) return;   // nur aktuelle/kommende Woche
+  } catch (e) { return; }
+  var g = WK.geo;
+  var u = 'https://api.open-meteo.com/v1/forecast?latitude=' + g.lat + '&longitude=' + g.lon +
+    '&daily=temperature_2m_max,precipitation_sum,weather_code&timezone=Europe%2FBerlin&forecast_days=7';
+  fetch(u).then(function (r) { return r.json(); }).then(function (d) {
+    var t = d.daily.temperature_2m_max, p = d.daily.precipitation_sum;
+    var avg = t.reduce(function (a, b) { return a + b; }, 0) / t.length;
+    var rain = p.filter(function (x) { return x >= 1; }).length;
+    var tip, emoji;
+    if (avg < 10) { tip = 'kalt → wärmende Gerichte (Eintopf, Ofen, Curry)'; emoji = '🥶'; }
+    else if (avg < 18) { tip = 'kühl/mild → herzhaft-warme Küche passt gut'; emoji = '🌦️'; }
+    else if (avg < 26) { tip = 'mild → ausgewogen, gern auch mal leichter'; emoji = '⛅'; }
+    else { tip = 'heiß → leichte/kalte Küche (Salate, Bowls), wenig Backofen'; emoji = '☀️'; }
+    if (rain >= 3) tip += ' · viel Regen → Comfort/Ofen';
+    line.hidden = false;
+    line.textContent = emoji + ' Wetter Aichach (Woche): Ø ~' + Math.round(avg) + '°C, ' + rain + ' Regentag(e) → ' + tip;
+  }).catch(function () {});
 })();
 </script>
 <script>
