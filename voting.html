@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="de-DE">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Abstimmung – Woche 14.–20.09.</title>
+<link rel="canonical" href="https://fizzcarraldo.github.io/haushalt-einkauf/voting.html">
+<style>
+  :root { color-scheme: light dark; }
+  * { box-sizing: border-box; }
+  body { font-family: -apple-system, system-ui, sans-serif; margin: 0; padding: 1.25rem;
+    max-width: 640px; margin-inline: auto; line-height: 1.5; background: Canvas; color: CanvasText; }
+  a { color: inherit; }
+  h1 { font-size: 1.55rem; margin: .2rem 0 .1rem; }
+  h2 { font-size: 1.15rem; margin: 1.6rem 0 .5rem; }
+  .sub { color: color-mix(in oklab, CanvasText 55%, Canvas); margin-top: 0; }
+  .back { display: inline-block; margin-bottom: .4rem; font-size: .9rem;
+    color: color-mix(in oklab, CanvasText 60%, Canvas); text-decoration: none; }
+  ul.plan { list-style: none; padding: 0; margin: .3rem 0; }
+  ul.plan li { display: flex; gap: .6rem; padding: .45rem .6rem; border-radius: 10px; align-items: baseline; }
+  ul.plan li:nth-child(odd) { background: color-mix(in oklab, CanvasText 6%, Canvas); }
+  .pday { flex: 0 0 5.4rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .pdish { flex: 1; }
+  .pdish a { font-weight: 600; text-underline-offset: 2px; }
+  .lunch { color: color-mix(in oklab, CanvasText 45%, Canvas); font-size: .85em; }
+  .pnote { font-size: .9rem; color: color-mix(in oklab, CanvasText 60%, Canvas);
+    background: color-mix(in oklab, #4caf2a 12%, Canvas); padding: .5rem .7rem; border-radius: 10px; }
+  .why { background: color-mix(in oklab, #4caf2a 10%, Canvas); border-radius: 12px; padding: .5rem .85rem; margin: .3rem 0 1rem; }
+  .why h2 { margin: .2rem 0 .3rem; font-size: 1.05rem; }
+  .why ul { padding-left: 1.1rem; list-style: none; margin: .2rem 0; }
+  .why li { margin: .3rem 0; font-size: .9rem; }
+  .bring { display: block; width: 100%; text-align: center; background: #4caf2a; color: #fff;
+    text-decoration: none; font-weight: 700; font-size: 1.15rem; padding: 1rem; border-radius: 14px;
+    margin: .6rem 0 .4rem; box-shadow: 0 4px 14px rgba(0,0,0,.18); }
+  .bring:active { transform: translateY(1px); }
+  .brnote { font-size: .8rem; color: color-mix(in oklab, CanvasText 50%, Canvas); margin: 0 0 1rem; }
+  .count { font-weight: 600; }
+  .recipe h3 { margin: 1.1rem 0 .15rem; font-size: 1rem; }
+  .recipe h3 a { text-decoration: none; }
+  .bring-mini { display: inline-block; font-size: .8rem; text-decoration: none; font-weight: 600;
+    background: color-mix(in oklab, #4caf2a 20%, Canvas); color: inherit;
+    padding: .2rem .65rem; border-radius: 999px; margin: 0 0 .35rem; }
+  .bring-mini:active { transform: translateY(1px); }
+  .fc { margin: .3rem 0 1rem; padding: .7rem .85rem; border-radius: 12px; background: color-mix(in oklab, CanvasText 6%, Canvas); font-size: .92rem; }
+  .fc b { font-variant-numeric: tabular-nums; }
+  .fc .cmp { color: color-mix(in oklab, CanvasText 60%, Canvas); font-size: .86rem; margin:.35rem 0 0; }
+  .storecard { border: 1px solid color-mix(in oklab, CanvasText 14%, Canvas); border-radius: 14px; padding: .6rem .8rem; margin: .8rem 0; }
+  .storecard > h3 { margin: .1rem 0 .1rem; font-size: 1.1rem; }
+  .storecard .when { color: color-mix(in oklab, CanvasText 50%, Canvas); font-size: .82rem; margin: 0 0 .4rem; }
+  .subtot { float: right; font-weight: 600; font-size: .85rem; color: color-mix(in oklab, CanvasText 65%, Canvas); }
+  .catrow { margin: .35rem 0 0; }
+  .catrow .cathd { font-size: .8rem; color: color-mix(in oklab, CanvasText 55%, Canvas); margin: .3rem 0 .05rem; }
+  .price { color: color-mix(in oklab, CanvasText 50%, Canvas); font-size: .82em; }
+  .badge { background: #e0a100; color: #000; border-radius: 6px; padding: 0 .3rem; font-size: .72rem; font-weight: 700; }
+  .offernote { color: #b26a00; font-size: .8em; }
+  .wknav { display: flex; gap: .45rem; align-items: center; flex-wrap: wrap; font-size: .85rem;
+    padding: .4rem .1rem; margin-bottom: .3rem; border-bottom: 1px solid color-mix(in oklab, CanvasText 12%, Canvas); }
+  .wknav a { text-decoration: none; font-weight: 600; }
+  .wknav .dim { opacity: .35; }
+  .wknav select { font: inherit; padding: .1rem .3rem; border-radius: 6px; }
+  .vweek { border: 1px solid color-mix(in oklab, CanvasText 12%, Canvas); border-radius: 12px; padding: .5rem .75rem; margin: .7rem 0; }
+  .vweek h3 { margin: .1rem 0 .3rem; font-size: 1rem; }
+  .vweek .fcast { float: right; font-weight: 600; color: color-mix(in oklab, CanvasText 60%, Canvas); font-size: .85rem; }
+  .trend { display:flex; gap:.25rem; align-items:flex-end; height:60px; margin:.4rem 0; }
+  .trend .bar { flex:1; background: color-mix(in oklab, #4caf2a 55%, Canvas); border-radius:4px 4px 0 0; min-height:3px; }
+  .trend .lbl { font-size:.7rem; text-align:center; color: color-mix(in oklab, CanvasText 55%, Canvas); }
+  .votebtn { display:inline-block; text-decoration:none; font-weight:700; background: color-mix(in oklab, #4caf2a 22%, Canvas);
+    padding:.5rem .8rem; border-radius:12px; margin:.2rem 0 .6rem; }
+  .voter { display:flex; gap:.4rem; align-items:center; flex-wrap:wrap; margin:.3rem 0 .7rem; font-size:.9rem; }
+  .voter button { font:inherit; padding:.3rem .8rem; border-radius:999px; border:1px solid color-mix(in oklab,CanvasText 30%,Canvas); background:transparent; color:inherit; cursor:pointer; }
+  .voter button.on { background: color-mix(in oklab,#4caf2a 32%,Canvas); font-weight:700; border-color:transparent; }
+  .vday { margin:.9rem 0; }
+  .vday h3 { margin:.2rem 0 .35rem; font-size:1rem; }
+  .opts { display:grid; grid-template-columns:repeat(3,1fr); gap:.5rem; }
+  .opt { position:relative; border:1px solid color-mix(in oklab,CanvasText 14%,Canvas); border-radius:12px; overflow:hidden;
+    background:Canvas; color:inherit; cursor:pointer; padding:0; text-align:left; font:inherit; }
+  .opt:active { transform: translateY(1px); }
+  .opt .thumb { width:100%; height:84px; object-fit:cover; display:block; background:color-mix(in oklab,CanvasText 8%,Canvas); }
+  .opt .emoji { width:100%; height:84px; display:flex; align-items:center; justify-content:center; font-size:2.3rem;
+    background:color-mix(in oklab,#4caf2a 12%,Canvas); }
+  .opt .oname { display:block; padding:.35rem .45rem 0; font-size:.8rem; font-weight:600; line-height:1.15; }
+  .opt .otag { display:block; padding:0 .45rem .45rem; font-size:.7rem; color:color-mix(in oklab,CanvasText 55%,Canvas); }
+  .opt .chips { position:absolute; top:.3rem; right:.3rem; font-size:1rem; text-shadow:0 1px 2px rgba(0,0,0,.5); }
+  .opt.win { outline:3px solid #4caf2a; outline-offset:-3px; }
+  .vsum { background: color-mix(in oklab, CanvasText 6%, Canvas); border-radius:12px; padding:.5rem .8rem; margin:1rem 0; }
+  .vsum li { margin:.2rem 0; font-size:.9rem; }
+  ul { margin: .2rem 0 .6rem; padding-left: 0; list-style: none; }
+  .recipe li { margin: .1rem 0; }
+  .recipe label { display: flex; gap: .6rem; align-items: baseline; cursor: pointer; padding: .15rem 0; }
+  .recipe input { width: 1.15rem; height: 1.15rem; }
+  li.done span { text-decoration: line-through; opacity: .4; }
+  ol.steps { padding-left: 1.3rem; } ol.steps li { margin: .35rem 0; }
+  ul.zutaten { list-style: disc; padding-left: 1.3rem; } ul.zutaten li { margin: .15rem 0; }
+  .have-note { color: color-mix(in oklab, CanvasText 45%, Canvas); font-size: .85em; }
+  .pantry { margin: 1rem 0; padding: .5rem .75rem; border-radius: 10px; background: color-mix(in oklab, CanvasText 6%, Canvas); }
+  .pantry summary { cursor: pointer; font-size: .95rem; }
+  .pantry ul { padding-left: 1.1rem; list-style: disc; }
+  .pantry li { color: color-mix(in oklab, CanvasText 55%, Canvas); }
+  .hint { font-size: .8rem; color: color-mix(in oklab, CanvasText 50%, Canvas); }
+  #haveBox { margin: 1rem 0; padding: .6rem .8rem; border-radius: 10px; background: color-mix(in oklab, #4caf2a 14%, Canvas); display: none; }
+  #haveBox h4 { margin: .1rem 0 .4rem; font-size: .95rem; }
+  #haveBox ul { padding-left: 1.1rem; list-style: disc; }
+  #haveBox button { font: inherit; padding: .35rem .7rem; border-radius: 8px; border: 1px solid; background: transparent; color: inherit; cursor: pointer; margin-top: .3rem; }
+  .meta { color: color-mix(in oklab, CanvasText 55%, Canvas); font-size: .9rem; }
+  footer { margin-top: 2rem; font-size: .8rem; color: color-mix(in oklab, CanvasText 45%, Canvas); }
+</style>
+</head>
+<body>
+  <a class="back" href="https://fizzcarraldo.github.io/haushalt-einkauf/">← Plan &amp; Einkauf</a>
+  <h1>🗳️ Abstimmung – Woche 14.–20.09.</h1>
+  <p class="sub">Pro Tag 3 Vorschläge – tippt euren Favoriten. Beide gleich = 🏆.</p>
+  <div class="voter">Ich bin:
+    <button data-v="F" type="button">🧑 Flo</button>
+    <button data-v="P" type="button">👩 Partnerin</button>
+    <button id="shareVotes" type="button" style="margin-left:auto">🔗 Stand teilen (Link)</button>
+  </div>
+  <section class="vday" data-d="0"><h3>Mo 14.09.</h3>
+  <div class="opts">
+    <button class="opt" data-d="0" data-o="0"><img class="thumb" loading="lazy" src="https://www.themealdb.com/images/media/meals/g373701551450225.jpg" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="emoji" style="display:none">🍳</span><span class="oname">Shakshuka mit Avocado</span><span class="otag">Ei · schnell</span><span class="chips"></span></button>
+    <button class="opt" data-d="0" data-o="1"><span class="emoji">🍚</span><span class="oname">Gochujang-Reis-Bowl</span><span class="otag">Tofu · würzig</span><span class="chips"></span></button>
+    <button class="opt" data-d="0" data-o="2"><img class="thumb" loading="lazy" src="https://www.themealdb.com/images/media/meals/wqurxy1511453156.jpg" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="emoji" style="display:none">🧀</span><span class="oname">Ofengemüse mit Feta</span><span class="otag">Veggie · Ofen</span><span class="chips"></span></button>
+  </div></section>
+  <section class="vday" data-d="1"><h3>Di 15.09.</h3>
+  <div class="opts">
+    <button class="opt" data-d="1" data-o="0"><img class="thumb" loading="lazy" src="https://www.themealdb.com/images/media/meals/njj1681763297231.jpg" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="emoji" style="display:none">🐟</span><span class="oname">Ofen-Kabeljau mit Herbstgemüse</span><span class="otag">Fisch · Herbst</span><span class="chips"></span></button>
+    <button class="opt" data-d="1" data-o="1"><img class="thumb" loading="lazy" src="https://www.themealdb.com/images/media/meals/1525873040.jpg" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="emoji" style="display:none">🦐</span><span class="oname">Garnelen-Gemüse-Pfanne</span><span class="otag">Meeresfr. · schnell</span><span class="chips"></span></button>
+    <button class="opt" data-d="1" data-o="2"><img class="thumb" loading="lazy" src="https://www.themealdb.com/images/media/meals/wyxwsp1486979827.jpg" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="emoji" style="display:none">🍗</span><span class="oname">Hähnchen-Gemüse aus dem Ofen</span><span class="otag">Geflügel</span><span class="chips"></span></button>
+  </div></section>
+  <section class="vday" data-d="2"><h3>Mi 16.09.</h3>
+  <div class="opts">
+    <button class="opt" data-d="2" data-o="0"><img class="thumb" loading="lazy" src="https://www.themealdb.com/images/media/meals/xxyupu1468262513.jpg" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="emoji" style="display:none">🥢</span><span class="oname">Sweet-Chili-Teriyaki-Bowl (Tofu)</span><span class="otag">Tofu</span><span class="chips"></span></button>
+    <button class="opt" data-d="2" data-o="1"><img class="thumb" loading="lazy" src="https://www.themealdb.com/images/media/meals/prrirc1763781360.jpg" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="emoji" style="display:none">🌯</span><span class="oname">Veggie Burrito</span><span class="otag">Bohnen · mexikanisch</span><span class="chips"></span></button>
+    <button class="opt" data-d="2" data-o="2"><img class="thumb" loading="lazy" src="https://www.themealdb.com/images/media/meals/tvtxpq1511464705.jpg" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="emoji" style="display:none">🍛</span><span class="oname">Kichererbsen-Curry</span><span class="otag">Hülsenfrüchte</span><span class="chips"></span></button>
+  </div></section>
+  <section class="vday" data-d="3"><h3>Do 17.09.</h3>
+  <div class="opts">
+    <button class="opt" data-d="3" data-o="0"><img class="thumb" loading="lazy" src="https://www.themealdb.com/images/media/meals/wuxrtu1483564410.jpg" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="emoji" style="display:none">🍲</span><span class="oname">Rote-Linsen-Dal mit Reis</span><span class="otag">Linsen · wärmend</span><span class="chips"></span></button>
+    <button class="opt" data-d="3" data-o="1"><img class="thumb" loading="lazy" src="https://www.themealdb.com/images/media/meals/wqurxy1511453156.jpg" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="emoji" style="display:none">🧀</span><span class="oname">Ofengemüse mit Feta</span><span class="otag">Veggie · Ofen</span><span class="chips"></span></button>
+    <button class="opt" data-d="3" data-o="2"><img class="thumb" loading="lazy" src="https://www.themealdb.com/images/media/meals/g373701551450225.jpg" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="emoji" style="display:none">🍳</span><span class="oname">Shakshuka mit Avocado</span><span class="otag">Ei</span><span class="chips"></span></button>
+  </div></section>
+  <section class="vday" data-d="4"><h3>Fr 18.09.</h3>
+  <div class="opts">
+    <button class="opt" data-d="4" data-o="0"><img class="thumb" loading="lazy" src="https://www.themealdb.com/images/media/meals/prrirc1763781360.jpg" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="emoji" style="display:none">🌯</span><span class="oname">Veggie Burrito</span><span class="otag">Bohnen</span><span class="chips"></span></button>
+    <button class="opt" data-d="4" data-o="1"><span class="emoji">🍝</span><span class="oname">Amatriciana</span><span class="otag">Pasta · Comfort</span><span class="chips"></span></button>
+    <button class="opt" data-d="4" data-o="2"><img class="thumb" loading="lazy" src="https://www.themealdb.com/images/media/meals/xxyupu1468262513.jpg" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="emoji" style="display:none">🥢</span><span class="oname">Sweet-Chili-Teriyaki-Bowl (Tofu)</span><span class="otag">Tofu</span><span class="chips"></span></button>
+  </div></section>
+  <section class="vday" data-d="5"><h3>Sa 19.09.</h3>
+  <div class="opts">
+    <button class="opt" data-d="5" data-o="0"><img class="thumb" loading="lazy" src="https://www.themealdb.com/images/media/meals/vussxq1511882648.jpg" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="emoji" style="display:none">🥩</span><span class="oname">Steak mit Gemüse</span><span class="otag">Rind · Gönnung</span><span class="chips"></span></button>
+    <button class="opt" data-d="5" data-o="1"><img class="thumb" loading="lazy" src="https://www.themealdb.com/images/media/meals/njj1681763297231.jpg" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="emoji" style="display:none">🐟</span><span class="oname">Ofen-Kabeljau mit Herbstgemüse</span><span class="otag">Fisch</span><span class="chips"></span></button>
+    <button class="opt" data-d="5" data-o="2"><span class="emoji">🍚</span><span class="oname">Gochujang-Reis-Bowl</span><span class="otag">Tofu</span><span class="chips"></span></button>
+  </div></section>
+  <section class="vday" data-d="6"><h3>So 20.09.</h3>
+  <div class="opts">
+    <button class="opt" data-d="6" data-o="0"><span class="emoji">🍽️</span><span class="oname">Reste / flexibel</span><span class="otag">aufbrauchen</span><span class="chips"></span></button>
+    <button class="opt" data-d="6" data-o="1"><span class="emoji">🍝</span><span class="oname">Amatriciana</span><span class="otag">Comfort</span><span class="chips"></span></button>
+    <button class="opt" data-d="6" data-o="2"><img class="thumb" loading="lazy" src="https://www.themealdb.com/images/media/meals/rwuyqx1511383174.jpg" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="emoji" style="display:none">🥞</span><span class="oname">Pancakes</span><span class="otag">Brunch</span><span class="chips"></span></button>
+  </div></section>
+  <h2>🏁 Ergebnis</h2>
+  <ul class="vsum" id="vsum"></ul>
+  <footer>Stimmen lokal + im Link gespeichert. Schick Flo den Link → er übernimmt die Gewinner in Plan &amp; Einkauf.</footer>
+<script>
+(function () {
+  var KEY = 'vote_v1';
+  function fromUrl() { try { var p = new URLSearchParams(location.search).get('v'); return p ? JSON.parse(decodeURIComponent(p)) : null; } catch (e) { return null; } }
+  function load() { try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) { return {}; } }
+  var votes = fromUrl() || load();
+  var voter = localStorage.getItem('voter') || 'F';
+  function save() {
+    localStorage.setItem(KEY, JSON.stringify(votes));
+    var u = new URL(location.href); u.searchParams.set('v', encodeURIComponent(JSON.stringify(votes))); history.replaceState(null, '', u);
+  }
+  function setVoterUI() {
+    document.querySelectorAll('.voter button').forEach(function (b) { b.classList.toggle('on', b.dataset.v === voter); });
+  }
+  function render() {
+    document.querySelectorAll('.opt').forEach(function (b) {
+      var d = b.dataset.d, o = b.dataset.o, dv = votes[d] || {};
+      var chips = ''; if (dv.F === o) chips += '🧑'; if (dv.P === o) chips += '👩';
+      b.querySelector('.chips').textContent = chips;
+      b.classList.toggle('win', dv.F === o && dv.P === o);
+    });
+    var sum = document.getElementById('vsum'); if (sum) {
+      var html = '';
+      document.querySelectorAll('.vday').forEach(function (day) {
+        var d = day.dataset.d, dv = votes[d] || {}, name = day.querySelector('h3').textContent;
+        var res;
+        if (dv.F != null && dv.F === dv.P) res = '🏆 ' + optName(d, dv.F);
+        else if (dv.F != null || dv.P != null) res = '🤝 offen (' + (dv.F != null ? '🧑 ' + optName(d, dv.F) : '') + (dv.P != null ? ' 👩 ' + optName(d, dv.P) : '') + ')';
+        else res = '– noch keine Stimme';
+        html += '<li><b>' + name + '</b> ' + res + '</li>';
+      });
+      sum.innerHTML = html;
+    }
+  }
+  function optName(d, o) { var el = document.querySelector('.opt[data-d="' + d + '"][data-o="' + o + '"] .oname'); return el ? el.textContent : ''; }
+  document.querySelectorAll('.voter button').forEach(function (b) {
+    b.addEventListener('click', function () { voter = b.dataset.v; localStorage.setItem('voter', voter); setVoterUI(); });
+  });
+  document.querySelectorAll('.opt').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var d = b.dataset.d, o = b.dataset.o; votes[d] = votes[d] || {};
+      votes[d][voter] = (votes[d][voter] === o) ? undefined : o;
+      if (votes[d][voter] === undefined) delete votes[d][voter];
+      save(); render();
+    });
+  });
+  var cp = document.getElementById('shareVotes');
+  if (cp) cp.addEventListener('click', function () {
+    save(); if (navigator.clipboard) navigator.clipboard.writeText(location.href);
+    this.textContent = 'Link kopiert ✓'; var s = this; setTimeout(function () { s.textContent = '🔗 Stand teilen (Link)'; }, 1500);
+  });
+  setVoterUI(); render();
+})();
+</script>
+</body>
+</html>
