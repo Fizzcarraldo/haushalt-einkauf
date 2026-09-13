@@ -70,5 +70,41 @@
         "dinner": "Reste (Curry) / flexibel"
       }
     ]
+  },
+  {
+    "id": "2026-09-14",
+    "label": "14.09.",
+    "url": "https://fizzcarraldo.github.io/haushalt-einkauf/wochen/2026-09-14/",
+    "forecast": 65,
+    "days": [
+      {
+        "date": "Mo 14.09.",
+        "dinner": "Shakshuka mit Avocado"
+      },
+      {
+        "date": "Di 15.09.",
+        "dinner": "Ofen-Kabeljau mit Herbstgemüse"
+      },
+      {
+        "date": "Mi 16.09.",
+        "dinner": "Sweet-Chili-Teriyaki-Bowl mit Tofu"
+      },
+      {
+        "date": "Do 17.09.",
+        "dinner": "Rote-Linsen-Dal mit Reis (Batch → Reste)"
+      },
+      {
+        "date": "Fr 18.09.",
+        "dinner": "Veggie Burrito"
+      },
+      {
+        "date": "Sa 19.09.",
+        "dinner": "Reste / flexibel"
+      },
+      {
+        "date": "So 20.09.",
+        "dinner": "Reste / flexibel"
+      }
+    ]
   }
 ]
