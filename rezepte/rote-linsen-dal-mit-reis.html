@@ -258,8 +258,26 @@
   .shop-h { font-weight:800; font-size:1.05rem; display:flex; align-items:center; gap:.4rem; flex-wrap:wrap; }
   .shop-tag { font-size:.7rem; font-weight:700; padding:.1rem .45rem; border-radius:999px;
     background: color-mix(in oklab,CanvasText 12%,Canvas); color: color-mix(in oklab,CanvasText 70%,Canvas); }
+  .shop-tag.off { background:#e0a100; color:#000; }
   .shop-eur { margin-left:auto; font-size:.85rem; font-weight:700; color: color-mix(in oklab,CanvasText 65%,Canvas); }
   .shop-sub { font-size:.84rem; color: color-mix(in oklab,CanvasText 62%,Canvas); margin:.15rem 0 .5rem; }
+  .stopcard { border-left:4px solid color-mix(in oklab,#4caf2a 55%,Canvas); }
+  /* wer kauft? */
+  .whorow { display:flex; align-items:center; gap:.35rem; flex-wrap:wrap; margin:.1rem 0 .5rem; font-size:.82rem; }
+  .whorow .wholbl { color: color-mix(in oklab,CanvasText 55%,Canvas); margin-right:.1rem; }
+  .whorow button { font:inherit; font-size:.8rem; font-weight:600; padding:.25rem .55rem; border-radius:999px;
+    border:1px solid color-mix(in oklab,CanvasText 22%,Canvas); background:Canvas; color:inherit; cursor:pointer; }
+  .whorow button.on { background:#4caf2a; color:#fff; border-color:transparent; }
+  /* Deine Märkte */
+  .markets summary { cursor:pointer; font-size:.95rem; font-weight:700; }
+  .markets { margin:.7rem 0; padding:.4rem .75rem; border-radius:12px; background: color-mix(in oklab,CanvasText 5%,Canvas); }
+  .mklist { list-style:none; padding:0; margin:.4rem 0; }
+  .mklist li { display:flex; align-items:baseline; gap:.5rem; padding:.3rem 0; flex-wrap:wrap;
+    border-bottom:1px solid color-mix(in oklab,CanvasText 8%,Canvas); }
+  .mk-n { font-weight:700; font-size:.9rem; }
+  .mk-t { font-size:.72rem; padding:.05rem .4rem; border-radius:999px; background: color-mix(in oklab,#4caf2a 18%,Canvas); }
+  .mk-r { font-size:.78rem; color: color-mix(in oklab,CanvasText 55%,Canvas); }
+  .mk-star { font-size:.72rem; font-weight:700; color:#b26a00; margin-left:auto; }
   .catrow label, .stop label { display:flex; gap:.5rem; align-items:baseline; cursor:pointer; padding:.12rem 0; }
   .catrow input, .stop input { width:1.1rem; height:1.1rem; flex:0 0 auto; }
   .catrow ul, .stop ul { list-style:none; padding:0; margin:.1rem 0 .3rem; }
