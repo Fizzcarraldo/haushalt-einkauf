@@ -16,7 +16,7 @@
   "@context": "https://schema.org",
   "@type": "Recipe",
   "inLanguage": "de-DE",
-  "name": "Einkauf diese Woche (Shakshuka mit Avocado, Ofen-Kabeljau mit Herbstgemüse, Rote-Linsen-Dal mit Reis, Sweet-Chili-/Teriyaki-Bowl mit Aubergine & knusprigem Tofu (Air Fryer), Veggie Burrito, Frühstück: Skyr-Bowl, Brotzeit / leichtes Mittag)",
+  "name": "Einkauf diese Woche (Shakshuka mit Avocado, Sweet-Chili-/Teriyaki-Bowl mit Aubergine & knusprigem Tofu (Air Fryer), Rote-Linsen-Dal mit Reis, Veggie Burrito, Frühstück: Skyr-Bowl, Brotzeit / leichtes Mittag)",
   "recipeYield": "1 Einkauf",
   "recipeIngredient": [
     "1 Dose gehackte Tomaten (oder 4 frische)",
@@ -26,21 +26,6 @@
     "1 Avocado",
     "Feta oder Joghurt",
     "frische Petersilie oder Koriander",
-    "2 Kabeljaufilets (oder anderer weißer Fisch)",
-    "1/2 Hokkaido-Kürbis",
-    "400 g Kartoffeln",
-    "1 rote Zwiebel",
-    "1 Zitrone",
-    "1 Bund frische Kräuter (Thymian/Rosmarin)",
-    "200 g rote Linsen",
-    "1 Dose gehackte Tomaten",
-    "1 Dose Kokosmilch",
-    "1 Zwiebel",
-    "1 kleines Stück Ingwer",
-    "2 EL Currypulver oder Garam Masala",
-    "1 TL Kurkuma",
-    "2 Handvoll Blattspinat (frisch oder TK)",
-    "1 Zitrone",
     "300–400 g grüne Bohnen",
     "1 Gurke",
     "1 EL Essig",
@@ -50,6 +35,15 @@
     "1 TL Stärke (optional, aber besser)",
     "Sriracha-Mayo (fertig)",
     "Frühlingszwiebel oder Sesam (optional)",
+    "200 g rote Linsen",
+    "1 Dose gehackte Tomaten",
+    "1 Dose Kokosmilch",
+    "1 Zwiebel",
+    "1 kleines Stück Ingwer",
+    "2 EL Currypulver oder Garam Masala",
+    "1 TL Kurkuma",
+    "2 Handvoll Blattspinat (frisch oder TK)",
+    "1 Zitrone",
     "½ Zucchini",
     "1 Karotte",
     "½ Zwiebel",
@@ -155,6 +149,18 @@
   .opt.win { outline:3px solid #4caf2a; outline-offset:-3px; }
   .vsum { background: color-mix(in oklab, CanvasText 6%, Canvas); border-radius:12px; padding:.5rem .8rem; margin:1rem 0; }
   .vsum li { margin:.2rem 0; font-size:.9rem; }
+  .topnav { display:flex; gap:.9rem; flex-wrap:wrap; margin:.1rem 0 .6rem; font-size:.9rem; }
+  .topnav a { font-weight:600; text-decoration:none; }
+  .catgrid { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:.6rem; }
+  .card { border:1px solid color-mix(in oklab,CanvasText 14%,Canvas); border-radius:12px; overflow:hidden; text-decoration:none; color:inherit; display:block; }
+  .card .thumb { width:100%; height:104px; object-fit:cover; display:block; background:color-mix(in oklab,CanvasText 8%,Canvas); }
+  .card .emoji { width:100%; height:104px; display:flex; align-items:center; justify-content:center; font-size:2.6rem; background:color-mix(in oklab,#4caf2a 12%,Canvas); }
+  .card .cname { display:block; padding:.4rem .5rem; font-size:.84rem; font-weight:600; line-height:1.15; }
+  .card2 { border:1px solid color-mix(in oklab,CanvasText 14%,Canvas); border-radius:12px; padding:.6rem .85rem; margin:.6rem 0; }
+  .card2 h3 { margin:.15rem 0 .35rem; font-size:1rem; }
+  .card2 .k { color: color-mix(in oklab, CanvasText 55%, Canvas); }
+  .cookdays span { display:inline-block; padding:.15rem .55rem; border-radius:999px; margin:.15rem .25rem 0 0; font-size:.82rem; background: color-mix(in oklab,#4caf2a 20%,Canvas); }
+  .cookdays span.off { background: color-mix(in oklab, CanvasText 12%, Canvas); text-decoration: line-through; opacity:.7; }
   ul { margin: .2rem 0 .6rem; padding-left: 0; list-style: none; }
   .recipe li { margin: .1rem 0; }
   .recipe label { display: flex; gap: .6rem; align-items: baseline; cursor: pointer; padding: .15rem 0; }
@@ -180,12 +186,13 @@
   <nav id="wknav" class="wknav"></nav>
   <h1>🍽️ Unser Essensplan</h1>
   <p class="sub">diese Woche · 14.–20.09.</p>
+  <p class="topnav"><a href="https://fizzcarraldo.github.io/haushalt-einkauf/rezepte.html">🍲 Rezepte</a><a href="https://fizzcarraldo.github.io/haushalt-einkauf/profil.html">⚙️ Profil</a><a href="https://fizzcarraldo.github.io/haushalt-einkauf/verlauf.html">📈 Verlauf</a></p>
 
   <section class="planwrap">
     <h2>📅 Essensplan</h2>
     <ul class="plan">
       <li><span class="pday">Mo 14.09.</span><span class="pdish"><a href="https://fizzcarraldo.github.io/haushalt-einkauf/rezepte/shakshuka-mit-avocado.html">Shakshuka mit Avocado</a></span></li>
-      <li><span class="pday">Di 15.09.</span><span class="pdish"><a href="https://fizzcarraldo.github.io/haushalt-einkauf/rezepte/ofen-kabeljau-mit-herbstgemuese.html">Ofen-Kabeljau mit Herbstgemüse</a></span></li>
+      <li><span class="pday">Di 15.09.</span><span class="pdish">🍽️ auswärts / unterwegs <span class="lunch">· mittags auswärts</span></span></li>
       <li><span class="pday">Mi 16.09.</span><span class="pdish"><a href="https://fizzcarraldo.github.io/haushalt-einkauf/rezepte/sweet-chili-teriyaki-bowl-mit-aubergine-knusprigem-tofu-air-fryer.html">Sweet-Chili-Teriyaki-Bowl mit Tofu</a></span></li>
       <li><span class="pday">Do 17.09.</span><span class="pdish"><a href="https://fizzcarraldo.github.io/haushalt-einkauf/rezepte/rote-linsen-dal-mit-reis.html">Rote-Linsen-Dal mit Reis (Batch → Reste)</a></span></li>
       <li><span class="pday">Fr 18.09.</span><span class="pdish"><a href="https://fizzcarraldo.github.io/haushalt-einkauf/rezepte/veggie-burrito.html">Veggie Burrito</a></span></li>
@@ -200,10 +207,11 @@
   <section class="why">
     <h2>💡 Warum dieser Plan?</h2>
     <ul>
+    <li>🚫 Kein Kochtag laut Profil: Di – dort nichts einplanen.</li>
     <li>📝 Neue Woche mit Abwechslung ggü. den letzten Wochen – herbstlich (Kürbis) und viel pflanzliches/mageres Protein.</li>
-    <li>🍂 Diese Woche liegt im Herbst – Saison haben u. a. Kürbis, Äpfel, Pilze, Kohl, Lauch, Feldsalat · saisonal schon dabei: Kürbis, Lauch, Karotte, Zwiebel, Kartoffel.</li>
-    <li>🍽️ Proteine wechseln: Ei → Fisch/Meeresfrüchte → Tofu → Hülsenfrüchte (Abwechslung, wenig rotes Fleisch).</li>
-    <li>♻️ ein Batch-Gericht → Reste für einen weiteren Tag.</li>
+    <li>🍂 Diese Woche liegt im Herbst – Saison haben u. a. Kürbis, Äpfel, Pilze, Kohl, Lauch, Feldsalat · saisonal schon dabei: Lauch, Karotte, Zwiebel, Zucchini, Paprika.</li>
+    <li>🍽️ Proteine wechseln: Ei → Tofu → Hülsenfrüchte (Abwechslung, wenig rotes Fleisch).</li>
+    <li>♻️ ein Batch-Gericht → Reste für einen weiteren Tag; außer Haus: Di.</li>
     <li>🏷️ Angebote – günstig &amp; im Plan: Lidl: gelbe Zwiebeln günstig (~0,85 €/kg) · günstig &amp; im Plan: Lidl: Bio Gurken 0,99 € · Idee/Ergänzung: Lidl: Süßkartoffeln 1,69 € (Idee/Ergänzung)</li>
     <li id="wxline" class="wxline" hidden></li>
     </ul>
@@ -214,7 +222,7 @@
   <p class="brnote">Oder pro Laden unten einzeln. Vorrat ist überall ausgenommen. Preise = grobe Schätzung.</p>
   
 
-  <p><span class="count" id="count">51</span> zu kaufen
+  <p><span class="count" id="count">46</span> zu kaufen
      <span class="hint">— tippe an, was du schon hast</span></p>
 
   <div id="haveBox">
@@ -224,9 +232,9 @@
     <p class="hint">Schick Flo diesen Link – dann streiche ich die abgehakten Sachen auch aus dem Bring-Export. Immer vorrätig? → dauerhaft in den Vorrat.</p>
   </div>
 
-  <div class="fc">💶 <b>Forecast: ~65,48 €</b> <span class="cmp">(realistisch ~61,55 €–69,41 €; Schätzung, +5 ohne Preis)</span><p class="cmp">📦 davon einmalige Vorratskäufe (halten lange) ~9,70 € → „normale“ Woche ~55,78 €</p><p class="cmp">⚖️ alles Discounter ~61,42 € · Aufteilung ~65,48 € · alles Vollsortiment ~73,71 € → spart ~8,23 €</p><p class="cmp">🍂 Saison (Herbst): Kürbis/Äpfel/Pilze günstig, Beeren teurer.</p><p class="cmp">🏷️ Angebote: Lidl: gelbe Zwiebeln günstig (~0,85 €/kg); Lidl: Bio Gurken 0,99 €; Lidl: Süßkartoffeln 1,69 € (Idee/Ergänzung)</p></div>
+  <div class="fc">💶 <b>Forecast: ~53,75 €</b> <span class="cmp">(realistisch ~50,53 €–56,98 €; Schätzung, +5 ohne Preis)</span><p class="cmp">📦 davon einmalige Vorratskäufe (halten lange) ~9,70 € → „normale“ Woche ~44,05 €</p><p class="cmp">⚖️ alles Discounter ~51,00 € · Aufteilung ~53,75 € · alles Vollsortiment ~61,20 € → spart ~7,44 €</p><p class="cmp">🍂 Saison (Herbst): Kürbis/Äpfel/Pilze günstig, Beeren teurer.</p><p class="cmp">🏷️ Angebote: Lidl: gelbe Zwiebeln günstig (~0,85 €/kg); Lidl: Bio Gurken 0,99 €; Lidl: Süßkartoffeln 1,69 € (Idee/Ergänzung)</p></div>
     <section class="storecard">
-      <span class="subtot">~41,15 €</span>
+      <span class="subtot">~37,22 €</span>
       <h3>Trip 1: Aldi Süd</h3>
       <p class="when">Wochenende – günstiger Großeinkauf</p>
       <a class="bring-mini" href="https://api.getbring.com/rest/bringrecipes/deeplink?url=https%3A%2F%2Ffizzcarraldo.github.io%2Fhaushalt-einkauf%2Fladen%2Faldi.html&amp;source=web">🛒 Aldi Süd-Liste → Bring</a>
@@ -235,13 +243,10 @@
           <li><label><input type="checkbox" class="have" data-item="1 Aubergine"><span>1 Aubergine <span class="price">~1,05 €</span></span></label></li>
           <li><label><input type="checkbox" class="have" data-item="1 Karotte"><span>1 Karotte <span class="price">~0,22 €</span></span></label></li>
           <li><label><input type="checkbox" class="have" data-item="1 Paprika"><span>1 Paprika <span class="price">~0,70 €</span></span></label></li>
-          <li><label><input type="checkbox" class="have" data-item="1 rote Zwiebel"><span>1 rote Zwiebel <span class="price">~0,22 €</span> <span class="badge">🏷️ Angebot</span> <span class="offernote">Lidl: gelbe Zwiebeln günstig (~0,85 €/kg)</span></span></label></li>
           <li><label><input type="checkbox" class="have" data-item="1 TL Tomatenmark"><span>1 TL Tomatenmark <span class="price">~1,60 €</span></span></label></li>
-          <li><label><input type="checkbox" class="have" data-item="1/2 Hokkaido-Kürbis"><span>1/2 Hokkaido-Kürbis <span class="price">~2,05 €</span></span></label></li>
+          <li><label><input type="checkbox" class="have" data-item="1 Zitrone"><span>1 Zitrone <span class="price">~0,40 €</span></span></label></li>
           <li><label><input type="checkbox" class="have" data-item="1 Gurke"><span>2× 1 Gurke <span class="price">~1,45 €</span> <span class="badge">🏷️ Angebot</span> <span class="offernote">Lidl: Bio Gurken 0,99 €</span></span></label></li>
-          <li><label><input type="checkbox" class="have" data-item="1 Zitrone"><span>2× 1 Zitrone <span class="price">~0,80 €</span></span></label></li>
           <li><label><input type="checkbox" class="have" data-item="1 Zwiebel"><span>2× 1 Zwiebel <span class="price">~0,45 €</span> <span class="badge">🏷️ Angebot</span> <span class="offernote">Lidl: gelbe Zwiebeln günstig (~0,85 €/kg)</span></span></label></li>
-          <li><label><input type="checkbox" class="have" data-item="400 g Kartoffeln"><span>400 g Kartoffeln <span class="price">~1,25 €</span></span></label></li>
           <li><label><input type="checkbox" class="have" data-item="etwas Limetten- oder Zitronensaft"><span>etwas Limetten- oder Zitronensaft <span class="price">~0,40 €</span></span></label></li>
           <li><label><input type="checkbox" class="have" data-item="Snackpaprika"><span>Snackpaprika <span class="price">~1,90 €</span></span></label></li>
           <li><label><input type="checkbox" class="have" data-item="Tomaten"><span>Tomaten <span class="price">~1,60 €</span></span></label></li>
@@ -288,14 +293,10 @@
           </ul></div>
     </section>
     <section class="storecard">
-      <span class="subtot">~24,33 €</span>
+      <span class="subtot">~16,53 €</span>
       <h3>Trip 2: HIT</h3>
       <p class="when">Mitte der Woche – frisch, große Auswahl, Spezielles</p>
       <a class="bring-mini" href="https://api.getbring.com/rest/bringrecipes/deeplink?url=https%3A%2F%2Ffizzcarraldo.github.io%2Fhaushalt-einkauf%2Fladen%2Fhit.html&amp;source=web">🛒 HIT-Liste → Bring</a>
-        <div class="catrow"><div class="cathd">🐟 Fisch</div>
-          <ul>
-          <li><label><input type="checkbox" class="have" data-item="2 Kabeljaufilets (oder anderer weißer Fisch)"><span>2 Kabeljaufilets (oder anderer weißer Fisch) <span class="price">~6,90 €</span></span></label></li>
-          </ul></div>
         <div class="catrow"><div class="cathd">🥢 Asia/Spezial</div>
           <ul>
           <li><label><input type="checkbox" class="have" data-item="2 EL Currypulver oder Garam Masala"><span>2 EL Currypulver oder Garam Masala <span class="price">~2,10 €</span></span></label></li>
@@ -311,7 +312,6 @@
         <div class="catrow"><div class="cathd">🌿 Frische Produce</div>
           <ul>
           <li><label><input type="checkbox" class="have" data-item="1 Avocado"><span>1 Avocado <span class="price">~1,26 €</span></span></label></li>
-          <li><label><input type="checkbox" class="have" data-item="1 Bund frische Kräuter (Thymian/Rosmarin)"><span>1 Bund frische Kräuter (Thymian/Rosmarin) <span class="price">~0,90 €</span></span></label></li>
           <li><label><input type="checkbox" class="have" data-item="1 kleines Stück Ingwer"><span>1 kleines Stück Ingwer <span class="price">~0,66 €</span></span></label></li>
           <li><label><input type="checkbox" class="have" data-item="Beeren (kleine Packung)"><span>Beeren (kleine Packung) <span class="price">~2,40 €</span></span></label></li>
           <li><label><input type="checkbox" class="have" data-item="frische Petersilie oder Koriander"><span>frische Petersilie oder Koriander <span class="price">~?</span></span></label></li>

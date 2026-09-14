@@ -15,14 +15,12 @@
   "recipeIngredient": [
     "1 Avocado",
     "frische Petersilie oder Koriander",
-    "2 Kabeljaufilets (oder anderer weißer Fisch)",
-    "1 Bund frische Kräuter (Thymian/Rosmarin)",
-    "1 kleines Stück Ingwer",
-    "2 EL Currypulver oder Garam Masala",
     "200–250 g Naturtofu",
     "3–4 EL Teriyaki-Sauce",
     "Sriracha-Mayo (fertig)",
     "Frühlingszwiebel oder Sesam (optional)",
+    "1 kleines Stück Ingwer",
+    "2 EL Currypulver oder Garam Masala",
     "frischer Koriander",
     "Beeren (kleine Packung)",
     "Magerer Aufschnitt (z.B. Putenbrust)"
@@ -108,6 +106,18 @@
   .opt.win { outline:3px solid #4caf2a; outline-offset:-3px; }
   .vsum { background: color-mix(in oklab, CanvasText 6%, Canvas); border-radius:12px; padding:.5rem .8rem; margin:1rem 0; }
   .vsum li { margin:.2rem 0; font-size:.9rem; }
+  .topnav { display:flex; gap:.9rem; flex-wrap:wrap; margin:.1rem 0 .6rem; font-size:.9rem; }
+  .topnav a { font-weight:600; text-decoration:none; }
+  .catgrid { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:.6rem; }
+  .card { border:1px solid color-mix(in oklab,CanvasText 14%,Canvas); border-radius:12px; overflow:hidden; text-decoration:none; color:inherit; display:block; }
+  .card .thumb { width:100%; height:104px; object-fit:cover; display:block; background:color-mix(in oklab,CanvasText 8%,Canvas); }
+  .card .emoji { width:100%; height:104px; display:flex; align-items:center; justify-content:center; font-size:2.6rem; background:color-mix(in oklab,#4caf2a 12%,Canvas); }
+  .card .cname { display:block; padding:.4rem .5rem; font-size:.84rem; font-weight:600; line-height:1.15; }
+  .card2 { border:1px solid color-mix(in oklab,CanvasText 14%,Canvas); border-radius:12px; padding:.6rem .85rem; margin:.6rem 0; }
+  .card2 h3 { margin:.15rem 0 .35rem; font-size:1rem; }
+  .card2 .k { color: color-mix(in oklab, CanvasText 55%, Canvas); }
+  .cookdays span { display:inline-block; padding:.15rem .55rem; border-radius:999px; margin:.15rem .25rem 0 0; font-size:.82rem; background: color-mix(in oklab,#4caf2a 20%,Canvas); }
+  .cookdays span.off { background: color-mix(in oklab, CanvasText 12%, Canvas); text-decoration: line-through; opacity:.7; }
   ul { margin: .2rem 0 .6rem; padding-left: 0; list-style: none; }
   .recipe li { margin: .1rem 0; }
   .recipe label { display: flex; gap: .6rem; align-items: baseline; cursor: pointer; padding: .15rem 0; }
@@ -137,14 +147,12 @@
   <ul class="zutaten">
       <li>1 Avocado</li>
       <li>frische Petersilie oder Koriander</li>
-      <li>2 Kabeljaufilets (oder anderer weißer Fisch)</li>
-      <li>1 Bund frische Kräuter (Thymian/Rosmarin)</li>
-      <li>1 kleines Stück Ingwer</li>
-      <li>2 EL Currypulver oder Garam Masala</li>
       <li>200–250 g Naturtofu</li>
       <li>3–4 EL Teriyaki-Sauce</li>
       <li>Sriracha-Mayo (fertig)</li>
       <li>Frühlingszwiebel oder Sesam (optional)</li>
+      <li>1 kleines Stück Ingwer</li>
+      <li>2 EL Currypulver oder Garam Masala</li>
       <li>frischer Koriander</li>
       <li>Beeren (kleine Packung)</li>
       <li>Magerer Aufschnitt (z.B. Putenbrust)</li>
