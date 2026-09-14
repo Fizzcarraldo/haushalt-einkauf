@@ -182,19 +182,29 @@
   #fbsave, #fbshare { font:inherit; font-weight:700; padding:.5rem .9rem; border-radius:10px;
     border:1px solid color-mix(in oklab,CanvasText 20%,Canvas); background:transparent; color:inherit; cursor:pointer; margin:.2rem .4rem .2rem 0; }
   #fbsave { background:#4caf2a; color:#fff; border-color:transparent; }
+  /* Rezept-Overlay (On-Page statt Unterseite) */
+  .rov { position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:50; display:flex; align-items:flex-end; }
+  .rov[hidden] { display:none; }
+  .rov-box { background:Canvas; color:CanvasText; width:100%; max-width:640px; margin:0 auto; max-height:92vh;
+    overflow:auto; border-radius:16px 16px 0 0; padding:1rem 1.1rem 2.2rem; position:relative;
+    box-shadow:0 -8px 30px rgba(0,0,0,.35); animation:rovup .22s ease; }
+  @keyframes rovup { from { transform: translateY(24px); opacity:.5; } to { transform:none; opacity:1; } }
+  .rov-x { position:absolute; top:.6rem; right:.7rem; font:inherit; font-size:1.05rem; line-height:1;
+    background: color-mix(in oklab,CanvasText 12%,Canvas); border:none; color:inherit; border-radius:999px;
+    width:2rem; height:2rem; cursor:pointer; }
+  .rov-box h2 { margin:.2rem 2.2rem .5rem 0; font-size:1.3rem; }
+  .rov-box h3 { font-size:1.05rem; margin:1.1rem 0 .3rem; }
   footer { margin-top: 2rem; font-size: .8rem; color: color-mix(in oklab, CanvasText 45%, Canvas); }
 </style>
 </head>
 <body>
   <a class="back" href="../">← Plan &amp; Einkauf</a>
   <h1>Ramen mit Ei &amp; Gemüse</h1>
-  <p class="meta">2 Portionen · aktiv 20 Min · gesamt 25 Min · mittel · Topf, kleiner Topf</p>
-  <p class="meta">🎓 Technik: wachsweiches Ei, Brühe würzen (Umami)</p>
-
   <a class="bring" href="https://api.getbring.com/rest/bringrecipes/deeplink?url=https%3A%2F%2Ffizzcarraldo.github.io%2Fhaushalt-einkauf%2Frezepte%2Framen-mit-ei-gemuese.html&amp;source=web">Nur dieses Gericht zu Bring!</a>
   <p class="brnote">Legt die Zutaten dieses Rezepts in Bring (Vorrat ausgenommen).</p>
-
-  <h2>🛒 Zutaten</h2>
+  <p class="meta">2 Portionen · aktiv 20 Min · gesamt 25 Min · mittel · Topf, kleiner Topf</p>
+  <p class="meta">🎓 Technik: wachsweiches Ei, Brühe würzen (Umami)</p>
+  <h3>🛒 Zutaten</h3>
   <ul class="zutaten">
       <li>2 Portionen Ramen-/Eiernudeln</li>
       <li>1 l Gemüsebrühe</li>
@@ -206,8 +216,7 @@
       <li>1 Pak Choi (oder Handvoll Spinat)</li>
       <li>1 kleines Stück Ingwer</li>
   </ul>
-
-  <h2>👨‍🍳 Zubereitung</h2>
+  <h3>👨‍🍳 Zubereitung</h3>
   <ol class="steps">
       <li>Ei in kochendes Wasser geben, 6½ Min., dann in Eiswasser abschrecken und halbieren.</li>
       <li>Brühe mit fein gehacktem Ingwer, Knoblauch und Miso aufkochen; kräftig abschmecken.</li>
@@ -223,7 +232,6 @@
       <li>Nudeln erst kurz vor dem Servieren kochen.</li>
     </ul>
   </div>
-  
   <footer>Automatisch aus euren Rezepten erzeugt.</footer>
 </body>
 </html>
