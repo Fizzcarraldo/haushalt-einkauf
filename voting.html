@@ -82,6 +82,7 @@
   .opt .otag { display:block; padding:0 .45rem .45rem; font-size:.7rem; color:color-mix(in oklab,CanvasText 55%,Canvas); }
   .opt .chips { position:absolute; top:.3rem; right:.3rem; font-size:1rem; text-shadow:0 1px 2px rgba(0,0,0,.5); }
   .opt.win { outline:3px solid #4caf2a; outline-offset:-3px; }
+  .awaycard { padding:.7rem .8rem; border-radius:12px; background: color-mix(in oklab, CanvasText 8%, Canvas); color: color-mix(in oklab, CanvasText 60%, Canvas); font-size:.9rem; }
   .vsum { background: color-mix(in oklab, CanvasText 6%, Canvas); border-radius:12px; padding:.5rem .8rem; margin:1rem 0; }
   .vsum li { margin:.2rem 0; font-size:.9rem; }
   .topnav { display:flex; gap:.9rem; flex-wrap:wrap; margin:.1rem 0 .6rem; font-size:.9rem; }
@@ -133,11 +134,7 @@
     <button class="opt" data-d="0" data-o="2"><img class="thumb" loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Bowl_of_chili.jpg/330px-Bowl_of_chili.jpg" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="emoji" style="display:none">🌶️</span><span class="oname">Chili sin Carne</span><span class="otag">Bohnen · würzig</span><span class="chips"></span></button>
   </div></section>
   <section class="vday" data-d="1"><h3>Di 15.09.</h3>
-  <div class="opts">
-    <button class="opt" data-d="1" data-o="0"><img class="thumb" loading="lazy" src="https://www.themealdb.com/images/media/meals/njj1681763297231.jpg" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="emoji" style="display:none">🐟</span><span class="oname">Ofen-Kabeljau mit Herbstgemüse</span><span class="otag">Fisch · Herbst</span><span class="chips"></span></button>
-    <button class="opt" data-d="1" data-o="1"><img class="thumb" loading="lazy" src="https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e2/Chicken_fajita_platter%2C_Lone_Star_Texas_Grill%2C_Windsor%2C_Ontario%2C_2025-06-14_03.jpg/330px-Chicken_fajita_platter%2C_Lone_Star_Texas_Grill%2C_Windsor%2C_Ontario%2C_2025-06-14_03.jpg" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="emoji" style="display:none">🌮</span><span class="oname">Hähnchen-Fajitas</span><span class="otag">Hähnchen · mexikanisch</span><span class="chips"></span></button>
-    <button class="opt" data-d="1" data-o="2"><img class="thumb" loading="lazy" src="https://thumb.wikimedia.org/wikipedia/commons/thumb/c/cd/K%C3%BCrbissuppe_mit_Kern%C3%B6l.JPG/330px-K%C3%BCrbissuppe_mit_Kern%C3%B6l.JPG" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="emoji" style="display:none">🎃</span><span class="oname">Kürbissuppe mit Kichererbsen</span><span class="otag">Kürbis · Herbst</span><span class="chips"></span></button>
-  </div></section>
+  <div class="awaycard">🍽️ auswärts – kein Kochen</div></section>
   <section class="vday" data-d="2"><h3>Mi 16.09.</h3>
   <div class="opts">
     <button class="opt" data-d="2" data-o="0"><img class="thumb" loading="lazy" src="https://thumb.wikimedia.org/wikipedia/commons/thumb/9/91/22nd_June_2012_Teriyaki_Duck.jpg/330px-22nd_June_2012_Teriyaki_Duck.jpg" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="emoji" style="display:none">🥢</span><span class="oname">Sweet-Chili-Teriyaki-Bowl (Tofu)</span><span class="otag">Tofu · asiatisch</span><span class="chips"></span></button>
@@ -196,6 +193,7 @@
       var html = '';
       document.querySelectorAll('.vday').forEach(function (day) {
         var d = day.dataset.d, dv = votes[d] || {}, name = day.querySelector('h3').textContent;
+        if (day.querySelectorAll('.opt').length === 0) { html += '<li><b>' + name + '</b> 🍽️ auswärts</li>'; return; }
         var res;
         if (dv.F != null && dv.F === dv.P) res = '🏆 ' + optName(d, dv.F);
         else if (dv.F != null || dv.P != null) res = '🤝 offen (' + (dv.F != null ? '🧑 ' + optName(d, dv.F) : '') + (dv.P != null ? ' 👩 ' + optName(d, dv.P) : '') + ')';
