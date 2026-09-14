@@ -208,10 +208,38 @@
   .opt.away .chips { position:static; text-shadow:none; }
   .opt.away.win { outline:3px solid #4caf2a; outline-offset:-3px; }
   /* Planen: joyful Planungsgrundlage */
-  .planhero { background: linear-gradient(135deg, color-mix(in oklab,#4caf2a 22%,Canvas), color-mix(in oklab,#4caf2a 8%,Canvas));
-    border-radius:16px; padding:1rem 1.1rem; margin:.4rem 0 1rem; }
-  .planhero h2 { margin:.1rem 0 .2rem; font-size:1.25rem; }
-  .planhero p { margin:0; font-size:.9rem; color: color-mix(in oklab, CanvasText 72%, Canvas); }
+  .planhero { display:flex; gap:.75rem; align-items:center;
+    background: linear-gradient(135deg, color-mix(in oklab,#4caf2a 24%,Canvas), color-mix(in oklab,#4caf2a 7%,Canvas));
+    border-radius:16px; padding:.9rem 1.1rem; margin:.4rem 0 1rem; }
+  .planhero .ph-em { font-size:2.3rem; line-height:1; }
+  .planhero h2 { margin:.1rem 0 .15rem; font-size:1.25rem; }
+  .planhero p { margin:0; font-size:.88rem; color: color-mix(in oklab, CanvasText 72%, Canvas); }
+  .votebtn.big { display:block; text-align:center; font-size:1.05rem; padding:.7rem 1rem; }
+  /* Saison-Spotlight */
+  .spot { border-radius:16px; padding:.9rem 1rem; margin:.2rem 0 1rem;
+    background: linear-gradient(135deg, color-mix(in oklab,#e0a100 24%,Canvas), color-mix(in oklab,#4caf2a 14%,Canvas)); }
+  .spot-h { font-weight:800; font-size:1.08rem; margin-bottom:.55rem; }
+  .prods { display:flex; flex-wrap:wrap; gap:.4rem; }
+  .prod { background:Canvas; border-radius:999px; padding:.28rem .65rem; font-size:.82rem; font-weight:600;
+    box-shadow:0 1px 2px rgba(0,0,0,.1); }
+  .spot-sub { margin-top:.6rem; font-size:.8rem; color: color-mix(in oklab, CanvasText 68%, Canvas); }
+  .ptile.region { background: color-mix(in oklab,#e0a100 11%,Canvas); border-color: color-mix(in oklab,#e0a100 32%,Canvas); }
+  /* Entscheiden: interaktive Tagesentscheidung */
+  .decrow { border:1px solid color-mix(in oklab,CanvasText 12%,Canvas); border-radius:12px; padding:.55rem .7rem; margin:.5rem 0; }
+  .decrow.conflict { border-color:#e0a100; background: color-mix(in oklab,#e0a100 10%,Canvas); }
+  .decrow.ok { border-color: color-mix(in oklab,#4caf2a 50%,Canvas); }
+  .decrow.fixed { opacity:.7; }
+  .dechd { font-size:.92rem; margin-bottom:.4rem; }
+  .decstatus { color: color-mix(in oklab, CanvasText 58%, Canvas); font-size:.84rem; }
+  .decopts { display:flex; flex-wrap:wrap; gap:.35rem; }
+  .decopt { font:inherit; font-size:.82rem; font-weight:600; padding:.35rem .65rem; border-radius:999px;
+    border:1px solid color-mix(in oklab,CanvasText 26%,Canvas); background:transparent; color:inherit; cursor:pointer; }
+  .decopt.on { background:#4caf2a; color:#fff; border-color:transparent; }
+  .decopt.away { border-style:dashed; }
+  .decopt:active { transform: translateY(1px); }
+  .decplanbox #decplan { margin:.45rem 0; }
+  #decshare { font:inherit; font-weight:700; padding:.45rem .85rem; border-radius:9px;
+    border:1px solid color-mix(in oklab,CanvasText 20%,Canvas); background:transparent; color:inherit; cursor:pointer; }
   .ptiles { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:.6rem; margin:.2rem 0 .4rem; }
   .ptile { display:flex; gap:.6rem; align-items:flex-start; border:1px solid color-mix(in oklab,CanvasText 12%,Canvas);
     border-radius:14px; padding:.65rem .75rem; background: color-mix(in oklab,#4caf2a 5%,Canvas); }
