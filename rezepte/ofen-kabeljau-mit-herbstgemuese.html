@@ -240,6 +240,36 @@
   #decshare { font:inherit; font-weight:700; padding:.45rem .85rem; border-radius:9px;
     border:1px solid color-mix(in oklab,CanvasText 20%,Canvas); background:transparent; color:inherit; cursor:pointer; }
   .ptiles { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:.6rem; margin:.2rem 0 .4rem; }
+  /* Einkaufs-Strategie */
+  .strat { border-radius:14px; padding:.75rem .85rem; margin:.3rem 0 1rem;
+    background: color-mix(in oklab,#4caf2a 12%,Canvas); border:1px solid color-mix(in oklab,#4caf2a 30%,Canvas); }
+  .strat-h { font-weight:800; font-size:1.02rem; margin-bottom:.5rem; }
+  .strat-presets { display:flex; gap:.4rem; flex-wrap:wrap; }
+  .strat-presets button { font:inherit; font-size:.82rem; font-weight:700; padding:.4rem .7rem; border-radius:999px;
+    border:1px solid color-mix(in oklab,CanvasText 22%,Canvas); background:Canvas; color:inherit; cursor:pointer; }
+  .strat-presets button.on { background:#4caf2a; color:#fff; border-color:transparent; }
+  .strat-plan { margin:.6rem 0 0; font-size:.9rem; }
+  .shopcard { border:1px solid color-mix(in oklab,CanvasText 13%,Canvas); border-radius:14px; padding:.7rem .85rem; margin:.7rem 0; }
+  .shopcard.big { background: color-mix(in oklab,CanvasText 4%,Canvas); }
+  .shopcard.fresh { background: color-mix(in oklab,#4caf2a 6%,Canvas); }
+  .shop-h { font-weight:800; font-size:1.05rem; display:flex; align-items:center; gap:.4rem; flex-wrap:wrap; }
+  .shop-tag { font-size:.7rem; font-weight:700; padding:.1rem .45rem; border-radius:999px;
+    background: color-mix(in oklab,CanvasText 12%,Canvas); color: color-mix(in oklab,CanvasText 70%,Canvas); }
+  .shop-eur { margin-left:auto; font-size:.85rem; font-weight:700; color: color-mix(in oklab,CanvasText 65%,Canvas); }
+  .shop-sub { font-size:.84rem; color: color-mix(in oklab,CanvasText 62%,Canvas); margin:.15rem 0 .5rem; }
+  .catrow label, .stop label { display:flex; gap:.5rem; align-items:baseline; cursor:pointer; padding:.12rem 0; }
+  .catrow input, .stop input { width:1.1rem; height:1.1rem; flex:0 0 auto; }
+  .catrow ul, .stop ul { list-style:none; padding:0; margin:.1rem 0 .3rem; }
+  .stop { margin:.5rem 0; }
+  .stop-h { font-weight:700; font-size:.9rem; margin:.5rem 0 .15rem; }
+  .stop-note { font-size:.8rem; color:#b26a00; margin:.1rem 0 .2rem; }
+  .freshitem { display:flex; align-items:baseline; justify-content:space-between; gap:.5rem; }
+  .fresh-for { flex:0 0 auto; font-size:.72rem; color: color-mix(in oklab,CanvasText 50%,Canvas); }
+  .vf { font-size:.85em; }
+  .why2 { margin:.6rem 0; padding:.4rem .7rem; border-radius:10px; background: color-mix(in oklab,CanvasText 5%,Canvas); }
+  .why2 summary { cursor:pointer; font-size:.9rem; font-weight:600; }
+  .why2 ul { padding-left:1.1rem; list-style:none; margin:.3rem 0; } .why2 li { font-size:.85rem; margin:.25rem 0; }
+  .fcwrap { margin:.6rem 0; } .fcwrap summary { cursor:pointer; font-size:.9rem; font-weight:600; }
   .ptile { display:flex; gap:.6rem; align-items:flex-start; border:1px solid color-mix(in oklab,CanvasText 12%,Canvas);
     border-radius:14px; padding:.65rem .75rem; background: color-mix(in oklab,#4caf2a 5%,Canvas); }
   .ptile.wide { grid-column:1/-1; }

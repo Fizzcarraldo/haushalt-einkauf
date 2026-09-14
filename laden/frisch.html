@@ -3,27 +3,20 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Einkauf Aldi Süd</title>
-<link rel="canonical" href="https://fizzcarraldo.github.io/haushalt-einkauf/laden/aldi.html">
+<title>Einkauf Frisch</title>
+<link rel="canonical" href="https://fizzcarraldo.github.io/haushalt-einkauf/laden/frisch.html">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "Recipe",
   "inLanguage": "de-DE",
-  "name": "Einkauf Aldi Süd",
+  "name": "Einkauf Frisch",
   "recipeYield": "1 Einkauf",
   "recipeIngredient": [
-    "2 Dosen Kidneybohnen",
-    "1 Dose Mais",
-    "1 Dose gehackte Tomaten",
-    "1 EL Tomatenmark",
     "1 Paprika",
     "1 Zwiebel",
     "1 Karotte",
     "Brot oder Fladenbrot (zum Servieren) (für 3 Gerichte)",
-    "1 Stück Zartbitterschokolade",
-    "2 Portionen Ramen-/Eiernudeln",
-    "1 l Gemüsebrühe",
     "2 Eier",
     "1 Pak Choi (oder Handvoll Spinat)",
     "4 Paprika",
@@ -37,14 +30,20 @@
     "250 g Kirschtomaten",
     "1 Zitrone",
     "Skyr (großer Becher)",
-    "Nüsse (z.B. Walnüsse oder Mandeln)",
     "Käse (z.B. Gouda / Emmentaler)",
     "Hüttenkäse",
     "6 Eier",
     "Hummus",
     "1 Gurke",
     "Tomaten",
-    "Snackpaprika"
+    "Snackpaprika",
+    "1 Frühlingszwiebel",
+    "100 g Pilze",
+    "1 kleines Stück Ingwer",
+    "1 Bund Petersilie (optional)",
+    "1 Bund Kräuter (Thymian/Rosmarin)",
+    "Beeren (kleine Packung)",
+    "Magerer Aufschnitt (z.B. Putenbrust)"
   ]
 }
 </script>
@@ -265,6 +264,36 @@
   #decshare { font:inherit; font-weight:700; padding:.45rem .85rem; border-radius:9px;
     border:1px solid color-mix(in oklab,CanvasText 20%,Canvas); background:transparent; color:inherit; cursor:pointer; }
   .ptiles { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:.6rem; margin:.2rem 0 .4rem; }
+  /* Einkaufs-Strategie */
+  .strat { border-radius:14px; padding:.75rem .85rem; margin:.3rem 0 1rem;
+    background: color-mix(in oklab,#4caf2a 12%,Canvas); border:1px solid color-mix(in oklab,#4caf2a 30%,Canvas); }
+  .strat-h { font-weight:800; font-size:1.02rem; margin-bottom:.5rem; }
+  .strat-presets { display:flex; gap:.4rem; flex-wrap:wrap; }
+  .strat-presets button { font:inherit; font-size:.82rem; font-weight:700; padding:.4rem .7rem; border-radius:999px;
+    border:1px solid color-mix(in oklab,CanvasText 22%,Canvas); background:Canvas; color:inherit; cursor:pointer; }
+  .strat-presets button.on { background:#4caf2a; color:#fff; border-color:transparent; }
+  .strat-plan { margin:.6rem 0 0; font-size:.9rem; }
+  .shopcard { border:1px solid color-mix(in oklab,CanvasText 13%,Canvas); border-radius:14px; padding:.7rem .85rem; margin:.7rem 0; }
+  .shopcard.big { background: color-mix(in oklab,CanvasText 4%,Canvas); }
+  .shopcard.fresh { background: color-mix(in oklab,#4caf2a 6%,Canvas); }
+  .shop-h { font-weight:800; font-size:1.05rem; display:flex; align-items:center; gap:.4rem; flex-wrap:wrap; }
+  .shop-tag { font-size:.7rem; font-weight:700; padding:.1rem .45rem; border-radius:999px;
+    background: color-mix(in oklab,CanvasText 12%,Canvas); color: color-mix(in oklab,CanvasText 70%,Canvas); }
+  .shop-eur { margin-left:auto; font-size:.85rem; font-weight:700; color: color-mix(in oklab,CanvasText 65%,Canvas); }
+  .shop-sub { font-size:.84rem; color: color-mix(in oklab,CanvasText 62%,Canvas); margin:.15rem 0 .5rem; }
+  .catrow label, .stop label { display:flex; gap:.5rem; align-items:baseline; cursor:pointer; padding:.12rem 0; }
+  .catrow input, .stop input { width:1.1rem; height:1.1rem; flex:0 0 auto; }
+  .catrow ul, .stop ul { list-style:none; padding:0; margin:.1rem 0 .3rem; }
+  .stop { margin:.5rem 0; }
+  .stop-h { font-weight:700; font-size:.9rem; margin:.5rem 0 .15rem; }
+  .stop-note { font-size:.8rem; color:#b26a00; margin:.1rem 0 .2rem; }
+  .freshitem { display:flex; align-items:baseline; justify-content:space-between; gap:.5rem; }
+  .fresh-for { flex:0 0 auto; font-size:.72rem; color: color-mix(in oklab,CanvasText 50%,Canvas); }
+  .vf { font-size:.85em; }
+  .why2 { margin:.6rem 0; padding:.4rem .7rem; border-radius:10px; background: color-mix(in oklab,CanvasText 5%,Canvas); }
+  .why2 summary { cursor:pointer; font-size:.9rem; font-weight:600; }
+  .why2 ul { padding-left:1.1rem; list-style:none; margin:.3rem 0; } .why2 li { font-size:.85rem; margin:.25rem 0; }
+  .fcwrap { margin:.6rem 0; } .fcwrap summary { cursor:pointer; font-size:.9rem; font-weight:600; }
   .ptile { display:flex; gap:.6rem; align-items:flex-start; border:1px solid color-mix(in oklab,CanvasText 12%,Canvas);
     border-radius:14px; padding:.65rem .75rem; background: color-mix(in oklab,#4caf2a 5%,Canvas); }
   .ptile.wide { grid-column:1/-1; }
@@ -280,21 +309,14 @@
 </head>
 <body>
   <a class="back" href="../">← Plan &amp; Einkauf</a>
-  <h1>🛒 Aldi Süd</h1>
-  <a class="bring" href="https://api.getbring.com/rest/bringrecipes/deeplink?url=https%3A%2F%2Ffizzcarraldo.github.io%2Fhaushalt-einkauf%2Fladen%2Faldi.html&amp;source=web">Diese Liste zu Bring!</a>
-  <p class="brnote">Nur die für Aldi Süd vorgesehenen Zutaten (Vorrat ausgenommen).</p>
+  <h1>🛒 Frisch</h1>
+  <a class="bring" href="https://api.getbring.com/rest/bringrecipes/deeplink?url=https%3A%2F%2Ffizzcarraldo.github.io%2Fhaushalt-einkauf%2Fladen%2Ffrisch.html&amp;source=web">Diese Liste zu Bring!</a>
+  <p class="brnote">Nur die für Frisch vorgesehenen Zutaten (Vorrat ausgenommen).</p>
   <ul class="zutaten">
-      <li>2 Dosen Kidneybohnen</li>
-      <li>1 Dose Mais</li>
-      <li>1 Dose gehackte Tomaten</li>
-      <li>1 EL Tomatenmark</li>
       <li>1 Paprika</li>
       <li>1 Zwiebel</li>
       <li>1 Karotte</li>
       <li>Brot oder Fladenbrot (zum Servieren) (für 3 Gerichte)</li>
-      <li>1 Stück Zartbitterschokolade</li>
-      <li>2 Portionen Ramen-/Eiernudeln</li>
-      <li>1 l Gemüsebrühe</li>
       <li>2 Eier</li>
       <li>1 Pak Choi (oder Handvoll Spinat)</li>
       <li>4 Paprika</li>
@@ -308,7 +330,6 @@
       <li>250 g Kirschtomaten</li>
       <li>1 Zitrone</li>
       <li>Skyr (großer Becher)</li>
-      <li>Nüsse (z.B. Walnüsse oder Mandeln)</li>
       <li>Käse (z.B. Gouda / Emmentaler)</li>
       <li>Hüttenkäse</li>
       <li>6 Eier</li>
@@ -316,6 +337,13 @@
       <li>1 Gurke</li>
       <li>Tomaten</li>
       <li>Snackpaprika</li>
+      <li>1 Frühlingszwiebel</li>
+      <li>100 g Pilze</li>
+      <li>1 kleines Stück Ingwer</li>
+      <li>1 Bund Petersilie (optional)</li>
+      <li>1 Bund Kräuter (Thymian/Rosmarin)</li>
+      <li>Beeren (kleine Packung)</li>
+      <li>Magerer Aufschnitt (z.B. Putenbrust)</li>
   </ul>
   <footer>Automatisch erzeugt · Bring-Import ohne Login.</footer>
 </body>
