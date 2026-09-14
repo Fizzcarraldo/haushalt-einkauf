@@ -93,7 +93,17 @@
   .catrow { margin: .35rem 0 0; }
   .catrow .cathd { font-size: .8rem; color: color-mix(in oklab, CanvasText 55%, Canvas); margin: .3rem 0 .05rem; }
   .price { color: color-mix(in oklab, CanvasText 50%, Canvas); font-size: .82em; }
-  .badge { background: #e0a100; color: #000; border-radius: 6px; padding: 0 .3rem; font-size: .72rem; font-weight: 700; }
+  .badge { background: #e0a100; color: #000; border-radius: 6px; padding: 0 .3rem; font-size: .72rem; font-weight: 700; text-decoration: none; white-space: nowrap; }
+  a.badge:active { transform: translateY(1px); }
+  /* Angebote-Übersicht */
+  .offers { margin:.7rem 0; padding:.4rem .75rem; border-radius:12px; background: color-mix(in oklab,#e0a100 12%,Canvas); }
+  .offers summary { cursor:pointer; font-size:.95rem; font-weight:700; }
+  .offstore { margin:.5rem 0; }
+  .offstore-h { font-weight:700; font-size:.9rem; }
+  .offstore ul { list-style:none; padding-left:.2rem; margin:.2rem 0; }
+  .offstore li { font-size:.85rem; margin:.2rem 0; }
+  .off-in { font-size:.7rem; font-weight:700; color:#2e7d0e; }
+  .off-idea { font-size:.7rem; font-weight:700; color: color-mix(in oklab,CanvasText 55%,Canvas); }
   .offernote { color: #b26a00; font-size: .8em; }
   .wknav { display: flex; gap: .45rem; align-items: center; flex-wrap: wrap; font-size: .85rem;
     padding: .4rem .1rem; margin-bottom: .3rem; border-bottom: 1px solid color-mix(in oklab, CanvasText 12%, Canvas); }
