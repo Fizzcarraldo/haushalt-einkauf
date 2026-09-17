@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Profil &amp; Requirements</title>
+<title>Haushalt &amp; Stammdaten</title>
 <link rel="canonical" href="https://fizzcarraldo.github.io/haushalt-einkauf/profil.html">
 <style>
   :root { color-scheme: light dark; }
@@ -303,21 +303,446 @@
     border:1px solid color-mix(in oklab,CanvasText 18%,Canvas); background:Canvas; color:inherit; margin:.3rem 0; }
   #pl-status { font-weight:600; }
   footer { margin-top: 2rem; font-size: .8rem; color: color-mix(in oklab, CanvasText 45%, Canvas); }
+  /* ── App: Stammdaten / Wochenkontext / Chat ── */
+  .sd-scope { display:inline-block; font-size:.7rem; font-weight:800; letter-spacing:.03em; text-transform:uppercase;
+    padding:.12rem .5rem; border-radius:999px; margin-bottom:.5rem; }
+  .sd-scope.dauer { background:color-mix(in oklab,#3f7cff 18%,Canvas); color:color-mix(in oklab,#3f7cff 75%,CanvasText); }
+  .sd-scope.woche { background:color-mix(in oklab,#ff9500 20%,Canvas); color:color-mix(in oklab,#c26a00 80%,CanvasText); }
+  .pcard { border:1px solid color-mix(in oklab,CanvasText 14%,Canvas); border-radius:14px; padding:.7rem .8rem; margin:.5rem 0;
+    background:color-mix(in oklab,CanvasText 3%,Canvas); }
+  .pcard h3 { margin:0 0 .35rem; display:flex; align-items:center; gap:.4rem; }
+  .pcard .who-in { margin-left:auto; font-size:.75rem; font-weight:600; opacity:.7; }
+  .prefs { display:flex; flex-wrap:wrap; gap:.35rem; margin:.3rem 0; }
+  .pref { display:inline-flex; align-items:center; gap:.3rem; font-size:.8rem; padding:.2rem .5rem; border-radius:999px;
+    border:1px solid color-mix(in oklab,CanvasText 16%,Canvas); background:Canvas; }
+  .pref.hart { border-color:color-mix(in oklab,#e5484d 55%,Canvas); background:color-mix(in oklab,#e5484d 12%,Canvas); font-weight:700; }
+  .pref .x { cursor:pointer; opacity:.5; font-weight:700; } .pref .x:hover { opacity:1; }
+  .pref .art { font-size:.62rem; text-transform:uppercase; letter-spacing:.03em; opacity:.6; }
+  .addrow { display:flex; flex-wrap:wrap; gap:.35rem; margin-top:.4rem; }
+  .addrow select, .addrow input { font:inherit; font-size:.85rem; padding:.35rem .5rem; border-radius:8px;
+    border:1px solid color-mix(in oklab,CanvasText 18%,Canvas); background:Canvas; color:inherit; }
+  .addrow input { flex:1; min-width:7rem; }
+  .btn-s { font:inherit; font-size:.85rem; font-weight:700; padding:.35rem .7rem; border-radius:8px; cursor:pointer;
+    border:1px solid transparent; background:#4caf2a; color:#fff; }
+  .btn-g { background:Canvas; color:inherit; border-color:color-mix(in oklab,CanvasText 22%,Canvas); }
+  .btn-del { background:none; border:none; color:color-mix(in oklab,#e5484d 80%,CanvasText); cursor:pointer; font-weight:700; }
+  .rule { display:flex; align-items:center; gap:.5rem; padding:.4rem .2rem; border-bottom:1px dashed color-mix(in oklab,CanvasText 12%,Canvas); }
+  .rule .rtag { font-size:.68rem; font-weight:800; padding:.1rem .4rem; border-radius:6px; background:color-mix(in oklab,CanvasText 10%,Canvas); }
+  .wkmatrix { overflow-x:auto; }
+  .wkmatrix table { border-collapse:collapse; width:100%; font-size:.82rem; }
+  .wkmatrix th, .wkmatrix td { padding:.3rem .45rem; text-align:center; border:1px solid color-mix(in oklab,CanvasText 10%,Canvas); }
+  .wkmatrix th:first-child, .wkmatrix td:first-child { text-align:left; font-weight:700; white-space:nowrap; }
+  .wkmatrix td.here { background:color-mix(in oklab,#4caf2a 16%,Canvas); }
+  .wkmatrix td.away { background:color-mix(in oklab,CanvasText 6%,Canvas); opacity:.55; }
+  .wkmatrix td.off { background:color-mix(in oklab,CanvasText 12%,Canvas); color:color-mix(in oklab,CanvasText 45%,Canvas); }
+  .transp { font-size:.82rem; margin:.3rem 0; }
+  .transp li { margin:.15rem 0; }
+  .kx { display:flex; flex-wrap:wrap; gap:.3rem; margin:.3rem 0; }
+  .kx .hx { background:color-mix(in oklab,#e5484d 14%,Canvas); border:1px solid color-mix(in oklab,#e5484d 45%,Canvas);
+    border-radius:999px; padding:.12rem .5rem; font-size:.76rem; font-weight:700; }
+  .kx .sx { background:Canvas; border:1px solid color-mix(in oklab,CanvasText 16%,Canvas); border-radius:999px; padding:.12rem .5rem; font-size:.76rem; }
+  .vconflict { outline:2px solid color-mix(in oklab,#e5484d 60%,Canvas); }
+  .vflag { font-size:.72rem; color:color-mix(in oklab,#e5484d 85%,CanvasText); font-weight:700; display:block; margin-top:.2rem; }
+  /* Chat */
+  .kchat { border:1px solid color-mix(in oklab,CanvasText 15%,Canvas); border-radius:16px; overflow:hidden; margin:.8rem 0;
+    background:color-mix(in oklab,CanvasText 3%,Canvas); }
+  .kc-head { padding:.55rem .75rem; font-weight:800; background:color-mix(in oklab,CanvasText 7%,Canvas); display:flex; align-items:center; gap:.5rem; }
+  .kc-ctx { margin-left:auto; font-size:.68rem; font-weight:800; text-transform:uppercase; letter-spacing:.03em;
+    padding:.12rem .5rem; border-radius:999px; }
+  .kc-ctx.dauer { background:color-mix(in oklab,#3f7cff 20%,Canvas); color:color-mix(in oklab,#3f7cff 80%,CanvasText); }
+  .kc-ctx.woche { background:color-mix(in oklab,#ff9500 22%,Canvas); color:color-mix(in oklab,#c26a00 85%,CanvasText); }
+  .kc-log { max-height:15rem; overflow-y:auto; padding:.6rem .75rem; display:flex; flex-direction:column; gap:.45rem; }
+  .kc-log:empty { display:none; }
+  .kc-msg { padding:.45rem .65rem; border-radius:12px; max-width:88%; font-size:.9rem; line-height:1.35; white-space:pre-wrap; }
+  .kc-msg.u { align-self:flex-end; background:#4caf2a; color:#fff; border-bottom-right-radius:4px; }
+  .kc-msg.a { align-self:flex-start; background:Canvas; border:1px solid color-mix(in oklab,CanvasText 14%,Canvas); border-bottom-left-radius:4px; }
+  .kc-chg { align-self:flex-start; font-size:.75rem; display:flex; flex-wrap:wrap; gap:.3rem; }
+  .kc-chg span { padding:.12rem .5rem; border-radius:999px; font-weight:700; }
+  .kc-chg span.dauer { background:color-mix(in oklab,#3f7cff 16%,Canvas); }
+  .kc-chg span.woche { background:color-mix(in oklab,#ff9500 18%,Canvas); }
+  .kc-quick { display:flex; flex-wrap:wrap; gap:.35rem; padding:.4rem .75rem; }
+  .kc-quick button { font:inherit; font-size:.78rem; padding:.3rem .6rem; border-radius:999px; cursor:pointer;
+    border:1px solid color-mix(in oklab,CanvasText 20%,Canvas); background:Canvas; color:inherit; }
+  .kc-in { display:flex; gap:.4rem; padding:.5rem .75rem .7rem; }
+  .kc-in input { flex:1; font:inherit; padding:.5rem .65rem; border-radius:10px;
+    border:1px solid color-mix(in oklab,CanvasText 18%,Canvas); background:Canvas; color:inherit; }
+  .kc-in button { font:inherit; font-weight:700; padding:.5rem .8rem; border-radius:10px; border:none; background:#4caf2a; color:#fff; cursor:pointer; }
+  .kc-in button:disabled { opacity:.5; }
 </style>
 </head>
 <body>
   <a class="back" href="https://fizzcarraldo.github.io/haushalt-einkauf/">← Plan &amp; Einkauf</a>
-  <h1>⚙️ Profil &amp; Requirements</h1>
+  <h1>⚙️ Haushalt &amp; Stammdaten</h1>
   <p class="sub">Flo &amp; Esra · Oberbernbach/Aichach</p>
-  <h2>👤 Personen</h2>
-  <div class="card2"><h3>Flo</h3><div><span class="k">Allergien:</span> keine bekannt</div><div><span class="k">Mag nicht:</span> Lachs</div><div><span class="k">Mag gern:</span> proteinreich, asiatisch, würzig</div><div><span class="k">Frühstück:</span> Skyr-Bowl (Skyr, Haferflocken, Beeren, Nüsse)</div></div>
-  <div class="card2"><h3>Esra</h3><div><span class="k">Allergien:</span> keine bekannt</div><div><span class="k">Mag nicht:</span> —</div><div><span class="k">Mag gern:</span> —</div><div><span class="k">Frühstück:</span> noch offen</div></div>
+  <div class="sd-scope dauer">Dauerhaft · wochenübergreifend gültig</div>
+  <h2>👤 Personen &amp; Präferenzen</h2>
+  <p class="hint">Allergien &amp; Ernährungsformen sind <b>harte</b> Ausschlüsse (rot), Vorlieben/Abneigungen sind weich.</p>
+  <div id="sd-personen"><p class="hint">lädt …</p></div>
+  <h2>📌 Wiederkehrende Regeln</h2>
+  <p class="hint">Gelten automatisch in jeder künftigen Woche (z.&nbsp;B. „mittwochs abends unterwegs“).</p>
+  <div id="sd-regeln"><p class="hint">lädt …</p></div>
+  <h2>💬 Per Chat pflegen</h2>
+  <p class="hint">Sag es in normaler Sprache – ich trage es ein und du siehst die Änderung oben sofort.</p>
+  <div class="kchat" data-scope="haushalt">
+    <div class="kc-head">🧑‍🍳 Küchenassistent <span class="kc-ctx dauer">Stammdaten · dauerhaft</span></div>
+    <div class="kc-log"></div>
+    <div class="kc-quick"><button type="button" data-tpl="Neue Person: ">➕ Person</button><button type="button" data-tpl="Esra hat eine Allergie gegen ">🚫 Allergie</button><button type="button" data-tpl="Flo mag gerne ">👍 Vorliebe</button><button type="button" data-tpl="Ich bin ab jetzt immer mittwochs nicht da">📅 Dauerregel</button></div>
+    <div class="kc-in"><input type="text" placeholder="Sag mir etwas über euren Haushalt …" aria-label="Nachricht"><button type="button">Senden</button></div>
+  </div>
   <h2>🎯 Ziele</h2>
   <ul><li>gesund &amp; proteinreich</li><li>wenig rotes Fleisch</li><li>wenig Fett</li><li>abwechslungsreich – nicht in 2 Wochen dasselbe</li></ul>
   <h2>🍳 Kochen</h2>
-  <div class="card2"><div><span class="k">Häufigkeit:</span> ca. 5× pro Woche</div>  <div class="cookdays"><span>Mo: kochen</span><span class="off">Di: auswärts</span><span>Mi: kochen</span><span>Do: kochen</span><span>Fr: kochen</span><span>Sa: kochen</span><span>So: Reste/flexibel</span></div>  <ul><li>Dienstag abends meist unterwegs → nicht einplanen</li><li>Mittags Brotzeit (kein Kochen)</li><li>kleiner Kühlschrank → gestaffelt einkaufen (2 Läden, 2–3 Trips)</li></ul></div>
+  <div class="card2"><div><span class="k">Häufigkeit:</span> ca. 5× pro Woche</div>  <ul><li>Dienstag abends meist unterwegs → nicht einplanen</li><li>Mittags Brotzeit (kein Kochen)</li><li>kleiner Kühlschrank → gestaffelt einkaufen (2 Läden, 2–3 Trips)</li></ul></div>
   <h2>🧺 Vorrat &amp; Läden</h2>
   <div class="card2"><div>Vorhanden: Reis, Sojasauce, Gewürze (Kreuzkümmel, Paprikapulver), Öl, Salz, Pfeffer, Zucker, Chili, Knoblauch, Haferflocken.</div>  <div class="k" style="margin-top:.3rem">Aldi + HIT (Stammläden), Lidl oft, Edeka/Rewe selten; Wochenmarkt Aichach (Fr) optional</div></div>
-  <footer>Änderungswunsch (neue Allergie, anderer Kochtag …)? Sag Flo – er pflegt das Profil.</footer>
+  <footer>Stammdaten &amp; Chat werden live in Supabase gespeichert – Flo &amp; Esra teilen sich den Stand.</footer>
+<script>window.SB={url:"https://qwuoynhmbisodcqasevs.supabase.co",key:"sb_publishable_bWwScjbczB4KfSc9faBUjA_wDf-4EE3"};</script>
+<script>
+(function () {
+  var SB = window.SB || {};
+  if (!SB.url || !SB.key) return;
+  var API = SB.url.replace(/\/$/, '');
+  var REST = API + '/rest/v1/';
+  var FN = API + '/functions/v1/';
+  var H = { apikey: SB.key, Authorization: 'Bearer ' + SB.key, 'Content-Type': 'application/json' };
+  var DOW = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
+  var HART = { allergie: true, ernaehrungsform: true, abneigung: false, vorliebe: false };
+  var ART_LABEL = { allergie: 'Allergie', ernaehrungsform: 'Ernährung', abneigung: 'mag nicht', vorliebe: 'mag' };
+
+  function req(method, path, body, prefer) {
+    var h = Object.assign({}, H); if (prefer) h.Prefer = prefer;
+    return fetch(REST + path, { method: method, headers: h, body: body ? JSON.stringify(body) : undefined })
+      .then(function (r) { return r.text().then(function (t) { return { ok: r.ok, status: r.status, data: t ? JSON.parse(t) : null }; }); });
+  }
+  var get = function (p) { return req('GET', p).then(function (r) { return r.data || []; }); };
+  var post = function (p, b) { return req('POST', p, b, 'return=representation'); };
+  var patch = function (p, b) { return req('PATCH', p, b, 'return=minimal'); };
+  var del = function (p) { return req('DELETE', p, null, 'return=minimal'); };
+  function esc(s) { var d = document.createElement('div'); d.textContent = s == null ? '' : String(s); return d.innerHTML; }
+  function enc(s) { return encodeURIComponent(s); }
+
+  function isoWeek(d) {
+    var t = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+    var day = (t.getUTCDay() + 6) % 7; t.setUTCDate(t.getUTCDate() - day + 3);
+    var first = new Date(Date.UTC(t.getUTCFullYear(), 0, 4));
+    var week = 1 + Math.round(((t - first) / 86400000 - 3 + ((first.getUTCDay() + 6) % 7)) / 7);
+    return { jahr: t.getUTCFullYear(), kw: week };
+  }
+
+  var S = { personen: [], regeln: [], planung: {}, woche: null, ereignisse: [] };
+
+  function loadStamm() {
+    return Promise.all([
+      get('personen?select=*,praeferenzen(*)&order=sort'),
+      get('regeln?select=*,personen(name)&order=created_at'),
+      get('planung?select=kochtage&id=eq.1')
+    ]).then(function (r) {
+      S.personen = r[0]; S.regeln = r[1]; S.planung = (r[2] && r[2][0]) || {};
+    });
+  }
+  function loadWoche() {
+    var w = isoWeek(new Date()); S.now = w;
+    return get('wochen?select=*&jahr=eq.' + w.jahr + '&kw=eq.' + w.kw).then(function (rows) {
+      if (rows[0]) return rows[0];
+      return post('wochen', { jahr: w.jahr, kw: w.kw }).then(function (r) { return (r.data && r.data[0]) || null; });
+    }).then(function (wo) {
+      S.woche = wo; if (!wo) { S.ereignisse = []; return; }
+      return get('woche_ereignisse?select=*,personen(name)&woche_id=eq.' + wo.id + '&order=created_at')
+        .then(function (ev) { S.ereignisse = ev; });
+    });
+  }
+
+  // ── Anwesenheits-Engine (US-08/09) ──
+  function kochtagAktiv(dow) { return S.planung.kochtage ? S.planung.kochtage[dow] !== false : true; }
+  function haushaltFrei(dow) {   // ganzer Haushalt weg (Dauerregel person=null oder Nicht-Kochtag)
+    if (!kochtagAktiv(dow)) return true;
+    return S.regeln.some(function (r) { return r.aktiv !== false && r.person_id == null && r.typ === 'abwesenheit' && r.wochentag === dow; });
+  }
+  function presence(personId, dow) {
+    var present = true, reasons = [];
+    S.regeln.forEach(function (r) {
+      if (r.aktiv === false || r.typ !== 'abwesenheit' || r.wochentag !== dow) return;
+      if (r.person_id === personId || r.person_id == null) { present = false; reasons.push('Dauerregel: ' + (r.text || 'abwesend')); }
+    });
+    S.ereignisse.forEach(function (e) {
+      if (e.wochentag !== dow) return;
+      if (e.person_id !== personId && e.person_id != null) return;
+      if (e.typ === 'abwesenheit') { present = false; reasons.push('diese Woche: ' + (e.text || 'abwesend')); }
+      if (e.typ === 'anwesenheit') { present = true; reasons.push('diese Woche anwesend'); }
+    });
+    return { present: present, reasons: reasons };
+  }
+  function gaeste(dow) {
+    return S.ereignisse.filter(function (e) { return e.typ === 'gast' && e.wochentag === dow; })
+      .map(function (e) { return e.gast_name || 'Gast'; });
+  }
+
+  // Strukturierter Wochenkontext (US-10/11): pro Kochtag anwesende Personen + geltende Ausschlüsse
+  function wochenkontext() {
+    var tage = [];
+    DOW.forEach(function (dow) {
+      if (haushaltFrei(dow)) { tage.push({ dow: dow, kochtag: false }); return; }
+      var anwesend = [], hart = {}, weich = {}, mag = {}, quellen = [];
+      S.personen.forEach(function (p) {
+        if (p.aktiv === false) return;
+        var pr = presence(p.id, dow);
+        if (!pr.present) { if (pr.reasons.length) quellen.push(p.name + ' abwesend (' + pr.reasons[0] + ')'); return; }
+        anwesend.push(p.name);
+        (p.praeferenzen || []).forEach(function (x) {
+          if (x.art === 'allergie' || x.art === 'ernaehrungsform') hart[x.wert] = p.name;
+          else if (x.art === 'abneigung') weich[x.wert] = p.name;
+          else if (x.art === 'vorliebe') mag[x.wert] = p.name;
+        });
+      });
+      var g = gaeste(dow);
+      tage.push({
+        dow: dow, kochtag: true, anwesend: anwesend, gaeste: g,
+        hart: Object.keys(hart).map(function (w) { return { wert: w, wer: hart[w] }; }),
+        weich: Object.keys(weich).map(function (w) { return { wert: w, wer: weich[w] }; }),
+        mag: Object.keys(mag), quellen: quellen
+      });
+    });
+    var k = { jahr: S.woche ? S.woche.jahr : (S.now && S.now.jahr), kw: S.woche ? S.woche.kw : (S.now && S.now.kw), tage: tage };
+    window.WOCHENKONTEXT = k; return k;
+  }
+
+  // ── Aktionen (typed) — von Buttons genutzt; der Chat schreibt dieselben Tabellen serverseitig ──
+  var actions = {
+    personAnlegen: function (name) { return post('personen', { name: name, sort: 9 }).then(refresh); },
+    personLoeschen: function (id) { return del('personen?id=eq.' + id).then(refresh); },
+    personUpdate: function (id, obj) { return patch('personen?id=eq.' + id, obj).then(refresh); },
+    praefSetzen: function (personId, art, wert) {
+      return post('praeferenzen', { person_id: personId, art: art, wert: wert, hart: !!HART[art] }).then(refresh);
+    },
+    praefLoeschen: function (id) { return del('praeferenzen?id=eq.' + id).then(refresh); },
+    regelSetzen: function (obj) { return post('regeln', obj).then(refresh); },
+    regelLoeschen: function (id) { return del('regeln?id=eq.' + id).then(refresh); },
+    ereignisSetzen: function (obj) {
+      obj.woche_id = S.woche && S.woche.id; return post('woche_ereignisse', obj).then(refresh);
+    },
+    ereignisLoeschen: function (id) { return del('woche_ereignisse?id=eq.' + id).then(refresh); }
+  };
+
+  // ── Renderer: Stammdaten (US-01/02/03) ──
+  function renderPersonen() {
+    var box = document.getElementById('sd-personen'); if (!box) return;
+    var h = '';
+    S.personen.forEach(function (p) {
+      var prefs = (p.praeferenzen || []).slice().sort(function (a, b) { return (HART[b.art] ? 1 : 0) - (HART[a.art] ? 1 : 0); });
+      var chips = prefs.map(function (x) {
+        return '<span class="pref' + (HART[x.art] ? ' hart' : '') + '"><span class="art">' + esc(ART_LABEL[x.art] || x.art) +
+          '</span>' + esc(x.wert) + '<span class="x" data-act="praef-del" data-id="' + x.id + '">✕</span></span>';
+      }).join('');
+      h += '<div class="pcard"><h3>👤 ' + esc(p.name) +
+        (p.aktiv === false ? ' <span class="who-in">inaktiv</span>' : '') +
+        ' <button class="btn-del" data-act="person-del" data-id="' + p.id + '" title="Person entfernen">Entfernen</button></h3>' +
+        (p.fruehstueck ? '<div class="hint">🥣 ' + esc(p.fruehstueck) + '</div>' : '') +
+        '<div class="prefs">' + (chips || '<span class="hint">keine Präferenzen hinterlegt</span>') + '</div>' +
+        '<div class="addrow" data-person="' + p.id + '">' +
+        '<select class="pa-art"><option value="vorliebe">mag</option><option value="abneigung">mag nicht</option>' +
+        '<option value="allergie">Allergie (hart)</option><option value="ernaehrungsform">Ernährung (hart)</option></select>' +
+        '<input class="pa-wert" placeholder="z.B. Nüsse, vegetarisch, asiatisch">' +
+        '<button class="btn-s" data-act="praef-add" data-id="' + p.id + '">+ hinzufügen</button></div></div>';
+    });
+    h += '<div class="addrow"><input id="np-name" placeholder="Neue Person …">' +
+      '<button class="btn-s" data-act="person-add">+ Person</button></div>';
+    box.innerHTML = h;
+  }
+
+  function renderRegeln() {
+    var box = document.getElementById('sd-regeln'); if (!box) return;
+    var h = '';
+    S.regeln.forEach(function (r) {
+      var wer = r.personen ? r.personen.name : 'Haushalt';
+      h += '<div class="rule"><span class="rtag">' + esc(r.typ) + '</span>' +
+        (r.wochentag ? '<span class="rtag">' + esc(r.wochentag) + '</span>' : '') +
+        '<span><b>' + esc(wer) + '</b> — ' + esc(r.text) + '</span>' +
+        '<button class="btn-del" data-act="regel-del" data-id="' + r.id + '" style="margin-left:auto">✕</button></div>';
+    });
+    var pOpts = '<option value="">ganzer Haushalt</option>' + S.personen.map(function (p) {
+      return '<option value="' + p.id + '">' + esc(p.name) + '</option>'; }).join('');
+    var dOpts = '<option value="">jeder Tag</option>' + DOW.map(function (d) { return '<option>' + d + '</option>'; }).join('');
+    h += '<div class="addrow" id="nr-row"><select class="nr-person">' + pOpts + '</select>' +
+      '<select class="nr-typ"><option value="abwesenheit">abwesend</option><option value="anwesenheit">anwesend</option><option value="hinweis">Hinweis</option></select>' +
+      '<select class="nr-dow">' + dOpts + '</select>' +
+      '<input class="nr-text" placeholder="Beschreibung – z.B. „abends unterwegs“">' +
+      '<button class="btn-s" data-act="regel-add">+ Dauerregel</button></div>';
+    box.innerHTML = h;
+  }
+
+  // ── Renderer: Wochenkontext + Anwesenheitsmatrix + Transparenz (US-05/06/08/09/10/12) ──
+  function renderWoche() {
+    var box = document.getElementById('wk-box'); if (!box) return;
+    var k = wochenkontext();
+    var head = '<div class="sd-scope woche">Nur diese Woche · KW ' + (k.kw || '?') + ' / ' + (k.jahr || '') + '</div>';
+    // Matrix
+    var thead = '<tr><th>Person</th>' + DOW.map(function (d) { return '<th>' + d + (kochtagAktiv(d) ? '' : '<br><span class="hint">–</span>') + '</th>'; }).join('') + '</tr>';
+    var rows = S.personen.filter(function (p) { return p.aktiv !== false; }).map(function (p) {
+      var tds = DOW.map(function (d) {
+        if (haushaltFrei(d)) return '<td class="off">–</td>';
+        var pr = presence(p.id, d);
+        return '<td class="' + (pr.present ? 'here' : 'away') + '" title="' + esc(pr.reasons.join('; ')) + '">' + (pr.present ? '✓' : '—') + '</td>';
+      }).join('');
+      return '<tr><td>' + esc(p.name) + '</td>' + tds + '</tr>';
+    }).join('');
+    var guestRow = '';
+    if (DOW.some(function (d) { return gaeste(d).length; })) {
+      guestRow = '<tr><td>👥 Gäste</td>' + DOW.map(function (d) {
+        var g = gaeste(d); return '<td class="' + (g.length ? 'here' : '') + '">' + (g.length ? esc(g.join(', ')) : '') + '</td>';
+      }).join('') + '</tr>';
+    }
+    var matrix = '<div class="wkmatrix"><table>' + thead + rows + guestRow + '</table></div>';
+
+    // Ereignisse dieser Woche (löschbar)
+    var evs = S.ereignisse.map(function (e) {
+      var wer = e.gast_name || (e.personen ? e.personen.name : '') || 'Haushalt';
+      return '<div class="rule"><span class="rtag">' + esc(e.typ) + '</span>' + (e.wochentag ? '<span class="rtag">' + esc(e.wochentag) + '</span>' : '') +
+        '<span><b>' + esc(wer) + '</b> — ' + esc(e.text) + '</span>' +
+        '<button class="btn-del" data-act="ev-del" data-id="' + e.id + '" style="margin-left:auto">✕</button></div>';
+    }).join('') || '<p class="hint">Noch keine Besonderheiten für diese Woche.</p>';
+    var dOpts = '<option value="">jeder Tag</option>' + DOW.map(function (d) { return '<option>' + d + '</option>'; }).join('');
+    var pOpts = '<option value="">ich/Haushalt</option>' + S.personen.map(function (p) { return '<option value="' + p.id + '">' + esc(p.name) + '</option>'; }).join('');
+    var addEv = '<div class="addrow" id="ev-row"><select class="ev-typ"><option value="gast">Gast</option><option value="abwesenheit">abwesend</option><option value="anwesenheit">anwesend</option><option value="hinweis">Hinweis</option></select>' +
+      '<select class="ev-person">' + pOpts + '</select><select class="ev-dow">' + dOpts + '</select>' +
+      '<input class="ev-text" placeholder="z.B. „Gast zum Essen“"><button class="btn-s" data-act="ev-add">+ diese Woche</button></div>';
+
+    // Transparenz (US-10): was fließt in welchen Tag ein
+    var transp = k.tage.filter(function (t) { return t.kochtag; }).map(function (t) {
+      var hx = t.hart.map(function (x) { return '<span class="hx" title="hart – ' + esc(x.wer) + '">⛔ ' + esc(x.wert) + '</span>'; }).join('');
+      var sx = t.weich.map(function (x) { return '<span class="sx" title="weich – ' + esc(x.wer) + '">' + esc(x.wert) + '</span>'; }).join('');
+      var g = t.gaeste.length ? ' · 👥 ' + esc(t.gaeste.join(', ')) : '';
+      return '<li><b>' + t.dow + ':</b> ' + (t.anwesend.join(' & ') || '—') + g +
+        (hx || sx ? '<div class="kx">' + hx + sx + '</div>' : ' <span class="hint">keine Einschränkungen</span>') + '</li>';
+    }).join('');
+
+    box.innerHTML = head +
+      '<h3>📅 Wer isst wann mit?</h3>' + matrix +
+      '<p class="hint">✓ anwesend · — abwesend · – kein Kochen. Abwesende zählen für den Tag nicht (ihre Abneigungen gelten dann nicht).</p>' +
+      '<h3 style="margin-top:.7rem">✳️ Besonderheiten dieser Woche</h3>' + evs + addEv +
+      '<h3 style="margin-top:.7rem">🔍 Planungsgrundlage je Kochtag</h3><ul class="transp">' + transp + '</ul>';
+  }
+
+  // ── US-11: Voting-Optionen mit dem Wochenkontext abgleichen ──
+  function applyVotingKontext() {
+    var days = document.querySelectorAll('.vday'); if (!days.length) return;
+    var k = window.WOCHENKONTEXT || wochenkontext();
+    var rdata = {}; var el = document.getElementById('rdata');
+    if (el) { try { rdata = JSON.parse(el.textContent); } catch (e) {} }
+    // Kontext-Banner in den Voten-Reiter
+    var host = document.getElementById('wk-voting-kontext');
+    if (host) {
+      var lines = k.tage.filter(function (t) { return t.kochtag; }).map(function (t) {
+        var restr = t.hart.map(function (x) { return '⛔' + x.wert; }).concat(t.weich.map(function (x) { return x.wert; }));
+        return '<b>' + t.dow + '</b>: ' + (t.anwesend.join(' & ') || '—') + (t.gaeste.length ? ' +Gast' : '') +
+          (restr.length ? ' <span class="hint">(' + esc(restr.join(', ')) + ')</span>' : '');
+      }).join(' · ');
+      host.innerHTML = '<div class="sd-scope woche">Kontext KW ' + (k.kw || '?') + '</div>' +
+        '<p class="hint">Diese Abstimmung berücksichtigt Anwesenheiten &amp; Präferenzen: ' + (lines || '—') + '</p>';
+    }
+    days.forEach(function (day) {
+      var h3 = day.querySelector('h3'); if (!h3) return;
+      var dow = (h3.textContent.trim().split(/\s+/)[0] || '').slice(0, 2);
+      var t = k.tage.filter(function (x) { return x.dow === dow; })[0];
+      if (!t || !t.kochtag) return;
+      var terms = t.hart.map(function (x) { return x.wert.toLowerCase(); });
+      if (!terms.length) return;
+      day.querySelectorAll('.opt').forEach(function (opt) {
+        if (opt.classList.contains('away')) return;
+        var link = opt.parentNode.querySelector('.rlink');
+        var slug = link ? link.getAttribute('data-recipe') : null;
+        var hay = (opt.textContent || '').toLowerCase();
+        if (slug && rdata[slug]) hay += ' ' + JSON.stringify(rdata[slug]).toLowerCase();
+        var hit = terms.filter(function (tm) { return hay.indexOf(tm) >= 0; });
+        if (hit.length) {
+          opt.classList.add('vconflict');
+          if (!opt.querySelector('.vflag')) {
+            var f = document.createElement('span'); f.className = 'vflag';
+            f.textContent = '⚠️ enthält evtl. ' + hit.join(', ') + ' (harte Einschränkung)';
+            opt.appendChild(f);
+          }
+        }
+      });
+    });
+  }
+
+  // ── Chat (US-04/07): erhebt Planungsinfos, unterscheidet dauerhaft vs. diese Woche ──
+  function mountChat(root) {
+    var scope = root.getAttribute('data-scope') === 'woche' ? 'woche' : 'haushalt';
+    var log = root.querySelector('.kc-log');
+    var input = root.querySelector('.kc-in input');
+    var btn = root.querySelector('.kc-in button');
+    var history = [];
+    function bubble(cls, text) { var d = document.createElement('div'); d.className = 'kc-msg ' + cls; d.textContent = text; log.appendChild(d); log.scrollTop = log.scrollHeight; return d; }
+    function changes(list) {
+      if (!list || !list.length) return;
+      var d = document.createElement('div'); d.className = 'kc-chg';
+      list.forEach(function (c) { var s = document.createElement('span'); s.className = c.scope === 'woche' ? 'woche' : 'dauer'; s.textContent = (c.scope === 'woche' ? '📅 ' : '📌 ') + c.text; d.appendChild(s); });
+      log.appendChild(d); log.scrollTop = log.scrollHeight;
+    }
+    function send(text) {
+      if (!text.trim()) return;
+      bubble('u', text); history.push({ role: 'user', content: text });
+      input.value = ''; btn.disabled = true;
+      var typing = bubble('a', '…');
+      var w = isoWeek(new Date());
+      fetch(FN + 'assistent', { method: 'POST', headers: H, body: JSON.stringify({ messages: history, scope: scope, jahr: w.jahr, kw: w.kw }) })
+        .then(function (r) { return r.json(); })
+        .then(function (res) {
+          typing.remove();
+          if (res.error) { bubble('a', '⚠️ ' + res.error); btn.disabled = false; return; }
+          bubble('a', res.reply || 'Erledigt.'); history.push({ role: 'assistant', content: res.reply || '' });
+          changes(res.changes);
+          btn.disabled = false;
+          if (res.changes && res.changes.length) refresh();  // sofort sichtbar+bearbeitbar (US-04/07)
+        })
+        .catch(function () { typing.remove(); bubble('a', '⚠️ offline'); btn.disabled = false; });
+    }
+    btn.addEventListener('click', function () { send(input.value); });
+    input.addEventListener('keydown', function (e) { if (e.key === 'Enter') send(input.value); });
+    root.querySelectorAll('.kc-quick button').forEach(function (q) {
+      q.addEventListener('click', function () { input.value = q.getAttribute('data-tpl') || q.textContent; input.focus(); });
+    });
+  }
+
+  // ── Event-Delegation für alle Buttons (gemeinsame Aktionsschicht) ──
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-act]'); if (!b) return;
+    var act = b.getAttribute('data-act'), id = b.getAttribute('data-id');
+    if (act === 'person-add') { var n = document.getElementById('np-name'); if (n && n.value.trim()) actions.personAnlegen(n.value.trim()); }
+    else if (act === 'person-del') { if (confirm('Person wirklich entfernen?')) actions.personLoeschen(id); }
+    else if (act === 'praef-add') {
+      var row = b.closest('.addrow'); var art = row.querySelector('.pa-art').value; var wert = row.querySelector('.pa-wert').value.trim();
+      if (wert) actions.praefSetzen(id, art, wert);
+    }
+    else if (act === 'praef-del') { actions.praefLoeschen(id); }
+    else if (act === 'regel-add') {
+      var r = document.getElementById('nr-row');
+      actions.regelSetzen({ person_id: r.querySelector('.nr-person').value || null, typ: r.querySelector('.nr-typ').value,
+        wochentag: r.querySelector('.nr-dow').value || null, text: r.querySelector('.nr-text').value.trim() || '—' });
+    }
+    else if (act === 'regel-del') { actions.regelLoeschen(id); }
+    else if (act === 'ev-add') {
+      var ev = document.getElementById('ev-row');
+      actions.ereignisSetzen({ typ: ev.querySelector('.ev-typ').value, person_id: ev.querySelector('.ev-person').value || null,
+        gast_name: ev.querySelector('.ev-typ').value === 'gast' ? (ev.querySelector('.ev-text').value.trim() || 'Gast') : '',
+        wochentag: ev.querySelector('.ev-dow').value || null, text: ev.querySelector('.ev-text').value.trim() || '—' });
+    }
+    else if (act === 'ev-del') { actions.ereignisLoeschen(id); }
+  });
+
+  function renderAll() { renderPersonen(); renderRegeln(); renderWoche(); applyVotingKontext(); }
+  function refresh() { return Promise.all([loadStamm(), loadWoche()]).then(renderAll); }
+
+  window.SBAPP = { refresh: refresh, actions: actions, wochenkontext: wochenkontext, state: S };
+
+  function init() {
+    var hasStamm = document.getElementById('sd-personen') || document.getElementById('sd-regeln');
+    var hasWoche = document.getElementById('wk-box') || document.getElementById('wk-voting-kontext');
+    document.querySelectorAll('.kchat').forEach(mountChat);
+    if (hasStamm || hasWoche) refresh();
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+})();
+</script>
 </body>
 </html>
