@@ -490,9 +490,10 @@
 
   // ── Anwesenheits-Engine (US-08/09) ──
   function kochtagAktiv(dow) { return S.planung.kochtage ? S.planung.kochtage[dow] !== false : true; }
-  function haushaltFrei(dow) {   // ganzer Haushalt weg (Dauerregel person=null oder Nicht-Kochtag)
+  function haushaltFrei(dow) {   // ganzer Haushalt weg (Nicht-Kochtag ODER alle Personen abwesend)
     if (!kochtagAktiv(dow)) return true;
-    return S.regeln.some(function (r) { return r.aktiv !== false && r.person_id == null && r.typ === 'abwesenheit' && r.wochentag === dow; });
+    if (!S.personen || !S.personen.length) return false;
+    return S.personen.every(function (p) { return !presence(p.id, dow).present; });
   }
   function presence(personId, dow) {
     var present = true, reasons = [];

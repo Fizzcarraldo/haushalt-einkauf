@@ -238,17 +238,20 @@
   function navTo(v){document.getElementById('vPlan').classList.toggle('on',v==='plan');document.getElementById('vProfil').classList.toggle('on',v==='profil');
     document.querySelectorAll('#nav button').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-v')===v);});document.getElementById('voteBtn').style.display=(v==='plan')?'block':'none';}
   document.querySelectorAll('#nav button').forEach(function(b){b.addEventListener('click',function(){navTo(b.getAttribute('data-v'));});});
-  function refresh(){return Promise.all([
-      get('personen?select=id,name,praeferenzen(id,art,wert,hart)&haushalt=eq.'+HH+'&order=sort'),
-      get('regeln?select=id,person_id,typ,wochentag,text,personen(name)&haushalt=eq.'+HH+'&order=created_at'),
-      get('woche_ereignisse?select=id,person_id,gast_name,typ,wochentag,text&haushalt=eq.'+HH)
-    ]).then(function(r){DATA.persons=r[0]||[];DATA.regeln=r[1]||[];DATA.ereignisse=r[2]||[];renderPlanen();renderProfil();});}
+  function refresh(){var w=isoWeek(new Date());
+    return get('wochen?select=id&haushalt=eq.'+HH+'&jahr=eq.'+w.jahr+'&kw=eq.'+w.kw).then(function(wr){
+      var wid=wr&&wr[0]&&wr[0].id;
+      return Promise.all([
+        get('personen?select=id,name,praeferenzen(id,art,wert,hart)&haushalt=eq.'+HH+'&order=sort'),
+        get('regeln?select=id,person_id,typ,wochentag,text,personen(name)&haushalt=eq.'+HH+'&order=created_at'),
+        wid?get('woche_ereignisse?select=id,person_id,gast_name,typ,wochentag,text&haushalt=eq.'+HH+'&woche_id=eq.'+wid):Promise.resolve([])
+      ]);
+    }).then(function(r){DATA.persons=r[0]||[];DATA.regeln=r[1]||[];DATA.ereignisse=r[2]||[];renderPlanen();renderProfil();});}
+  // Präsenz ist personen-scharf: abwesend gilt genau für die Person (kein Haushalt-weites null mehr).
   function presentOn(day){return DATA.persons.filter(function(p){
-    // Wochen-Override „anwesend" (auch Haushalt-weit) gewinnt
-    if(DATA.ereignisse.some(function(e){return e.typ==='anwesenheit'&&e.wochentag===day&&(e.person_id===p.id||e.person_id==null);}))return true;
-    // abwesend gilt für die Person ODER Haushalt-weit (person_id null)
-    var awR=DATA.regeln.some(function(r){return r.typ==='abwesenheit'&&r.wochentag===day&&(r.person_id===p.id||r.person_id==null);});
-    var awW=DATA.ereignisse.some(function(e){return e.typ==='abwesenheit'&&e.wochentag===day&&(e.person_id===p.id||e.person_id==null);});
+    if(DATA.ereignisse.some(function(e){return e.typ==='anwesenheit'&&e.wochentag===day&&e.person_id===p.id;}))return true;
+    var awR=DATA.regeln.some(function(r){return r.typ==='abwesenheit'&&r.wochentag===day&&r.person_id===p.id;});
+    var awW=DATA.ereignisse.some(function(e){return e.typ==='abwesenheit'&&e.wochentag===day&&e.person_id===p.id;});
     return !(awR||awW);});}
   function guestsOn(day){return DATA.ereignisse.filter(function(e){return e.typ==='gast'&&e.wochentag===day;});}
   function renderPlanen(){var persons=DATA.persons;
@@ -280,7 +283,7 @@
     else if(act==='delpref'){rest('DELETE','praeferenzen?id=eq.'+id).then(refresh);}
     else if(act==='addgrund'){var g=document.getElementById('ng-text');if(g&&g.value.trim())post('regeln',{typ:'wunsch',text:g.value.trim(),haushalt:HH}).then(refresh);}
     else if(act==='delreg'){rest('DELETE','regeln?id=eq.'+id).then(refresh);}
-    else if(act==='addreg'){var r=document.getElementById('nr');post('regeln',{person_id:r.querySelector('.nr-person').value||null,typ:r.querySelector('.nr-typ').value,wochentag:r.querySelector('.nr-dow').value||null,text:r.querySelector('.nr-text').value.trim()||'—',haushalt:HH}).then(refresh);}});
+    else if(act==='addreg'){var r=document.getElementById('nr');var typ=r.querySelector('.nr-typ').value;var pv=r.querySelector('.nr-person').value;if(typ==='abwesenheit'&&!pv){alert('Bei „abwesend" bitte eine Person wählen – Abwesenheit ist immer personen-scharf.');return;}post('regeln',{person_id:pv||null,typ:typ,wochentag:r.querySelector('.nr-dow').value||null,text:r.querySelector('.nr-text').value.trim()||'—',haushalt:HH}).then(refresh);}});
   function ensureWoche(){var w=isoWeek(new Date());return get('wochen?select=id&haushalt=eq.'+HH+'&jahr=eq.'+w.jahr+'&kw=eq.'+w.kw).then(function(rows){if(rows&&rows[0])return rows[0].id;return post('wochen',{jahr:w.jahr,kw:w.kw,haushalt:HH}).then(function(r){return r&&r[0]&&r[0].id;});});}
   document.getElementById('addGast').addEventListener('click',function(){var day=prompt('Gast an welchem Tag? (Mo–So)','Do');if(!day)return;day=day.trim();day=day.charAt(0).toUpperCase()+day.slice(1,2).toLowerCase();if(DOW.indexOf(day)<0){alert('Bitte Mo–So');return;}var name=(prompt('Name des Gasts (optional)','Oma')||'Gast');
     ensureWoche().then(function(wid){return post('woche_ereignisse',{woche_id:wid,typ:'gast',wochentag:day,gast_name:name,text:'Gast: '+name,haushalt:HH});}).then(refresh);});
