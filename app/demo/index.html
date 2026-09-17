@@ -65,13 +65,14 @@
   .askbar{display:flex;align-items:center;gap:.6rem;width:100%;text-align:left;cursor:pointer;margin-top:.5rem;border:1px solid color-mix(in oklab,CanvasText 13%,var(--card));border-radius:13px;padding:.55rem .7rem;background:color-mix(in oklab,CanvasText 4%,var(--card));box-shadow:0 1px 2px rgba(0,0,0,.05);}
   .askbar .av2{width:2rem;height:2rem;flex:0 0 auto;border-radius:50%;display:grid;place-items:center;font-size:1.05rem;background:color-mix(in oklab,CanvasText 8%,var(--card));}
   .askbar .lbl{flex:1;min-width:0;font-size:.85rem;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;} .askbar .lbl b{color:var(--ink);font-weight:750;}
-  .sback{position:fixed;inset:0;background:rgba(10,12,16,.42);opacity:0;visibility:hidden;transition:opacity .25s;z-index:30;} .sback.open{opacity:1;visibility:visible;}
-  .sheet{position:fixed;left:0;right:0;bottom:0;z-index:31;max-width:560px;margin:0 auto;height:78vh;background:var(--card);border-radius:20px 20px 0 0;transform:translateY(103%);visibility:hidden;transition:transform .32s cubic-bezier(.2,.8,.2,1),visibility 0s linear .32s;display:flex;flex-direction:column;box-shadow:0 -10px 34px rgba(0,0,0,.3);}
+  .sback{position:fixed;inset:0;background:rgba(10,12,16,.28);opacity:0;visibility:hidden;transition:opacity .25s;z-index:30;} .sback.open{opacity:1;visibility:visible;}
+  .sheet{position:fixed;left:0;right:0;bottom:0;z-index:31;max-width:560px;margin:0 auto;height:86vh;background:var(--paper);border-radius:20px 20px 0 0;transform:translateY(103%);visibility:hidden;transition:transform .32s cubic-bezier(.2,.8,.2,1),visibility 0s linear .32s;display:flex;flex-direction:column;box-shadow:0 -10px 34px rgba(0,0,0,.3);}
   .sheet.open{transform:none;visibility:visible;transition:transform .32s cubic-bezier(.2,.8,.2,1),visibility 0s;}
-  .grab{width:40px;height:4px;border-radius:3px;background:var(--line);margin:.55rem auto .1rem;}
-  .shd{display:flex;align-items:center;gap:.5rem;padding:.25rem .9rem .55rem;font-weight:750;border-bottom:1px solid var(--line2);}
+  .grab{width:40px;height:4px;border-radius:3px;background:var(--line);margin:.55rem auto .3rem;}
+  .shd{display:flex;align-items:center;gap:.5rem;padding:.15rem .9rem .45rem;font-weight:750;}
+  .shd .chefav{width:2rem;height:2rem;flex:0 0 auto;border-radius:50%;display:grid;place-items:center;font-size:1.05rem;background:color-mix(in oklab,CanvasText 8%,var(--card));}
   .shd .scope{margin-left:.2rem;font:700 .66rem/1 var(--mono);background:var(--orange-bg);color:var(--orange);border-radius:999px;padding:.2rem .5rem;} .shd .x{margin-left:auto;background:none;border:none;font-size:1.15rem;color:var(--muted);cursor:pointer;}
-  .qk{display:flex;gap:.4rem;flex-wrap:wrap;padding:.55rem .9rem 0;} .qk button{font:700 .78rem/1 var(--sans);padding:.4rem .7rem;border-radius:999px;border:1px solid var(--line);background:var(--card2);color:var(--ink);cursor:pointer;}
+  .qk{display:flex;gap:.4rem;flex-wrap:wrap;padding:.35rem .9rem .15rem;} .qk button{font:600 .82rem/1 var(--sans);padding:.42rem .72rem;border-radius:999px;border:1px dashed var(--line);background:none;color:var(--muted);cursor:pointer;}
   .ccard{align-self:flex-start;max-width:96%;border:1px solid var(--line);border-left:4px solid var(--orange);border-radius:11px;padding:.5rem .65rem;background:var(--card2);font-size:.85rem;}
   .sin{display:flex;gap:.4rem;padding:.5rem .9rem calc(.6rem + env(safe-area-inset-bottom));border-top:1px solid var(--line2);}
   .sin input{flex:1;font:inherit;font-size:.9rem;padding:.62rem .72rem;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--ink);} .sin .snd{background:var(--green);color:#fff;border:none;border-radius:12px;padding:0 1rem;font-weight:800;font-size:1.1rem;cursor:pointer;}
@@ -140,7 +141,7 @@
 
   <div class="sback" id="sback"></div>
   <div class="sheet" id="sheet"><div class="grab"></div>
-    <div class="shd"><span>🧑‍🍳</span> Assistent <span class="scoperow"><button data-sc="woche" class="on w">📅 Woche</button><button data-sc="dauer" class="d">∞ Dauerhaft</button></span><button class="x" id="closeA">✕</button></div>
+    <div class="shd"><span class="chefav">🧑‍🍳</span><b>Assistent</b> <span class="scoperow"><button data-sc="woche" class="on w">📅 Woche</button><button data-sc="dauer" class="d">∞ Dauerhaft</button></span><button class="x" id="closeA">✕</button></div>
     <div class="qk" id="qk"></div>
     <div class="log" id="slog"></div>
     <div class="sin"><input id="stext" placeholder="Sag's einfach …"><button class="snd" id="ssend">→</button></div>
@@ -299,8 +300,8 @@
 
   // ── Assistent-Sheet (echte Function, beide Scopes) ──
   var sheet=document.getElementById('sheet'),sback=document.getElementById('sback'),slog=document.getElementById('slog'),stext=document.getElementById('stext'),shist=[],sseed=false,curScope='woche';
-  var SCFG={woche:{greet:'🧑‍🍳 Sag mir, was <b>diese Woche</b> anders ist – z.&nbsp;B. „Freitag kommt Besuch".',quick:[['👤 Gast','Am Donnerstag kommt Besuch'],['🚗 Abwesend','Freitag bin ich nicht da'],['🥕 Wunsch','Diese Woche extra viel Brokkoli']]},
-    dauer:{greet:'🧑‍🍳 Sag mir, was sich <b>dauerhaft</b> ändert – z.&nbsp;B. „Anna ist ab jetzt vegetarisch".',quick:[['👤 Person','Neue Person: Max'],['⛔ Allergie','Anna hat eine Nussallergie'],['🎯 Grundsatz','Uns ist gesund wichtig']]}};
+  var SCFG={woche:{greet:'Da bin ich. 👋 Sag mir, was <b>diese Woche</b> anders ist – z.&nbsp;B. „Freitag kommt Besuch".',quick:[['👤 Gast','Am Donnerstag kommt Besuch'],['🚗 Abwesend','Freitag bin ich nicht da'],['🥕 Wunsch','Diese Woche extra viel Brokkoli']]},
+    dauer:{greet:'Da bin ich. 👋 Sag mir, was sich <b>dauerhaft</b> ändert – z.&nbsp;B. „Anna ist ab jetzt vegetarisch".',quick:[['👤 Person','Neue Person: Max'],['⛔ Allergie','Anna hat eine Nussallergie'],['🎯 Grundsatz','Uns ist gesund wichtig']]}};
   function sbot(h){var d=document.createElement('div');d.className='msg bot';d.innerHTML=h;slog.appendChild(d);slog.scrollTop=slog.scrollHeight;}
   function sme(t){var d=document.createElement('div');d.className='msg me';d.textContent=t;slog.appendChild(d);slog.scrollTop=slog.scrollHeight;}
   function chg(c){var w=c.scope==='woche';var d=document.createElement('div');d.className='ccard'+(w?'':' dh');d.innerHTML='<div>'+(w?'📅 diese Woche':'∞ dauerhaft')+' · '+esc(c.text||'gespeichert')+'</div>';slog.appendChild(d);slog.scrollTop=slog.scrollHeight;}
