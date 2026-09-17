@@ -314,6 +314,16 @@
   .chips2 { display:flex; flex-wrap:wrap; gap:.3rem; margin-top:.2rem; }
   .chips2 span { font-size:.78rem; padding:.12rem .5rem; border-radius:999px;
     background: color-mix(in oklab,#4caf2a 20%,Canvas); }
+  /* Planen: editierbarer Block (Supabase) */
+  .planedit { margin:.6rem 0; }
+  .planedit #pl-days { display:flex; flex-wrap:wrap; gap:.25rem; margin:.45rem 0; }
+  .pl-day { font:inherit; font-size:.82rem; font-weight:700; padding:.3rem .62rem; border-radius:999px;
+    border:1px solid color-mix(in oklab,CanvasText 25%,Canvas); background:Canvas; color:inherit; cursor:pointer; }
+  .pl-day.on { background:#4caf2a; color:#fff; border-color:transparent; }
+  .pl-day:not(.on) { opacity:.6; text-decoration:line-through; }
+  .planedit textarea { width:100%; min-height:3.4rem; font:inherit; padding:.55rem; border-radius:10px;
+    border:1px solid color-mix(in oklab,CanvasText 18%,Canvas); background:Canvas; color:inherit; margin:.3rem 0; }
+  #pl-status { font-weight:600; }
   footer { margin-top: 2rem; font-size: .8rem; color: color-mix(in oklab, CanvasText 45%, Canvas); }
 </style>
 </head>
