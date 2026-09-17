@@ -55,6 +55,8 @@
   .dayrow .dd{width:2.1rem;text-align:center;font:600 .66rem/1.1 var(--mono);color:var(--muted);flex-shrink:0;} .dayrow .dd b{font:800 .98rem/1.15 var(--sans);color:var(--ink);display:block;}
   .eaters{display:flex;gap:.28rem;flex:1;flex-wrap:wrap;}
   .av{width:1.55rem;height:1.55rem;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font:800 .72rem/1 var(--sans);background:var(--green);color:#fff;}
+  .agenda .av{cursor:pointer;transition:transform .1s ease;} .agenda .av:active{transform:scale(.9);}
+  .av.off{background:var(--card);color:var(--muted);border:1px solid var(--line);text-decoration:line-through;}
   .spill{font:700 .72rem/1 var(--sans);padding:.3rem .55rem;border-radius:999px;white-space:nowrap;flex-shrink:0;} .spill.cook{background:var(--green-bg);color:var(--green-ink);} .spill.out{background:var(--grey-bg);color:var(--muted);}
   .empty{background:color-mix(in oklab,var(--blue) 7%,var(--card));border:1px dashed var(--blue-line);border-radius:12px;padding:.8rem;text-align:center;color:var(--muted);font-size:.88rem;}
   .dock{position:fixed;left:0;right:0;bottom:0;z-index:20;background:linear-gradient(to top,var(--paper) 78%,transparent);padding:.6rem .9rem calc(.6rem + env(safe-area-inset-bottom));}
@@ -243,16 +245,18 @@
       get('woche_ereignisse?select=id,person_id,gast_name,typ,wochentag,text&haushalt=eq.'+HH)
     ]).then(function(r){DATA.persons=r[0]||[];DATA.regeln=r[1]||[];DATA.ereignisse=r[2]||[];renderPlanen();renderProfil();});}
   function presentOn(day){return DATA.persons.filter(function(p){
+    if(DATA.ereignisse.some(function(e){return e.typ==='anwesenheit'&&e.wochentag===day&&e.person_id===p.id;}))return true; // diese Woche da (Override)
     var aw=DATA.regeln.some(function(r){return r.typ==='abwesenheit'&&r.wochentag===day&&r.person_id===p.id;})||DATA.ereignisse.some(function(e){return e.typ==='abwesenheit'&&e.wochentag===day&&e.person_id===p.id;});
     return !aw;});}
   function guestsOn(day){return DATA.ereignisse.filter(function(e){return e.typ==='gast'&&e.wochentag===day;});}
   function renderPlanen(){var persons=DATA.persons;
     document.getElementById('plsub').textContent=persons.map(function(p){return p.name;}).join(' & ')+' · Haushalt '+HH;
-    document.getElementById('legend').innerHTML=persons.map(function(p){return '<span><span class="av">'+esc(initials(p.name))+'</span> '+esc(p.name)+'</span>';}).join('')+'<span>weg = nicht gezeigt</span>';
-    document.getElementById('agenda').innerHTML=DOW.map(function(d){var here=presentOn(d),g=guestsOn(d);
-      var avs=here.map(function(p){return '<span class="av">'+esc(initials(p.name))+'</span>';}).join('')+g.map(function(x){return '<span class="av" style="background:var(--orange)">'+esc(initials(x.gast_name||'G'))+'</span>';}).join('');
+    document.getElementById('legend').innerHTML=persons.map(function(p){return '<span><span class="av">'+esc(initials(p.name))+'</span> '+esc(p.name)+'</span>';}).join('')+'<span>👉 Namen antippen = da / weg</span>';
+    document.getElementById('agenda').innerHTML=DOW.map(function(d){var here=presentOn(d),hereIds={};here.forEach(function(p){hereIds[p.id]=1;});var g=guestsOn(d);
+      var avs=persons.map(function(p){var on=hereIds[p.id];return '<span class="av'+(on?'':' off')+'" data-pid="'+p.id+'" data-day="'+d+'" title="antippen: diese Woche da/weg">'+esc(initials(p.name))+'</span>';}).join('')
+        +g.map(function(x){return '<span class="av" style="background:var(--orange)">'+esc(initials(x.gast_name||'G'))+'</span>';}).join('');
       var st=(here.length||g.length)?'<span class="spill cook">Kochen</span>':'<span class="spill out">Auswärts</span>';
-      return '<div class="dayrow"><div class="dd"><span>'+d+'</span></div><div class="eaters">'+(avs||'<span style="color:var(--muted);font-size:.8rem">niemand</span>')+'</div>'+st+'</div>';}).join('');
+      return '<div class="dayrow"><div class="dd"><span>'+d+'</span></div><div class="eaters">'+avs+'</div>'+st+'</div>';}).join('');
     var tp=DOW.map(function(d){var here=presentOn(d);if(!here.length)return '';var hard=[];here.forEach(function(p){(p.praeferenzen||[]).forEach(function(x){if(HART[x.art])hard.push(x.wert);});});
       return '<li><b>'+d+':</b> '+here.map(function(p){return esc(p.name);}).join(' & ')+(hard.length?' <span class="hx">⛔ '+hard.map(esc).join(', ')+'</span>':' <span class="sx">keine Einschränkung</span>')+'</li>';}).filter(Boolean).join('');
     document.getElementById('transp').innerHTML=tp||'<li class="sx">—</li>';}
@@ -278,6 +282,15 @@
   function ensureWoche(){var w=isoWeek(new Date());return get('wochen?select=id&haushalt=eq.'+HH+'&jahr=eq.'+w.jahr+'&kw=eq.'+w.kw).then(function(rows){if(rows&&rows[0])return rows[0].id;return post('wochen',{jahr:w.jahr,kw:w.kw,haushalt:HH}).then(function(r){return r&&r[0]&&r[0].id;});});}
   document.getElementById('addGast').addEventListener('click',function(){var day=prompt('Gast an welchem Tag? (Mo–So)','Do');if(!day)return;day=day.trim();day=day.charAt(0).toUpperCase()+day.slice(1,2).toLowerCase();if(DOW.indexOf(day)<0){alert('Bitte Mo–So');return;}var name=(prompt('Name des Gasts (optional)','Oma')||'Gast');
     ensureWoche().then(function(wid){return post('woche_ereignisse',{woche_id:wid,typ:'gast',wochentag:day,gast_name:name,text:'Gast: '+name,haushalt:HH});}).then(refresh);});
+  // Namen in der Agenda antippen = diese Woche da/weg (Override, ändert Stammdaten nicht)
+  function togglePresence(pid,day){var wasPresent=presentOn(day).some(function(p){return p.id===pid;});
+    rest('DELETE','woche_ereignisse?haushalt=eq.'+HH+'&person_id=eq.'+pid+'&wochentag=eq.'+day+'&typ=in.(abwesenheit,anwesenheit)')
+      .then(function(){return ensureWoche();})
+      .then(function(wid){var permAbs=DATA.regeln.some(function(r){return r.typ==='abwesenheit'&&r.wochentag===day&&r.person_id===pid;});
+        if(!wasPresent){ if(permAbs) return post('woche_ereignisse',{woche_id:wid,person_id:pid,typ:'anwesenheit',wochentag:day,text:'diese Woche da',haushalt:HH}); return null; }
+        return post('woche_ereignisse',{woche_id:wid,person_id:pid,typ:'abwesenheit',wochentag:day,text:'diese Woche weg',haushalt:HH}); })
+      .then(refresh);}
+  document.getElementById('agenda').addEventListener('click',function(e){var a=e.target.closest('.av[data-pid]');if(a)togglePresence(a.getAttribute('data-pid'),a.getAttribute('data-day'));});
 
   // ── Assistent-Sheet (echte Function, beide Scopes) ──
   var sheet=document.getElementById('sheet'),sback=document.getElementById('sback'),slog=document.getElementById('slog'),stext=document.getElementById('stext'),shist=[],sseed=false,curScope='woche';
