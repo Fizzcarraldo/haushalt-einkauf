@@ -368,6 +368,39 @@
     border:1px solid color-mix(in oklab,CanvasText 18%,Canvas); background:Canvas; color:inherit; }
   .kc-in button { font:inherit; font-weight:700; padding:.5rem .8rem; border-radius:10px; border:none; background:#4caf2a; color:#fff; cursor:pointer; }
   .kc-in button:disabled { opacity:.5; }
+  /* Wunsch-Board */
+  .wgroup { margin:.4rem 0; }
+  .wgroup > .lbl { font-size:.72rem; font-weight:800; text-transform:uppercase; letter-spacing:.03em; opacity:.65; display:flex; align-items:center; gap:.35rem; margin-bottom:.25rem; }
+  .wchips { display:flex; flex-wrap:wrap; gap:.4rem; }
+  .wchip { display:inline-flex; align-items:center; gap:.4rem; padding:.32rem .6rem; border-radius:999px; font-size:.86rem; font-weight:600;
+    border:1px solid transparent; transition:transform .12s ease, box-shadow .12s ease; }
+  .wchip.woche { background:color-mix(in oklab,#ff9500 15%,Canvas); border-color:color-mix(in oklab,#ff9500 40%,Canvas); }
+  .wchip.dauer { background:color-mix(in oklab,#3f7cff 13%,Canvas); border-color:color-mix(in oklab,#3f7cff 38%,Canvas); }
+  .wchip .flip { cursor:pointer; opacity:.55; font-size:.78rem; } .wchip .flip:hover { opacity:1; }
+  .wchip .x { cursor:pointer; opacity:.5; font-weight:800; } .wchip .x:hover { opacity:1; color:#e5484d; }
+  .wchip.empty { background:none; border:1px dashed color-mix(in oklab,CanvasText 25%,Canvas); font-weight:500; opacity:.7; }
+  /* Change-Cards im Chat */
+  .kc-card { align-self:flex-start; max-width:96%; border-radius:12px; padding:.5rem .65rem; font-size:.86rem;
+    border:1px solid color-mix(in oklab,CanvasText 14%,Canvas); background:Canvas; }
+  .kc-card.woche { border-left:4px solid #ff9500; } .kc-card.dauer { border-left:4px solid #3f7cff; }
+  .kc-card .cc-top { display:flex; align-items:center; gap:.4rem; }
+  .kc-card .cc-badge { font-size:.66rem; font-weight:800; text-transform:uppercase; padding:.1rem .45rem; border-radius:999px; }
+  .kc-card.woche .cc-badge { background:color-mix(in oklab,#ff9500 22%,Canvas); }
+  .kc-card.dauer .cc-badge { background:color-mix(in oklab,#3f7cff 20%,Canvas); }
+  .kc-card .cc-actions { display:flex; flex-wrap:wrap; gap:.4rem; margin-top:.4rem; }
+  .kc-card .cc-actions button { font:inherit; font-size:.76rem; font-weight:700; padding:.25rem .55rem; border-radius:8px; cursor:pointer;
+    border:1px solid color-mix(in oklab,CanvasText 20%,Canvas); background:Canvas; color:inherit; }
+  .kc-card .cc-actions button:hover { border-color:#4caf2a; }
+  .kc-card.undone { opacity:.5; }
+  @keyframes chippulse { 0%{ box-shadow:0 0 0 0 color-mix(in oklab,#4caf2a 70%,Canvas); transform:scale(1); }
+    30%{ transform:scale(1.06); } 100%{ box-shadow:0 0 0 14px transparent; transform:scale(1); } }
+  .pulse { animation:chippulse 1.3s ease; }
+  /* Inline Mini-Picker für Quick-Actions */
+  .kc-picker { display:flex; flex-wrap:wrap; gap:.4rem; padding:.2rem .75rem .5rem; align-items:center; }
+  .kc-picker select, .kc-picker input { font:inherit; font-size:.82rem; padding:.3rem .45rem; border-radius:8px;
+    border:1px solid color-mix(in oklab,CanvasText 18%,Canvas); background:Canvas; color:inherit; }
+  .kc-picker .go { background:#4caf2a; color:#fff; border:none; font-weight:700; padding:.3rem .6rem; border-radius:8px; cursor:pointer; }
+  .kc-picker .cx { background:none; border:none; cursor:pointer; opacity:.6; }
 </style>
 </head>
 <body>
@@ -381,12 +414,15 @@
   <h2>📌 Wiederkehrende Regeln</h2>
   <p class="hint">Gelten automatisch in jeder künftigen Woche (z.&nbsp;B. „mittwochs abends unterwegs“).</p>
   <div id="sd-regeln"><p class="hint">lädt …</p></div>
+  <h2>🎯 Dauerhafte Wünsche</h2>
+  <p class="hint">Gelten für jede Woche (z.&nbsp;B. „viel Gemüse", „wenig Aufwand"). Wochen-Wünsche stehen im Wochenplan.</p>
+  <div id="sd-wuensche"><p class="hint">lädt …</p></div>
   <h2>💬 Per Chat pflegen</h2>
   <p class="hint">Sag es in normaler Sprache – ich trage es ein und du siehst die Änderung oben sofort.</p>
   <div class="kchat" data-scope="haushalt">
     <div class="kc-head">🧑‍🍳 Küchenassistent <span class="kc-ctx dauer">Stammdaten · dauerhaft</span></div>
     <div class="kc-log"></div>
-    <div class="kc-quick"><button type="button" data-tpl="Neue Person: ">➕ Person</button><button type="button" data-tpl="Esra hat eine Allergie gegen ">🚫 Allergie</button><button type="button" data-tpl="Flo mag gerne ">👍 Vorliebe</button><button type="button" data-tpl="Ich bin ab jetzt immer mittwochs nicht da">📅 Dauerregel</button></div>
+    <div class="kc-quick"><button type="button" data-tpl="@picker:person">👤 Person</button><button type="button" data-tpl="@picker:allergie">⛔ Allergie</button><button type="button" data-tpl="Flo mag gerne ">👍 Vorliebe</button><button type="button" data-tpl="Ich bin ab jetzt immer mittwochs nicht da">📅 Dauerregel</button></div>
     <div class="kc-in"><input type="text" placeholder="Sag mir etwas über euren Haushalt …" aria-label="Nachricht"><button type="button">Senden</button></div>
   </div>
   <h2>🎯 Ziele</h2>
@@ -552,9 +588,9 @@
   function renderRegeln() {
     var box = document.getElementById('sd-regeln'); if (!box) return;
     var h = '';
-    S.regeln.forEach(function (r) {
+    S.regeln.filter(function (r) { return r.typ !== 'wunsch'; }).forEach(function (r) {
       var wer = r.personen ? r.personen.name : 'Haushalt';
-      h += '<div class="rule"><span class="rtag">' + esc(r.typ) + '</span>' +
+      h += '<div class="rule" data-wtext="' + esc(r.text) + '"><span class="rtag">' + esc(r.typ) + '</span>' +
         (r.wochentag ? '<span class="rtag">' + esc(r.wochentag) + '</span>' : '') +
         '<span><b>' + esc(wer) + '</b> — ' + esc(r.text) + '</span>' +
         '<button class="btn-del" data-act="regel-del" data-id="' + r.id + '" style="margin-left:auto">✕</button></div>';
@@ -594,9 +630,9 @@
     var matrix = '<div class="wkmatrix"><table>' + thead + rows + guestRow + '</table></div>';
 
     // Ereignisse dieser Woche (löschbar)
-    var evs = S.ereignisse.map(function (e) {
+    var evs = S.ereignisse.filter(function (e) { return e.typ !== 'wunsch'; }).map(function (e) {
       var wer = e.gast_name || (e.personen ? e.personen.name : '') || 'Haushalt';
-      return '<div class="rule"><span class="rtag">' + esc(e.typ) + '</span>' + (e.wochentag ? '<span class="rtag">' + esc(e.wochentag) + '</span>' : '') +
+      return '<div class="rule" data-wtext="' + esc(e.text) + '"><span class="rtag">' + esc(e.typ) + '</span>' + (e.wochentag ? '<span class="rtag">' + esc(e.wochentag) + '</span>' : '') +
         '<span><b>' + esc(wer) + '</b> — ' + esc(e.text) + '</span>' +
         '<button class="btn-del" data-act="ev-del" data-id="' + e.id + '" style="margin-left:auto">✕</button></div>';
     }).join('') || '<p class="hint">Noch keine Besonderheiten für diese Woche.</p>';
@@ -620,6 +656,82 @@
       '<p class="hint">✓ anwesend · — abwesend · – kein Kochen. Abwesende zählen für den Tag nicht (ihre Abneigungen gelten dann nicht).</p>' +
       '<h3 style="margin-top:.7rem">✳️ Besonderheiten dieser Woche</h3>' + evs + addEv +
       '<h3 style="margin-top:.7rem">🔍 Planungsgrundlage je Kochtag</h3><ul class="transp">' + transp + '</ul>';
+  }
+
+  // ── Wunsch-Board (erstklassige Chips, dauerhaft vs. diese Woche) ──
+  function renderWuensche() {
+    var box = document.getElementById('wk-wuensche');
+    var sd = document.getElementById('sd-wuensche');
+    if (!box && !sd) return;
+    var weekW = S.ereignisse.filter(function (e) { return e.typ === 'wunsch'; });
+    var dauerW = S.regeln.filter(function (r) { return r.typ === 'wunsch'; });
+    function chip(w, scope) {
+      var toW = scope === 'woche';
+      var flip = '<span class="flip" data-act="wunsch-flip" data-scope="' + scope + '" data-id="' + w.id + '" title="' +
+        (toW ? 'dauerhaft machen' : 'nur diese Woche') + '">' + (toW ? '∞?' : '📅?') + '</span>';
+      return '<span class="wchip ' + (toW ? 'woche' : 'dauer') + '" data-wtext="' + esc(w.text) + '">' +
+        (toW ? '📅' : '∞') + ' ' + esc(w.text) + flip +
+        '<span class="x" data-act="wunsch-del" data-scope="' + scope + '" data-id="' + w.id + '" title="entfernen">✕</span></span>';
+    }
+    var weekChips = weekW.length ? weekW.map(function (w) { return chip(w, 'woche'); }).join('')
+      : '<span class="wchip empty">noch keine – z.B. „extra viel Karotten“</span>';
+    var dauerChips = dauerW.length ? dauerW.map(function (w) { return chip(w, 'dauer'); }).join('')
+      : '<span class="wchip empty">noch keine</span>';
+    if (box) {
+      box.innerHTML =
+        '<div class="wgroup"><div class="lbl">📅 Diese Woche</div><div class="wchips">' + weekChips + '</div></div>' +
+        '<div class="addrow" id="ww-row"><input class="ww-text" placeholder="Wunsch für diese Woche … z.B. extra viel Karotten">' +
+        '<button class="btn-s" data-act="wunsch-add" data-scope="woche">+ diese Woche</button></div>' +
+        '<div class="wgroup"><div class="lbl">∞ Dauerhaft</div><div class="wchips">' + dauerChips + '</div></div>' +
+        '<div class="addrow" id="wd-row"><input class="wd-text" placeholder="Dauerhafter Wunsch …">' +
+        '<button class="btn-s btn-g" data-act="wunsch-add" data-scope="dauer">+ dauerhaft</button></div>';
+    }
+    if (sd) {
+      sd.innerHTML = '<div class="wchips">' + dauerChips + '</div>' +
+        '<div class="addrow" id="wd-row2"><input class="wd-text" placeholder="Dauerhafter Wunsch …">' +
+        '<button class="btn-s" data-act="wunsch-add" data-scope="dauer">+ dauerhaft</button></div>';
+    }
+  }
+  function flipWunsch(scope, id) {
+    if (scope === 'woche') {
+      var e = S.ereignisse.filter(function (x) { return x.id === id; })[0]; if (!e) return;
+      return post('regeln', { typ: 'wunsch', text: e.text, wochentag: null, person_id: e.person_id || null })
+        .then(function () { return del('woche_ereignisse?id=eq.' + id); }).then(refresh);
+    }
+    var r = S.regeln.filter(function (x) { return x.id === id; })[0]; if (!r || !S.woche) return refresh();
+    return post('woche_ereignisse', { woche_id: S.woche.id, typ: 'wunsch', text: r.text, person_id: r.person_id || null })
+      .then(function () { return del('regeln?id=eq.' + id); }).then(refresh);
+  }
+
+  // Änderung sichtbar machen: passenden Chip kurz aufleuchten lassen
+  function pulseByText(t) {
+    if (!t) return; t = String(t).toLowerCase();
+    document.querySelectorAll('[data-wtext]').forEach(function (el) {
+      if ((el.getAttribute('data-wtext') || '').toLowerCase().indexOf(t) >= 0) {
+        el.classList.add('pulse'); setTimeout(function () { el.classList.remove('pulse'); }, 1400);
+      }
+    });
+  }
+  // Scope einer Chat-Änderung umschalten (dauerhaft <-> diese Woche)
+  function flipChange(c) {
+    var d = c.data || {};
+    if (c.scope === 'woche') {
+      return post('regeln', { typ: d.typ, text: d.text, wochentag: d.wochentag || null, person_id: d.person_id || null })
+        .then(function () { return del(c.undo.table + '?id=eq.' + c.undo.id); }).then(refresh);
+    }
+    if (!S.woche) return refresh();
+    return post('woche_ereignisse', { woche_id: S.woche.id, typ: d.typ, text: d.text, wochentag: d.wochentag || null, person_id: d.person_id || null })
+      .then(function () { return del(c.undo.table + '?id=eq.' + c.undo.id); }).then(refresh);
+  }
+  // Zur betroffenen Stelle springen + Chip pulsen (öffnet nötigenfalls den Planen-Reiter)
+  function jumpTo(c) {
+    var map = { wunsch: 'wk-wuensche', gast: 'wk-box', abwesenheit: 'wk-box', anwesenheit: 'wk-box', hinweis: 'wk-box', praeferenz: 'sd-personen', person: 'sd-personen' };
+    var id = map[c.kind] || (c.scope === 'woche' ? 'wk-box' : 'sd-personen');
+    var el = document.getElementById(id) || document.getElementById('wk-wuensche') || document.getElementById('sd-personen');
+    if (!el) { location.href = './index.html'; return; }
+    var panel = el.closest ? el.closest('.steppanel') : null;
+    if (panel && panel.hidden) { var stp = document.querySelector('.stp[data-step="' + panel.getAttribute('data-step') + '"]'); if (stp) stp.click(); }
+    setTimeout(function () { el.scrollIntoView({ behavior: 'smooth', block: 'center' }); pulseByText(c.data && c.data.text || c.text); }, 60);
   }
 
   // ── US-11: Voting-Optionen mit dem Wochenkontext abgleichen ──
@@ -665,42 +777,79 @@
     });
   }
 
-  // ── Chat (US-04/07): erhebt Planungsinfos, unterscheidet dauerhaft vs. diese Woche ──
+  // ── Chat (US-04/07): erhebt Infos, jede Änderung wird als rückgängig-machbare Change-Card sichtbar ──
   function mountChat(root) {
     var scope = root.getAttribute('data-scope') === 'woche' ? 'woche' : 'haushalt';
     var log = root.querySelector('.kc-log');
     var input = root.querySelector('.kc-in input');
     var btn = root.querySelector('.kc-in button');
+    var quickbar = root.querySelector('.kc-quick');
     var history = [];
     function bubble(cls, text) { var d = document.createElement('div'); d.className = 'kc-msg ' + cls; d.textContent = text; log.appendChild(d); log.scrollTop = log.scrollHeight; return d; }
-    function changes(list) {
-      if (!list || !list.length) return;
-      var d = document.createElement('div'); d.className = 'kc-chg';
-      list.forEach(function (c) { var s = document.createElement('span'); s.className = c.scope === 'woche' ? 'woche' : 'dauer'; s.textContent = (c.scope === 'woche' ? '📅 ' : '📌 ') + c.text; d.appendChild(s); });
-      log.appendChild(d); log.scrollTop = log.scrollHeight;
+    function changeCard(c) {
+      if (!c || !c.scope) return;
+      var card = document.createElement('div'); card.className = 'kc-card ' + (c.scope === 'woche' ? 'woche' : 'dauer');
+      card.innerHTML = '<div class="cc-top"><span class="cc-badge">' + (c.scope === 'woche' ? '📅 nur diese Woche' : '∞ dauerhaft') + '</span><span>' + esc(c.text) + '</span></div>';
+      var acts = document.createElement('div'); acts.className = 'cc-actions';
+      if (c.undo && c.undo.id) {
+        var u = document.createElement('button'); u.textContent = '↩︎ Rückgängig';
+        u.onclick = function () { del(c.undo.table + '?id=eq.' + c.undo.id).then(function () { card.classList.add('undone'); acts.innerHTML = ''; refresh(); }); };
+        acts.appendChild(u);
+      }
+      if (c.canFlip && c.undo && c.data) {
+        var f = document.createElement('button'); f.textContent = (c.scope === 'woche' ? '→ dauerhaft' : '→ nur diese Woche');
+        f.onclick = function () { flipChange(c).then(function () { card.classList.add('undone'); acts.innerHTML = ''; }); };
+        acts.appendChild(f);
+      }
+      var v = document.createElement('button'); v.textContent = '↗ ansehen'; v.onclick = function () { jumpTo(c); }; acts.appendChild(v);
+      card.appendChild(acts); log.appendChild(card); log.scrollTop = log.scrollHeight;
     }
     function send(text) {
-      if (!text.trim()) return;
+      if (!text || !text.trim()) return;
       bubble('u', text); history.push({ role: 'user', content: text });
       input.value = ''; btn.disabled = true;
-      var typing = bubble('a', '…');
-      var w = isoWeek(new Date());
+      var typing = bubble('a', '…'); var w = isoWeek(new Date());
       fetch(FN + 'assistent', { method: 'POST', headers: H, body: JSON.stringify({ messages: history, scope: scope, jahr: w.jahr, kw: w.kw }) })
         .then(function (r) { return r.json(); })
         .then(function (res) {
-          typing.remove();
-          if (res.error) { bubble('a', '⚠️ ' + res.error); btn.disabled = false; return; }
+          typing.remove(); btn.disabled = false;
+          if (res.error) { bubble('a', '⚠️ ' + res.error); return; }
           bubble('a', res.reply || 'Erledigt.'); history.push({ role: 'assistant', content: res.reply || '' });
-          changes(res.changes);
-          btn.disabled = false;
-          if (res.changes && res.changes.length) refresh();  // sofort sichtbar+bearbeitbar (US-04/07)
+          (res.changes || []).forEach(changeCard);
+          if (res.changes && res.changes.length) refresh().then(function () { res.changes.forEach(function (c) { pulseByText(c.data && c.data.text || c.text); }); });
         })
         .catch(function () { typing.remove(); bubble('a', '⚠️ offline'); btn.disabled = false; });
+    }
+    // Inline-Picker: häufige Aktionen in 1–2 Taps ohne Tippen (ruft direkt die Aktionsschicht)
+    function dayOpts() { return DOW.map(function (d) { return '<option>' + d + '</option>'; }).join(''); }
+    function personOpts() { return S.personen.map(function (p) { return '<option value="' + p.id + '">' + esc(p.name) + '</option>'; }).join(''); }
+    function showPicker(kind) {
+      var old = root.querySelector('.kc-picker'); if (old) old.remove();
+      var pk = document.createElement('div'); pk.className = 'kc-picker'; var inner = '';
+      if (kind === 'gast') inner = 'Tag <select class="pk-day">' + dayOpts() + '</select><input class="pk-name" placeholder="Name (optional)">';
+      else if (kind === 'abwesend') inner = '<select class="pk-person">' + personOpts() + '</select> ist <select class="pk-day">' + dayOpts() + '</select> weg';
+      else if (kind === 'allergie') inner = '<select class="pk-person">' + personOpts() + '</select> Allergie <input class="pk-wert" placeholder="z.B. Nüsse">';
+      else if (kind === 'person') inner = '<input class="pk-name" placeholder="Name der Person">';
+      pk.innerHTML = inner + '<button class="go">OK</button><button class="cx">✕</button>';
+      quickbar.after(pk);
+      var fin = function (msg) { pk.remove(); if (msg) bubble('a', msg); };
+      pk.querySelector('.cx').onclick = function () { pk.remove(); };
+      pk.querySelector('.go').onclick = function () {
+        var day = pk.querySelector('.pk-day'), per = pk.querySelector('.pk-person'), nm = pk.querySelector('.pk-name'), wt = pk.querySelector('.pk-wert');
+        if (kind === 'gast') { var g = (nm.value || '').trim(); actions.ereignisSetzen({ typ: 'gast', wochentag: day.value, gast_name: g || 'Gast', text: g ? ('Gast: ' + g) : 'Gast zum Essen' }).then(function () { pulseByText('Gast'); }); fin('👤 Gast am ' + day.value + ' eingetragen (nur diese Woche).'); }
+        else if (kind === 'abwesend') { actions.ereignisSetzen({ typ: 'abwesenheit', person_id: per.value || null, wochentag: day.value, text: 'abwesend' }).then(function () { pulseByText('abwesend'); }); fin('🚗 Abwesenheit am ' + day.value + ' eingetragen (nur diese Woche).'); }
+        else if (kind === 'allergie') { if (!wt.value.trim()) return; actions.praefSetzen(per.value, 'allergie', wt.value.trim()).then(function () { pulseByText(wt.value.trim()); }); fin('⛔ Allergie „' + wt.value.trim() + '" gespeichert (dauerhaft, hart).'); }
+        else if (kind === 'person') { if (!nm.value.trim()) return; actions.personAnlegen(nm.value.trim()); fin('👤 Person „' + nm.value.trim() + '" angelegt.'); }
+      };
     }
     btn.addEventListener('click', function () { send(input.value); });
     input.addEventListener('keydown', function (e) { if (e.key === 'Enter') send(input.value); });
     root.querySelectorAll('.kc-quick button').forEach(function (q) {
-      q.addEventListener('click', function () { input.value = q.getAttribute('data-tpl') || q.textContent; input.focus(); });
+      q.addEventListener('click', function () {
+        var tpl = q.getAttribute('data-tpl') || '';
+        if (tpl.indexOf('@picker:') === 0) showPicker(tpl.slice(8));
+        else { input.value = tpl; input.focus(); }
+      });
     });
   }
 
@@ -728,9 +877,16 @@
         wochentag: ev.querySelector('.ev-dow').value || null, text: ev.querySelector('.ev-text').value.trim() || '—' });
     }
     else if (act === 'ev-del') { actions.ereignisLoeschen(id); }
+    else if (act === 'wunsch-add') {
+      var sc = b.getAttribute('data-scope');
+      if (sc === 'woche') { var wi = document.querySelector('#ww-row .ww-text'); if (wi && wi.value.trim()) { actions.ereignisSetzen({ typ: 'wunsch', text: wi.value.trim() }).then(function () { pulseByText(wi.value.trim()); }); } }
+      else { var wd = document.querySelector('#wd-row .wd-text') || document.querySelector('#wd-row2 .wd-text'); if (wd && wd.value.trim()) { var t = wd.value.trim(); actions.regelSetzen({ typ: 'wunsch', text: t, wochentag: null, person_id: null }).then(function () { pulseByText(t); }); } }
+    }
+    else if (act === 'wunsch-del') { if (b.getAttribute('data-scope') === 'woche') actions.ereignisLoeschen(id); else actions.regelLoeschen(id); }
+    else if (act === 'wunsch-flip') { flipWunsch(b.getAttribute('data-scope'), id); }
   });
 
-  function renderAll() { renderPersonen(); renderRegeln(); renderWoche(); applyVotingKontext(); }
+  function renderAll() { renderPersonen(); renderRegeln(); renderWuensche(); renderWoche(); applyVotingKontext(); }
   function refresh() { return Promise.all([loadStamm(), loadWoche()]).then(renderAll); }
 
   window.SBAPP = { refresh: refresh, actions: actions, wochenkontext: wochenkontext, state: S };

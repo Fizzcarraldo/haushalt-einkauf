@@ -384,6 +384,39 @@
     border:1px solid color-mix(in oklab,CanvasText 18%,Canvas); background:Canvas; color:inherit; }
   .kc-in button { font:inherit; font-weight:700; padding:.5rem .8rem; border-radius:10px; border:none; background:#4caf2a; color:#fff; cursor:pointer; }
   .kc-in button:disabled { opacity:.5; }
+  /* Wunsch-Board */
+  .wgroup { margin:.4rem 0; }
+  .wgroup > .lbl { font-size:.72rem; font-weight:800; text-transform:uppercase; letter-spacing:.03em; opacity:.65; display:flex; align-items:center; gap:.35rem; margin-bottom:.25rem; }
+  .wchips { display:flex; flex-wrap:wrap; gap:.4rem; }
+  .wchip { display:inline-flex; align-items:center; gap:.4rem; padding:.32rem .6rem; border-radius:999px; font-size:.86rem; font-weight:600;
+    border:1px solid transparent; transition:transform .12s ease, box-shadow .12s ease; }
+  .wchip.woche { background:color-mix(in oklab,#ff9500 15%,Canvas); border-color:color-mix(in oklab,#ff9500 40%,Canvas); }
+  .wchip.dauer { background:color-mix(in oklab,#3f7cff 13%,Canvas); border-color:color-mix(in oklab,#3f7cff 38%,Canvas); }
+  .wchip .flip { cursor:pointer; opacity:.55; font-size:.78rem; } .wchip .flip:hover { opacity:1; }
+  .wchip .x { cursor:pointer; opacity:.5; font-weight:800; } .wchip .x:hover { opacity:1; color:#e5484d; }
+  .wchip.empty { background:none; border:1px dashed color-mix(in oklab,CanvasText 25%,Canvas); font-weight:500; opacity:.7; }
+  /* Change-Cards im Chat */
+  .kc-card { align-self:flex-start; max-width:96%; border-radius:12px; padding:.5rem .65rem; font-size:.86rem;
+    border:1px solid color-mix(in oklab,CanvasText 14%,Canvas); background:Canvas; }
+  .kc-card.woche { border-left:4px solid #ff9500; } .kc-card.dauer { border-left:4px solid #3f7cff; }
+  .kc-card .cc-top { display:flex; align-items:center; gap:.4rem; }
+  .kc-card .cc-badge { font-size:.66rem; font-weight:800; text-transform:uppercase; padding:.1rem .45rem; border-radius:999px; }
+  .kc-card.woche .cc-badge { background:color-mix(in oklab,#ff9500 22%,Canvas); }
+  .kc-card.dauer .cc-badge { background:color-mix(in oklab,#3f7cff 20%,Canvas); }
+  .kc-card .cc-actions { display:flex; flex-wrap:wrap; gap:.4rem; margin-top:.4rem; }
+  .kc-card .cc-actions button { font:inherit; font-size:.76rem; font-weight:700; padding:.25rem .55rem; border-radius:8px; cursor:pointer;
+    border:1px solid color-mix(in oklab,CanvasText 20%,Canvas); background:Canvas; color:inherit; }
+  .kc-card .cc-actions button:hover { border-color:#4caf2a; }
+  .kc-card.undone { opacity:.5; }
+  @keyframes chippulse { 0%{ box-shadow:0 0 0 0 color-mix(in oklab,#4caf2a 70%,Canvas); transform:scale(1); }
+    30%{ transform:scale(1.06); } 100%{ box-shadow:0 0 0 14px transparent; transform:scale(1); } }
+  .pulse { animation:chippulse 1.3s ease; }
+  /* Inline Mini-Picker für Quick-Actions */
+  .kc-picker { display:flex; flex-wrap:wrap; gap:.4rem; padding:.2rem .75rem .5rem; align-items:center; }
+  .kc-picker select, .kc-picker input { font:inherit; font-size:.82rem; padding:.3rem .45rem; border-radius:8px;
+    border:1px solid color-mix(in oklab,CanvasText 18%,Canvas); background:Canvas; color:inherit; }
+  .kc-picker .go { background:#4caf2a; color:#fff; border:none; font-weight:700; padding:.3rem .6rem; border-radius:8px; cursor:pointer; }
+  .kc-picker .cx { background:none; border:none; cursor:pointer; opacity:.6; }
 </style>
 </head>
 <body>
