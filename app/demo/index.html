@@ -245,9 +245,12 @@
       get('woche_ereignisse?select=id,person_id,gast_name,typ,wochentag,text&haushalt=eq.'+HH)
     ]).then(function(r){DATA.persons=r[0]||[];DATA.regeln=r[1]||[];DATA.ereignisse=r[2]||[];renderPlanen();renderProfil();});}
   function presentOn(day){return DATA.persons.filter(function(p){
-    if(DATA.ereignisse.some(function(e){return e.typ==='anwesenheit'&&e.wochentag===day&&e.person_id===p.id;}))return true; // diese Woche da (Override)
-    var aw=DATA.regeln.some(function(r){return r.typ==='abwesenheit'&&r.wochentag===day&&r.person_id===p.id;})||DATA.ereignisse.some(function(e){return e.typ==='abwesenheit'&&e.wochentag===day&&e.person_id===p.id;});
-    return !aw;});}
+    // Wochen-Override „anwesend" (auch Haushalt-weit) gewinnt
+    if(DATA.ereignisse.some(function(e){return e.typ==='anwesenheit'&&e.wochentag===day&&(e.person_id===p.id||e.person_id==null);}))return true;
+    // abwesend gilt für die Person ODER Haushalt-weit (person_id null)
+    var awR=DATA.regeln.some(function(r){return r.typ==='abwesenheit'&&r.wochentag===day&&(r.person_id===p.id||r.person_id==null);});
+    var awW=DATA.ereignisse.some(function(e){return e.typ==='abwesenheit'&&e.wochentag===day&&(e.person_id===p.id||e.person_id==null);});
+    return !(awR||awW);});}
   function guestsOn(day){return DATA.ereignisse.filter(function(e){return e.typ==='gast'&&e.wochentag===day;});}
   function renderPlanen(){var persons=DATA.persons;
     document.getElementById('plsub').textContent=persons.map(function(p){return p.name;}).join(' & ')+' · Haushalt '+HH;
@@ -312,7 +315,7 @@
   function ssend(){var t=(stext.value||'').trim();if(!t)return;sme(t);shist.push({role:'user',content:t});stext.value='';
     var ty=document.createElement('div');ty.className='msg bot typing';ty.innerHTML='<span></span><span></span><span></span>';slog.appendChild(ty);slog.scrollTop=slog.scrollHeight;
     var w=isoWeek(new Date());
-    fetch(FN,{method:'POST',headers:H,body:JSON.stringify({messages:shist,scope:curScope==='dauer'?'haushalt':'woche',jahr:w.jahr,kw:w.kw,haushalt:HH})}).then(function(r){return r.json();})
+    fetch(FN,{method:'POST',headers:H,body:JSON.stringify({messages:shist,scope:curScope==='dauer'?'haushalt':'woche',jahr:w.jahr,kw:w.kw,haushalt:HH,benutzer:(DATA.persons[0]&&DATA.persons[0].name)||''})}).then(function(r){return r.json();})
       .then(function(res){ty.remove();if(res.error){sbot('⚠️ '+res.error);return;}sbot(res.reply||'Erledigt.');shist.push({role:'assistant',content:res.reply||''});(res.changes||[]).forEach(chg);refresh();})
       .catch(function(){ty.remove();sbot('⚠️ offline');});}
   document.getElementById('ssend').addEventListener('click',ssend);
