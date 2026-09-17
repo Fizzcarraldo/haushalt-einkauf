@@ -179,20 +179,19 @@
   function stepIntro(){ask('Hi! 🧑‍🍳 Ich bin euer <b>Küchenassistent</b>.<br>Von <b>„Was gibt’s diese Woche?"</b> bis zur fertigen <b>Einkaufsliste</b> nehm ich euch alles ab — <b>gekocht wird bei euch.</b>',null,{then:stepPersons});}
   function stepPersons(){head(1,'active');
     ask('Damit das passt, lernen wir uns kurz kennen. 👋<br><b>Wer kocht &amp; isst mit?</b>',function(b,c){
-      c.innerHTML='<div class="chips" data-list></div><div class="nameadd"><input placeholder="Name eingeben (z. B. du)"><button class="add">＋</button></div><button class="go" data-go disabled>Passt ›</button>';
-      var list=c.querySelector('[data-list]'),nm=c.querySelector('input'),go=c.querySelector('[data-go]');
+      input.placeholder='Name eintippen – z. B. du …';
+      c.innerHTML='<div class="chips" data-list></div><button class="go" data-go disabled>Passt ›</button><div class="cnote" style="margin-top:.4rem">↓ Namen unten eintippen (Enter) – oder „Wir sind Peter &amp; Bo".</div>';
+      var list=c.querySelector('[data-list]'),go=c.querySelector('[data-go]');
       function rp(){list.innerHTML=state.persons.map(function(n,i){return '<span class="chip d">'+(i===0?'🧑 ':'👤 ')+esc(n)+' <span class="x" data-rm="'+i+'">✕</span></span>';}).join('');
         list.querySelectorAll('[data-rm]').forEach(function(x){x.addEventListener('click',function(){state.persons.splice(+x.getAttribute('data-rm'),1);rp();});});
         go.disabled=!state.persons.length;go.textContent=state.persons.length?('Weiter mit '+state.persons.join(' & ')+' ›'):'Passt ›';}
       function addN(v){(v||'').split(/,| und | & |&|\//i).map(function(s){return s.replace(/^(ich bin|wir sind|und)\s+/i,'').trim();}).filter(Boolean).forEach(function(n){state.persons.push(n);});rp();}
-      c.querySelector('.add').addEventListener('click',function(){addN(nm.value);nm.value='';nm.focus();});
-      nm.addEventListener('keydown',function(e){if(e.key==='Enter'){addN(nm.value);nm.value='';}});
       go.addEventListener('click',function(){if(!state.persons.length||busy)return;
         Promise.all(state.persons.map(function(n,i){return post('personen',{name:n,haushalt:HH,sort:i+1}).then(function(r){if(r&&r[0])state.ids[n]=r[0].id;});}))
           .then(function(){me(state.persons.join(' & '));head(1,'done');stepNogos();});});
       curHandler=function(t){addN(t);};advanceFn=function(){go.click();};rp();
     },{focus:true});}
-  function stepNogos(){head(2,'active');var o=['🥜 Nüsse','🌾 Gluten','🥛 Laktose','🥗 vegetarisch','🌱 vegan'];
+  function stepNogos(){head(2,'active');input.placeholder='Antworten oder erzählen …';var o=['🥜 Nüsse','🌾 Gluten','🥛 Laktose','🥗 vegetarisch','🌱 vegan'];
     ask('Super, <b>'+esc(state.persons.join(' & '))+'</b> ✓<br>Gibt’s <b>harte No-Gos?</b> <span style="color:var(--muted)">(Allergien / Ernährung)</span>',function(b,c){
       c.innerHTML='<div class="chips">'+o.map(function(x){return '<span class="chip sug h">'+x+'</span>';}).join('')+'</div><button class="go" data-go>Keine / Weiter ›</button>';
       wireSug(c);var go=c.querySelector('[data-go]');
