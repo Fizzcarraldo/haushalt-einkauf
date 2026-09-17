@@ -469,8 +469,8 @@
 
   function loadStamm() {
     return Promise.all([
-      get('personen?select=*,praeferenzen(*)&order=sort'),
-      get('regeln?select=*,personen(name)&order=created_at'),
+      get('personen?select=*,praeferenzen(*)&haushalt=eq.default&order=sort'),
+      get('regeln?select=*,personen(name)&haushalt=eq.default&order=created_at'),
       get('planung?select=kochtage&id=eq.1')
     ]).then(function (r) {
       S.personen = r[0]; S.regeln = r[1]; S.planung = (r[2] && r[2][0]) || {};
@@ -478,9 +478,9 @@
   }
   function loadWoche() {
     var w = isoWeek(new Date()); S.now = w;
-    return get('wochen?select=*&jahr=eq.' + w.jahr + '&kw=eq.' + w.kw).then(function (rows) {
+    return get('wochen?select=*&haushalt=eq.default&jahr=eq.' + w.jahr + '&kw=eq.' + w.kw).then(function (rows) {
       if (rows[0]) return rows[0];
-      return post('wochen', { jahr: w.jahr, kw: w.kw }).then(function (r) { return (r.data && r.data[0]) || null; });
+      return post('wochen', { jahr: w.jahr, kw: w.kw, haushalt: 'default' }).then(function (r) { return (r.data && r.data[0]) || null; });
     }).then(function (wo) {
       S.woche = wo; if (!wo) { S.ereignisse = []; return; }
       return get('woche_ereignisse?select=*,personen(name)&woche_id=eq.' + wo.id + '&order=created_at')
