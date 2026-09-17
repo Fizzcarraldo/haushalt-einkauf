@@ -7,18 +7,18 @@
 <style>
   :root{--paper:#f4f4f2;--card:#fff;--card2:#f6f6f4;--ink:#1b1d21;--muted:#6c717a;--line:#e4e4df;--line2:#eeeeea;
     --green:#3f9b2e;--green-bg:#e7f4e3;--green-ink:#2f7422;--blue:#3663c9;--blue-bg:#e9eefb;--blue-line:#c3d2f4;
-    --orange:#c96f1b;--orange-bg:#fbefe0;--orange-line:#f0d3ac;--red:#cf463c;--red-bg:#fbe9e7;--red-line:#f2c4bf;
+    --orange:#c96f1b;--orange-bg:#fbefe0;--orange-line:#f0d3ac;--red:#cf463c;--red-bg:#fbe9e7;--red-line:#f2c4bf;--grey-bg:#f0f0ec;
     --sans:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;--mono:ui-monospace,SFMono-Regular,Menlo,monospace;}
   @media (prefers-color-scheme:dark){:root{--paper:#0d0f13;--card:#191c21;--card2:#14171c;--ink:#e8eaed;--muted:#969ca5;--line:#2a2e35;--line2:#23262c;
     --green:#6cc258;--green-bg:#182a13;--green-ink:#8ed67c;--blue:#7099f2;--blue-bg:#182137;--blue-line:#33487f;
-    --orange:#eda152;--orange-bg:#33260f;--orange-line:#5c421f;--red:#ef6a60;--red-bg:#361a18;--red-line:#5e2b27;}}
-  *{box-sizing:border-box}
-  html,body{height:100%}
+    --orange:#eda152;--orange-bg:#33260f;--orange-line:#5c421f;--red:#ef6a60;--red-bg:#361a18;--red-line:#5e2b27;--grey-bg:#22262d;}}
+  *{box-sizing:border-box} html,body{height:100%}
   body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);line-height:1.5;-webkit-font-smoothing:antialiased;display:flex;flex-direction:column;}
-  .tbar{flex:0 0 auto;display:flex;align-items:center;gap:.5rem;padding:.5rem .8rem;background:color-mix(in oklab,var(--blue) 12%,var(--card));border-bottom:1px solid var(--line2);font:700 .74rem/1 var(--mono);color:var(--blue);}
-  .tbar b{letter-spacing:.03em}
-  .tbar .reset{margin-left:auto;font:700 .74rem/1 var(--sans);border:1px solid var(--blue-line);background:var(--card);color:var(--blue);border-radius:999px;padding:.35rem .7rem;cursor:pointer;}
-  .app{flex:1;min-height:0;max-width:560px;width:100%;margin:0 auto;display:flex;flex-direction:column;}
+  .tbar{flex:0 0 auto;display:flex;align-items:center;gap:.5rem;padding:.5rem .8rem;background:color-mix(in oklab,var(--blue) 12%,var(--card));border-bottom:1px solid var(--line2);font:700 .72rem/1.2 var(--mono);color:var(--blue);}
+  .tbar .reset{margin-left:auto;font:700 .74rem/1 var(--sans);border:1px solid var(--blue-line);background:var(--card);color:var(--blue);border-radius:999px;padding:.35rem .7rem;cursor:pointer;text-decoration:none;white-space:nowrap;}
+  .view{flex:1;min-height:0;max-width:560px;width:100%;margin:0 auto;display:none;flex-direction:column;}
+  .view.on{display:flex;}
+  /* Onboarding */
   .head{display:flex;gap:.4rem;padding:.5rem .9rem;flex-wrap:wrap;}
   .oc{font:700 .63rem/1 var(--mono);padding:.26rem .48rem;border-radius:999px;background:var(--card2);color:var(--muted);border:1px solid var(--line2);}
   .oc.active{border-color:var(--blue);color:var(--blue);} .oc.done{background:var(--green-bg);color:var(--green-ink);border-color:transparent;} .oc.done::before{content:"✓ ";}
@@ -41,32 +41,91 @@
   .go{align-self:flex-start;font:700 .84rem/1 var(--sans);padding:.5rem .85rem;border-radius:10px;border:1px solid var(--blue-line);background:var(--blue-bg);color:var(--blue);cursor:pointer;} .go[disabled]{opacity:.45;cursor:default;}
   table.mx{border-collapse:collapse;font-size:.82rem;} table.mx th{font:700 .64rem/1 var(--mono);color:var(--muted);padding:.2rem;} table.mx td{padding:.22rem;text-align:center;} table.mx td:first-child{text-align:left;font-weight:700;white-space:nowrap;}
   .c{width:1.7rem;height:1.7rem;border-radius:8px;display:inline-block;background:var(--green);cursor:pointer;} .c.off{background:var(--card2);border:1px solid var(--line);}
-  .sum{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:.9rem;margin:.2rem 0;}
-  .sum h3{margin:0 0 .4rem;} .sum .row{font-size:.88rem;margin:.25rem 0;} .sum .row b{color:var(--muted);font-weight:700;font-size:.72rem;text-transform:uppercase;letter-spacing:.03em;display:block;}
-  .restart{width:100%;background:var(--blue);color:#fff;border:none;border-radius:12px;padding:.8rem;font:800 1rem/1 var(--sans);cursor:pointer;margin-top:.6rem;}
   .inbar{flex:0 0 auto;display:flex;gap:.4rem;padding:.55rem .9rem calc(.55rem + env(safe-area-inset-bottom));border-top:1px solid var(--line2);max-width:560px;width:100%;margin:0 auto;}
   .inbar input{flex:1;font:inherit;font-size:.92rem;padding:.62rem .72rem;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--ink);}
   .inbar input:disabled{opacity:.5} .inbar .snd{background:var(--green);color:#fff;border:none;border-radius:12px;padding:0 1rem;font-weight:800;font-size:1.15rem;cursor:pointer;}
+  /* Planen */
+  .pl{flex:1;overflow-y:auto;padding:.9rem .9rem 9rem;}
+  .pl h1{font-size:1.3rem;margin:.2rem 0 .1rem;} .pl .sub{color:var(--muted);font-size:.88rem;margin:0 0 .3rem;}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:.85rem .9rem;margin:.7rem 0;box-shadow:0 1px 2px rgba(20,22,28,.06),0 8px 24px rgba(20,22,28,.08);}
+  .chd{font-weight:750;margin:0 0 .2rem;}
+  .legend2{display:flex;gap:.7rem;flex-wrap:wrap;font-size:.74rem;color:var(--muted);margin:.1rem 0 .4rem;align-items:center;}
+  .agenda{display:flex;flex-direction:column;gap:.4rem;}
+  .dayrow{display:flex;align-items:center;gap:.6rem;padding:.5rem .6rem;border-radius:12px;background:var(--card2);border:1px solid var(--line2);}
+  .dayrow .dd{width:2.1rem;text-align:center;font:600 .66rem/1.1 var(--mono);color:var(--muted);flex-shrink:0;} .dayrow .dd b{font:800 .98rem/1.15 var(--sans);color:var(--ink);display:block;}
+  .eaters{display:flex;gap:.28rem;flex:1;flex-wrap:wrap;}
+  .av{width:1.55rem;height:1.55rem;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font:800 .72rem/1 var(--sans);background:var(--green);color:#fff;}
+  .spill{font:700 .72rem/1 var(--sans);padding:.3rem .55rem;border-radius:999px;white-space:nowrap;flex-shrink:0;} .spill.cook{background:var(--green-bg);color:var(--green-ink);} .spill.out{background:var(--grey-bg);color:var(--muted);}
+  .empty{background:color-mix(in oklab,var(--blue) 7%,var(--card));border:1px dashed var(--blue-line);border-radius:12px;padding:.8rem;text-align:center;color:var(--muted);font-size:.88rem;}
+  .dock{position:fixed;left:0;right:0;bottom:0;z-index:20;background:linear-gradient(to top,var(--paper) 78%,transparent);padding:.6rem .9rem calc(.6rem + env(safe-area-inset-bottom));}
+  .dock .in{max-width:560px;margin:0 auto;}
+  .votebtn{display:block;width:100%;background:var(--green);color:#fff;border:none;border-radius:14px;padding:.9rem;font:800 1.02rem/1 var(--sans);text-align:center;text-decoration:none;box-shadow:0 4px 16px color-mix(in oklab,var(--green) 40%,transparent);}
+  .askbar{display:flex;align-items:center;gap:.6rem;width:100%;text-align:left;cursor:pointer;margin-top:.5rem;border:1px solid color-mix(in oklab,CanvasText 13%,var(--card));border-radius:13px;padding:.55rem .7rem;background:color-mix(in oklab,CanvasText 4%,var(--card));box-shadow:0 1px 2px rgba(0,0,0,.05);}
+  .askbar .av2{width:2rem;height:2rem;flex:0 0 auto;border-radius:50%;display:grid;place-items:center;font-size:1.05rem;background:color-mix(in oklab,CanvasText 8%,var(--card));}
+  .askbar .lbl{flex:1;min-width:0;font-size:.85rem;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;} .askbar .lbl b{color:var(--ink);font-weight:750;}
+  .sback{position:fixed;inset:0;background:rgba(10,12,16,.42);opacity:0;visibility:hidden;transition:opacity .25s;z-index:30;} .sback.open{opacity:1;visibility:visible;}
+  .sheet{position:fixed;left:0;right:0;bottom:0;z-index:31;max-width:560px;margin:0 auto;height:78vh;background:var(--card);border-radius:20px 20px 0 0;transform:translateY(103%);visibility:hidden;transition:transform .32s cubic-bezier(.2,.8,.2,1),visibility 0s linear .32s;display:flex;flex-direction:column;box-shadow:0 -10px 34px rgba(0,0,0,.3);}
+  .sheet.open{transform:none;visibility:visible;transition:transform .32s cubic-bezier(.2,.8,.2,1),visibility 0s;}
+  .grab{width:40px;height:4px;border-radius:3px;background:var(--line);margin:.55rem auto .1rem;}
+  .shd{display:flex;align-items:center;gap:.5rem;padding:.25rem .9rem .55rem;font-weight:750;border-bottom:1px solid var(--line2);}
+  .shd .scope{margin-left:.2rem;font:700 .66rem/1 var(--mono);background:var(--orange-bg);color:var(--orange);border-radius:999px;padding:.2rem .5rem;} .shd .x{margin-left:auto;background:none;border:none;font-size:1.15rem;color:var(--muted);cursor:pointer;}
+  .qk{display:flex;gap:.4rem;flex-wrap:wrap;padding:.55rem .9rem 0;} .qk button{font:700 .78rem/1 var(--sans);padding:.4rem .7rem;border-radius:999px;border:1px solid var(--line);background:var(--card2);color:var(--ink);cursor:pointer;}
+  .ccard{align-self:flex-start;max-width:96%;border:1px solid var(--line);border-left:4px solid var(--orange);border-radius:11px;padding:.5rem .65rem;background:var(--card2);font-size:.85rem;}
+  .sin{display:flex;gap:.4rem;padding:.5rem .9rem calc(.6rem + env(safe-area-inset-bottom));border-top:1px solid var(--line2);}
+  .sin input{flex:1;font:inherit;font-size:.9rem;padding:.62rem .72rem;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--ink);} .sin .snd{background:var(--green);color:#fff;border:none;border-radius:12px;padding:0 1rem;font-weight:800;font-size:1.1rem;cursor:pointer;}
   @media (prefers-reduced-motion:reduce){*{animation:none!important}}
 </style>
 </head>
 <body>
-  <div class="tbar"><span>🧪 <b>TESTMODUS</b> · neuer User · nichts wird echt gespeichert</span><button class="reset" id="reset">🔄 Neu starten</button></div>
-  <div class="app">
-    <div class="head">
-      <span class="oc" data-oc="1">👤 Wer</span><span class="oc" data-oc="2">⛔ No-Gos</span><span class="oc" data-oc="3">🎯 Wichtig</span><span class="oc" data-oc="4">🗓️ Rhythmus</span>
-    </div>
+  <div class="tbar"><span>🧪 <b>TESTMODUS</b> · Haushalt <span id="hh"></span></span><a class="reset" href="?">🔄 Neuer Test-User</a></div>
+
+  <div class="view on" id="vOnb">
+    <div class="head"><span class="oc" data-oc="1">👤 Wer</span><span class="oc" data-oc="2">⛔ No-Gos</span><span class="oc" data-oc="3">🎯 Wichtig</span><span class="oc" data-oc="4">🗓️ Rhythmus</span></div>
     <div class="log" id="log"></div>
   </div>
-  <div class="inbar"><input id="text" placeholder="Antworten oder erzählen …" aria-label="Nachricht"><button class="snd" id="send">→</button></div>
+  <div class="inbar" id="inbar"><input id="text" placeholder="Antworten oder erzählen …" aria-label="Nachricht"><button class="snd" id="send">→</button></div>
+
+  <div class="view" id="vPlan">
+    <div class="pl">
+      <h1>🗓️ Diese Woche</h1><p class="sub" id="plsub">euer neuer Haushalt</p>
+      <div class="card"><div class="chd">Wer isst wann?</div>
+        <div class="legend2" id="legend"></div>
+        <div class="agenda" id="agenda"></div>
+      </div>
+      <div class="empty">🍽️ Noch kein Essensplan — als Nächstes würdet ihr <b>abstimmen &amp; kochen</b>.<br><span style="font-size:.8rem">(Vorschläge kommen im nächsten Schritt der App.)</span></div>
+    </div>
+    <div class="dock"><div class="in">
+      <a class="votebtn" href="#">🗳️ Weiter zum Voten →</a>
+      <button class="askbar" id="openA"><span class="av2">🧑‍🍳</span><span class="lbl"><b>Frag den Assistenten</b> – Gast, Allergie, Wunsch …</span><span>✨</span></button>
+    </div></div>
+  </div>
+
+  <div class="sback" id="sback"></div>
+  <div class="sheet" id="sheet"><div class="grab"></div>
+    <div class="shd"><span>🧑‍🍳</span> Küchenassistent <span class="scope">📅 Diese Woche</span><button class="x" id="closeA">✕</button></div>
+    <div class="qk"><button data-q="Am Donnerstag kommt Besuch">👤 Gast</button><button data-q="Freitag bin ich nicht da">🚗 Abwesend</button><button data-q="Diese Woche extra viel Brokkoli">🥕 Wunsch</button></div>
+    <div class="log" id="slog"></div>
+    <div class="sin"><input id="stext" placeholder="Sag's einfach …"><button class="snd" id="ssend">→</button></div>
+  </div>
 
 <script>
 (function(){
+  var SB={url:"https://qwuoynhmbisodcqasevs.supabase.co",key:"sb_publishable_bWwScjbczB4KfSc9faBUjA_wDf-4EE3"};
+  var H={apikey:SB.key,Authorization:"Bearer "+SB.key,"Content-Type":"application/json"};
+  var REST=SB.url.replace(/\/$/,"")+"/rest/v1/", FN=SB.url.replace(/\/$/,"")+"/functions/v1/assistent";
+  var q=new URLSearchParams(location.search), HH=q.get("h");
+  if(!HH){HH="demo-"+Math.random().toString(36).slice(2,8);q.set("h",HH);history.replaceState(null,"",location.pathname+"?"+q.toString());}
+  document.getElementById("hh").textContent=HH;
   var reduce=!!(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches);
-  var log=document.getElementById('log'),input=document.getElementById('text'),sendBtn=document.getElementById('send');
   var DOW=['Mo','Di','Mi','Do','Fr','Sa','So'];
-  var state={persons:[],nogos:[],grund:[],rhythm:{}}, curHandler=null, advanceFn=null, busy=false;
+  function rest(m,t,b){return fetch(REST+t,{method:m,headers:Object.assign(m==='POST'?{Prefer:'return=representation'}:{},H),body:b?JSON.stringify(b):undefined}).then(function(r){return r.text().then(function(x){return x?JSON.parse(x):null;});});}
+  function post(t,b){return rest('POST',t,b);} function get(t){return rest('GET',t);}
   function esc(s){var d=document.createElement('div');d.textContent=s==null?'':String(s);return d.innerHTML;}
+  function initials(n){return (n||'?').trim().charAt(0).toUpperCase();}
+
+  // ── Onboarding-Chat ──
+  var log=document.getElementById('log'),input=document.getElementById('text'),sendBtn=document.getElementById('send');
+  var state={persons:[],ids:{},nogos:[],grund:[],rhythm:{}},curHandler=null,advanceFn=null,busy=false;
   function scr(){log.scrollTo?log.scrollTo({top:log.scrollHeight,behavior:reduce?'auto':'smooth'}):log.scrollTop=log.scrollHeight;}
   function wait(ms,fn){setTimeout(fn,reduce?0:ms);}
   function me(t){var d=document.createElement('div');d.className='msg me';d.textContent=t;log.appendChild(d);scr();}
@@ -77,7 +136,7 @@
       if(build){wait(reduce?0:240,function(){var c=document.createElement('div');c.className='ctrl';b.appendChild(c);build(b,c);scr();busy=false;if(opts&&opts.focus)input.focus();});}
       else{busy=false;if(opts&&opts.then)wait(reduce?0:750,opts.then);}});}
   function wireSug(c){c.querySelectorAll('.chip.sug').forEach(function(x){x.addEventListener('click',function(){x.classList.toggle('sel');});});}
-  function sel(c){return [].slice.call(c.querySelectorAll('.chip.sug.sel')).map(function(x){return x.textContent.trim();});}
+  function sel(c){return [].slice.call(c.querySelectorAll('.chip.sug.sel')).map(function(x){return x.textContent.replace(/[^\p{L} ]/gu,'').trim();});}
 
   function stepIntro(){ask('Hi! 🧑‍🍳 Ich bin euer <b>Küchenassistent</b>.<br>Von <b>„Was gibt’s diese Woche?"</b> bis zur fertigen <b>Einkaufsliste</b> nehm ich euch alles ab — <b>gekocht wird bei euch.</b>',null,{then:stepPersons});}
   function stepPersons(){head(1,'active');
@@ -90,53 +149,89 @@
       function addN(v){(v||'').split(/,| und | & |&|\//i).map(function(s){return s.replace(/^(ich bin|wir sind|und)\s+/i,'').trim();}).filter(Boolean).forEach(function(n){state.persons.push(n);});rp();}
       c.querySelector('.add').addEventListener('click',function(){addN(nm.value);nm.value='';nm.focus();});
       nm.addEventListener('keydown',function(e){if(e.key==='Enter'){addN(nm.value);nm.value='';}});
-      go.addEventListener('click',function(){if(!state.persons.length||busy)return;me(state.persons.join(' & '));head(1,'done');stepNogos();});
+      go.addEventListener('click',function(){if(!state.persons.length||busy)return;
+        Promise.all(state.persons.map(function(n,i){return post('personen',{name:n,haushalt:HH,sort:i+1}).then(function(r){if(r&&r[0])state.ids[n]=r[0].id;});}))
+          .then(function(){me(state.persons.join(' & '));head(1,'done');stepNogos();});});
       curHandler=function(t){addN(t);};advanceFn=function(){go.click();};rp();
     },{focus:true});}
   function stepNogos(){head(2,'active');var o=['🥜 Nüsse','🌾 Gluten','🥛 Laktose','🥗 vegetarisch','🌱 vegan'];
     ask('Super, <b>'+esc(state.persons.join(' & '))+'</b> ✓<br>Gibt’s <b>harte No-Gos?</b> <span style="color:var(--muted)">(Allergien / Ernährung)</span>',function(b,c){
       c.innerHTML='<div class="chips">'+o.map(function(x){return '<span class="chip sug h">'+x+'</span>';}).join('')+'</div><button class="go" data-go>Keine / Weiter ›</button>';
       wireSug(c);var go=c.querySelector('[data-go]');
-      go.addEventListener('click',function(){if(busy)return;state.nogos=sel(c);me(state.nogos.join(', ')||'keine No-Gos');head(2,'done');stepGrund();});
+      go.addEventListener('click',function(){if(busy)return;state.nogos=sel(c);
+        var pid=state.ids[state.persons[0]];
+        Promise.all(state.nogos.map(function(w){var art=/vegetar|vegan/i.test(w)?'ernaehrungsform':'allergie';return pid?post('praeferenzen',{person_id:pid,art:art,wert:w,hart:true,haushalt:HH}):Promise.resolve();}))
+          .then(function(){me(state.nogos.join(', ')||'keine No-Gos');head(2,'done');stepGrund();});});
       curHandler=function(t){var s=document.createElement('span');s.className='chip sug h sel';s.textContent='✨ '+t;s.addEventListener('click',function(){s.classList.toggle('sel');});c.querySelector('.chips').appendChild(s);me(t);};
       advanceFn=function(){go.click();};});}
   function stepGrund(){head(3,'active');var o=['🥦 viel Gemüse','💪 proteinreich','⚡ wenig Aufwand','🥩 wenig Fleisch','🔄 abwechslungsreich'];
     ask('Und was ist euch beim Essen <b>wichtig?</b> Tipp an oder erzähl.',function(b,c){
       c.innerHTML='<div class="chips">'+o.map(function(x){return '<span class="chip sug g">'+x+'</span>';}).join('')+'</div><button class="go" data-go>Weiter ›</button>';
       wireSug(c);var go=c.querySelector('[data-go]');
-      go.addEventListener('click',function(){if(busy)return;state.grund=sel(c);me(state.grund.join(', ')||'—');head(3,'done');stepRhythm();});
+      go.addEventListener('click',function(){if(busy)return;state.grund=sel(c);
+        Promise.all(state.grund.map(function(w){return post('regeln',{typ:'wunsch',text:w,haushalt:HH});}))
+          .then(function(){me(state.grund.join(', ')||'—');head(3,'done');stepRhythm();});});
       curHandler=function(t){var s=document.createElement('span');s.className='chip sug g sel';s.textContent='✨ '+t;s.addEventListener('click',function(){s.classList.toggle('sel');});c.querySelector('.chips').appendChild(s);me(t);};
       advanceFn=function(){go.click();};});}
-  function stepRhythm(){head(4,'active');var names=state.persons.length?state.persons:['Du'];
+  function stepRhythm(){head(4,'active');var names=state.persons;
     var h='<tr><th></th>'+DOW.map(function(d){return '<th>'+d+'</th>';}).join('')+'</tr>';
     var rows=names.map(function(n,i){return '<tr><td>'+(i===0?'🧑 ':'👤 ')+esc(n)+'</td>'+DOW.map(function(){return '<td><span class="c"></span></td>';}).join('')+'</tr>';}).join('');
     ask('Fast fertig! <b>Wer ist abends typischerweise da?</b> Tippen = da/weg.',function(b,c){
       c.innerHTML='<table class="mx">'+h+rows+'</table><button class="go" data-go>Fertig ✓</button>';
       c.querySelectorAll('.c').forEach(function(x){x.addEventListener('click',function(){x.classList.toggle('off');});});
       var go=c.querySelector('[data-go]');
-      go.addEventListener('click',function(){if(busy)return;
-        [].slice.call(c.querySelectorAll('table.mx tr')).slice(1).forEach(function(tr,ri){var nm=names[ri];state.rhythm[nm]=[].slice.call(tr.querySelectorAll('.c')).map(function(cell,ci){return cell.classList.contains('off')?null:DOW[ci];}).filter(Boolean);});
-        me('Rhythmus gesetzt');head(4,'done');stepDone();});
+      go.addEventListener('click',function(){if(busy)return;var proms=[];
+        [].slice.call(c.querySelectorAll('table.mx tr')).slice(1).forEach(function(tr,ri){var n=names[ri],pid=state.ids[n];
+          [].slice.call(tr.querySelectorAll('.c')).forEach(function(cell,ci){ if(cell.classList.contains('off')&&pid){ proms.push(post('regeln',{person_id:pid,typ:'abwesenheit',wochentag:DOW[ci],text:'regelmäßig abends weg',haushalt:HH})); } });});
+        Promise.all(proms).then(function(){me('Rhythmus gesetzt');head(4,'done');stepDone();});});
       curHandler=function(t){me(t);};advanceFn=function(){go.click();};});}
-  function stepDone(){
-    ask('🎉 <b>Startklar!</b> So sieht euer neuer Haushalt aus:',function(b,c){
-      function chips(arr,cls){return (arr&&arr.length)?arr.map(function(x){return '<span class="chip '+(cls||'')+'" style="font-size:.8rem">'+esc(x)+'</span>';}).join(' '):'<span style="color:var(--muted)">—</span>';}
-      var rhythm=Object.keys(state.rhythm).map(function(n){return '<div class="row">'+esc(n)+': '+(state.rhythm[n].join(' · ')||'nie')+'</div>';}).join('');
-      c.innerHTML='<div class="sum"><h3>👤 Personen</h3><div class="chips">'+chips(state.persons,'d')+'</div>'
-        +'<div class="row" style="margin-top:.5rem"><b>⛔ Harte No-Gos</b>'+chips(state.nogos)+'</div>'
-        +'<div class="row" style="margin-top:.5rem"><b>🎯 Grundsätze</b>'+chips(state.grund)+'</div>'
-        +'<div class="row" style="margin-top:.5rem"><b>🗓️ Wer ist wann da</b>'+(rhythm||'—')+'</div>'
-        +'<button class="restart" id="again">🔄 Als neuer User neu starten</button></div>'
-        +'<div style="color:var(--muted);font-size:.8rem;text-align:center;margin-top:.4rem">Testmodus – keine echten Daten geändert.</div>';
-      c.querySelector('#again').addEventListener('click',reset);
-      input.disabled=true;sendBtn.disabled=true;input.placeholder='Test abgeschlossen – oben „Neu starten"';});}
+  function stepDone(){ask('🎉 <b>Startklar!</b> Ich hab euren Haushalt angelegt — hier ist eure Woche.',null,{then:function(){wait(500,showPlanen);}});}
 
   function sendText(){if(busy)return;var v=(input.value||'').trim();if(!v){if(advanceFn)advanceFn();return;}if(curHandler)curHandler(v);input.value='';scr();}
-  function reset(){log.innerHTML='';state={persons:[],nogos:[],grund:[],rhythm:{}};curHandler=null;advanceFn=null;busy=false;
-    input.disabled=false;sendBtn.disabled=false;input.placeholder='Antworten oder erzählen …';['1','2','3','4'].forEach(function(n){head(n,'');});stepIntro();}
-  document.getElementById('reset').addEventListener('click',reset);
   sendBtn.addEventListener('click',sendText);
   input.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();sendText();}});
+
+  // ── Planen (aus Supabase, scoped auf HH) ──
+  function showPlanen(){
+    Promise.all([get('personen?select=id,name&haushalt=eq.'+HH+'&order=sort'),get('regeln?select=person_id,wochentag&typ=eq.abwesenheit&haushalt=eq.'+HH)])
+      .then(function(r){var persons=r[0]||[],abw=r[1]||[];
+        var away={};abw.forEach(function(a){if(a.wochentag){(away[a.wochentag]=away[a.wochentag]||{})[a.person_id]=1;}});
+        document.getElementById('legend').innerHTML=persons.map(function(p){return '<span><span class="av">'+esc(initials(p.name))+'</span> '+esc(p.name)+'</span>';}).join('')+'<span>weg = nicht gezeigt</span>';
+        var dates={Mo:'',Di:'',Mi:'',Do:'',Fr:'',Sa:'',So:''};
+        var ag=DOW.map(function(d){
+          var here=persons.filter(function(p){return !(away[d]&&away[d][p.id]);});
+          var avs=here.map(function(p){return '<span class="av">'+esc(initials(p.name))+'</span>';}).join('');
+          var status=here.length?'<span class="spill cook">Kochen</span>':'<span class="spill out">Auswärts</span>';
+          return '<div class="dayrow"><div class="dd"><span>'+d+'</span><b></b></div><div class="eaters">'+(avs||'<span style="color:var(--muted);font-size:.8rem">niemand</span>')+'</div>'+status+'</div>';
+        }).join('');
+        document.getElementById('agenda').innerHTML=ag;
+        document.getElementById('plsub').textContent=persons.map(function(p){return p.name;}).join(' & ')+' · Haushalt '+HH;
+        document.getElementById('vOnb').classList.remove('on');document.getElementById('inbar').style.display='none';
+        document.getElementById('vPlan').classList.add('on');
+      });
+  }
+
+  // ── Assistent-Sheet (echte Function, scoped) ──
+  var sheet=document.getElementById('sheet'),sback=document.getElementById('sback'),slog=document.getElementById('slog'),stext=document.getElementById('stext'),shist=[],sseed=false;
+  function isoWeek(d){var t=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()));var dd=(t.getUTCDay()+6)%7;t.setUTCDate(t.getUTCDate()-dd+3);var f=new Date(Date.UTC(t.getUTCFullYear(),0,4));var w=1+Math.round(((t-f)/864e5-3+((f.getUTCDay()+6)%7))/7);return{jahr:t.getUTCFullYear(),kw:w};}
+  function sbot(h){var d=document.createElement('div');d.className='msg bot';d.innerHTML=h;slog.appendChild(d);slog.scrollTop=slog.scrollHeight;}
+  function sme(t){var d=document.createElement('div');d.className='msg me';d.textContent=t;slog.appendChild(d);slog.scrollTop=slog.scrollHeight;}
+  function chg(c){var d=document.createElement('div');d.className='ccard';d.innerHTML='<div>'+(c.scope==='woche'?'📅 diese Woche':'∞ dauerhaft')+' · '+esc(c.text||'gespeichert')+'</div>';slog.appendChild(d);slog.scrollTop=slog.scrollHeight;}
+  function openS(){sheet.classList.add('open');sback.classList.add('open');if(!sseed){sseed=true;sbot('🧑‍🍳 Sag mir, was <b>diese Woche</b> anders ist – z.&nbsp;B. „Freitag kommt Besuch".');}}
+  function closeS(){sheet.classList.remove('open');sback.classList.remove('open');}
+  document.getElementById('openA').addEventListener('click',openS);
+  document.getElementById('closeA').addEventListener('click',closeS);
+  sback.addEventListener('click',closeS);
+  document.querySelectorAll('.qk button').forEach(function(b){b.addEventListener('click',function(){stext.value=b.getAttribute('data-q');stext.focus();});});
+  function ssend(){var t=(stext.value||'').trim();if(!t)return;sme(t);shist.push({role:'user',content:t});stext.value='';
+    var ty=document.createElement('div');ty.className='msg bot typing';ty.innerHTML='<span></span><span></span><span></span>';slog.appendChild(ty);slog.scrollTop=slog.scrollHeight;
+    var w=isoWeek(new Date());
+    fetch(FN,{method:'POST',headers:H,body:JSON.stringify({messages:shist,scope:'woche',jahr:w.jahr,kw:w.kw,haushalt:HH})}).then(function(r){return r.json();})
+      .then(function(res){ty.remove();if(res.error){sbot('⚠️ '+res.error);return;}sbot(res.reply||'Erledigt.');shist.push({role:'assistant',content:res.reply||''});(res.changes||[]).forEach(chg);showPlanen();})
+      .catch(function(){ty.remove();sbot('⚠️ offline');});}
+  document.getElementById('ssend').addEventListener('click',ssend);
+  stext.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();ssend();}});
+
   stepIntro();
 })();
 </script>
