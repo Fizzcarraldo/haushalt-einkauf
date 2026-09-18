@@ -132,8 +132,8 @@
   .coach b{color:var(--green-ink);} .coach .ok{margin-left:.35rem;font:800 .75rem/1 var(--sans);color:#fff;background:var(--ai);border:none;border-radius:999px;padding:.36rem .72rem;cursor:pointer;}
   @keyframes coachin{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
   .sback{position:fixed;inset:0;background:rgba(10,12,16,.28);opacity:0;visibility:hidden;transition:opacity .25s;z-index:30;} .sback.open{opacity:1;visibility:visible;}
-  .sheet{position:fixed;left:0;right:0;top:14vh;bottom:var(--kb,0);z-index:31;max-width:560px;margin:0 auto;background:var(--paper);border-radius:20px 20px 0 0;transform:translateY(103%) scale(.9);transform-origin:50% 100%;visibility:hidden;transition:transform .36s cubic-bezier(.2,.85,.2,1),visibility 0s linear .36s;display:flex;flex-direction:column;box-shadow:0 -10px 34px rgba(0,0,0,.3);}
-  .sheet::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;border-radius:20px 20px 0 0;background:var(--ai);opacity:.9;}
+  .sheet{position:fixed;right:0;left:auto;top:0;bottom:var(--kb,0);z-index:31;width:min(93%,460px);margin:0;background:var(--paper);border-radius:18px 0 0 18px;transform:translateX(103%);transform-origin:100% 50%;visibility:hidden;transition:transform .34s cubic-bezier(.2,.82,.2,1),visibility 0s linear .34s;display:flex;flex-direction:column;box-shadow:-16px 0 40px rgba(0,0,0,.28);}
+  .sheet::before{content:"";position:absolute;top:0;bottom:0;left:0;width:3px;border-radius:18px 0 0 18px;background:var(--ai);opacity:.9;}
   .sheet.open{transform:none;visibility:visible;transition:transform .32s cubic-bezier(.2,.8,.2,1),visibility 0s;}
   .grab{width:40px;height:4px;border-radius:3px;background:var(--line);margin:.55rem auto .3rem;}
   .shd{display:flex;align-items:center;gap:.5rem;padding:.15rem .9rem .45rem;font-weight:750;}
@@ -721,19 +721,12 @@
     qk.querySelectorAll('button').forEach(function(bn){bn.addEventListener('click',function(){stext.value=bn.getAttribute('data-q');stext.focus();});});
     slog.innerHTML='';sbot(SCFG[sc].greet);}
   document.querySelectorAll('.scoperow button').forEach(function(x){x.addEventListener('click',function(){applyScope(x.getAttribute('data-sc'));});});
-  function openS(){
+  function openS(){                                        // Chat = Drawer von rechts (Board bleibt dahinter)
     hideCoach();
-    var pill=document.getElementById('openA'),av=pill&&pill.querySelector('.av2'),scf=sheet.querySelector('.chef');
-    var tgt=(!reduce&&av&&scf)?sheetChefRect(scf):null;   // Endposition messen, bevor das Sheet aufklappt
     sheet.classList.add('open');sback.classList.add('open');
     if(!sseed){sseed=true;applyScope('woche');}
-    if(tgt)coinFly(av,scf,'rise',{toRect:tgt});           // Koch steigt aus der Leiste in den Chat-Kopf
   }
-  function closeS(){
-    var pill=document.getElementById('openA'),av=pill&&pill.querySelector('.av2'),scf=sheet.querySelector('.chef');
-    if(!reduce&&av&&scf)coinFly(scf,av,'dive');            // Koch wandert zurück in die Leiste
-    sheet.classList.remove('open');sback.classList.remove('open');
-  }
+  function closeS(){sheet.classList.remove('open');sback.classList.remove('open');}
   document.getElementById('openA').addEventListener('click',openS);
   document.getElementById('closeA').addEventListener('click',closeS);
   sback.addEventListener('click',closeS);
