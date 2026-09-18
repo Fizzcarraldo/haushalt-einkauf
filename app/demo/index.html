@@ -76,9 +76,28 @@
   .pstep.done{color:var(--green-ink);} .pstep.done .pn{background:var(--green);color:#fff;} .psep{color:var(--muted);}
   .votebar{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin:.2rem 0 .5rem;font-size:.86rem;} .votebar .vb-who{color:var(--muted);} .votebar .vb-switch{display:inline-flex;gap:.25rem;}
   .vsw{width:1.7rem;height:1.7rem;border-radius:50%;border:1px solid var(--line);background:var(--card2);color:var(--muted);font:800 .72rem/1 var(--sans);cursor:pointer;} .vsw.on{background:var(--green);color:#fff;border-color:transparent;} .votebar .vb-share{margin-left:auto;}
-  .vopt{display:flex;gap:.6rem;align-items:flex-start;justify-content:space-between;padding:.55rem .6rem;border:1px solid var(--line);border-radius:12px;margin:.35rem 0;cursor:pointer;background:var(--card);}
-  .vopt.mine{border-color:var(--green);background:var(--green-bg);} .vopt.lead{box-shadow:0 0 0 2px color-mix(in oklab,var(--green) 30%,transparent);}
-  .vopt .vo-main{min-width:0;} .vopt .vo-main b{font-size:.95rem;} .vopt .vo-tally{display:flex;align-items:center;gap:.2rem;flex-wrap:wrap;justify-content:flex-end;flex:0 0 auto;max-width:45%;}
+  /* Voting-Board als eigene Seite: Emoji-Karten im Raster (angelehnt an die alte Wochenseite) */
+  .voteback{background:none;border:none;color:var(--blue);font-weight:700;font-size:.82rem;cursor:pointer;padding:.1rem 0;margin:.1rem 0 .4rem;}
+  .voteintro{font-size:.86rem;color:var(--muted);margin:.1rem 0 .6rem;}
+  .vday{margin:.2rem 0 1.05rem;} .vday .vd-h{display:flex;align-items:baseline;gap:.5rem;font-weight:800;font-size:1.02rem;margin:.55rem 0 .05rem;} .vday .vd-h .vd-who{font:400 .8rem/1.2 var(--sans);color:var(--muted);}
+  .opts{display:grid;grid-template-columns:repeat(auto-fill,minmax(9rem,1fr));gap:.5rem;margin:.35rem 0 .3rem;}
+  .vopt{display:flex;flex-direction:column;text-align:left;border:1px solid var(--line);border-radius:14px;overflow:hidden;cursor:pointer;background:var(--card);position:relative;padding:0 0 .5rem;transition:transform .08s ease,box-shadow .15s ease;}
+  .vopt:active{transform:translateY(1px);}
+  .vopt .vtop{position:relative;height:74px;display:grid;place-items:center;background:linear-gradient(135deg,color-mix(in oklab,var(--green) 14%,var(--card)),color-mix(in oklab,var(--blue) 14%,var(--card)));}
+  .vopt .vemoji{font-size:2.2rem;line-height:1;}
+  .vopt .vchips{position:absolute;top:.28rem;right:.28rem;display:flex;gap:.15rem;align-items:center;}
+  .vopt .vchips .av.tv{box-shadow:0 0 0 2px var(--card);}
+  .vopt .vname{padding:.4rem .55rem 0;font-size:.84rem;font-weight:750;line-height:1.16;}
+  .vopt .vmeta{padding:.1rem .55rem 0;font-size:.7rem;color:var(--muted);}
+  .vopt.mine{border-color:var(--green);} .vopt.mine .vtop{background:linear-gradient(135deg,color-mix(in oklab,var(--green) 30%,var(--card)),color-mix(in oklab,var(--green) 12%,var(--card)));}
+  .vopt.lead{box-shadow:0 0 0 2px color-mix(in oklab,var(--green) 48%,transparent);}
+  .vopt .vo-toggle{display:inline-grid;place-items:center;width:1.5rem;height:1.5rem;border-radius:50%;background:color-mix(in oklab,var(--card) 82%,transparent);font-size:.82rem;box-shadow:0 1px 3px rgba(0,0,0,.2);}
+  .vopt.mine .vo-toggle{background:var(--green);color:#fff;}
+  .vcrown{font-size:.9rem;filter:drop-shadow(0 1px 1px rgba(0,0,0,.35));}
+  .govote{display:block;width:100%;margin:.4rem 0 0;background:var(--green);color:#fff;border:none;border-radius:14px;padding:.85rem;font:800 1rem/1 var(--sans);cursor:pointer;box-shadow:0 4px 16px color-mix(in oklab,var(--green) 34%,transparent);}
+  .shareurl{width:100%;font:inherit;font-size:.8rem;padding:.55rem .6rem;border:1px solid var(--line);border-radius:10px;background:var(--card2);color:var(--ink);margin:.55rem 0;}
+  .sharebtns{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;} .sharebtns .wa{text-decoration:none;background:#25d366;color:#fff;display:inline-flex;align-items:center;} .sharebtns .lnk{background:none;border:none;color:var(--muted);font-weight:700;cursor:pointer;font-size:.82rem;}
+  .pstep{cursor:pointer;} .pstep.off{opacity:.45;cursor:default;}
   .av.tv{width:1.4rem;height:1.4rem;font-size:.66rem;background:var(--green);} .vo-toggle{margin-left:.15rem;font-size:1rem;}
   .vtag{font:700 .6rem/1 var(--mono);color:var(--blue);background:var(--blue-bg);border-radius:999px;padding:.12rem .35rem;} .vwarn{color:var(--warn,#a86400);}
   .vactions{display:flex;gap:.7rem;flex-wrap:wrap;margin:.3rem 0 .1rem;} .vactions .lnk{background:none;border:none;color:var(--blue);font-weight:700;font-size:.78rem;cursor:pointer;padding:0;}
@@ -190,12 +209,14 @@
     <div class="pl">
       <h1>🗓️ Diese Woche <span class="kw" id="kw"></span></h1><p class="sub" id="plsub">euer neuer Haushalt</p>
       <div class="stepper" id="stepper"></div>
+      <div id="planOnly">
       <div class="card"><div class="chd">Wer isst wann?</div><p class="cnote" id="wwsub" style="margin:.1rem 0 .4rem"></p>
         <div class="legend2" id="legend"></div>
         <div class="agenda" id="agenda"></div>
         <div class="chips" style="margin-top:.5rem"><button class="chip add" id="addGast">＋ Gast / Besonderheit</button></div>
       </div>
       <details class="acc"><summary>🔍 Was fließt in die Planung ein?</summary><ul class="tb" id="transp"></ul></details>
+      </div>
       <div id="planwrap">
         <div id="planEmpty" class="empty">🍽️ Noch kein Essensplan. <button class="btn-s" data-act="gen">✨ Vorschläge holen</button><br><span style="font-size:.8rem">…passend zu wer da ist, Diäten, Zeit &amp; Budget.</span></div>
         <div id="planCards"></div>
@@ -219,6 +240,7 @@
   </div></div>
 
   <div class="idov" id="idov" hidden><div class="idcard"><h3>🧑‍🍳 Wer bist du?</h3><p class="cnote">Stimm mit ab, was diese Woche gekocht wird – ohne App, ohne Account.</p><div class="idchips" id="idchips"></div></div></div>
+  <div class="idov" id="shareov" hidden><div class="idcard"><h3>🔗 Voting teilen</h3><p class="cnote">Link kopieren und per WhatsApp schicken – jede/r kann ohne App abstimmen.</p><input class="shareurl" id="shareurl" readonly><div class="sharebtns"><button class="btn-s" id="shareCopy">📋 Link kopieren</button><a class="btn-s wa" id="shareWa" target="_blank" rel="noopener">🟢 WhatsApp</a><button class="lnk" id="shareNative" hidden>📲 Teilen…</button><button class="lnk" id="shareClose">Schließen</button></div><span class="cnote" id="sharemsg"></span></div></div>
   <div class="sback" id="sback"></div>
   <div class="sheet" id="sheet"><div class="grab"></div>
     <div class="shd"><span class="chef mid" id="schef"><span class="cf">🧑‍🍳</span><i class="ring"></i><b class="steam">✨</b></span><b>Assistent</b> <span class="scoperow"><button data-sc="woche" class="on w">📅 Woche</button><button data-sc="dauer" class="d">∞ Dauerhaft</button></span><button class="x" id="closeA">✕</button></div>
@@ -386,7 +408,7 @@
   // ── App-Modus: Nav, Planen, Profil (alles scoped auf HH) ──
   function isoWeek(d){var t=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()));var dd=(t.getUTCDay()+6)%7;t.setUTCDate(t.getUTCDate()-dd+3);var f=new Date(Date.UTC(t.getUTCFullYear(),0,4));var w=1+Math.round(((t-f)/864e5-3+((f.getUTCDay()+6)%7))/7);return{jahr:t.getUTCFullYear(),kw:w};}
   var DATA={persons:[],regeln:[],ereignisse:[],woche:null,stimmen:[]};
-  var voteMode=!!q.get('vote'), VOTER={id:null,name:null};
+  var voteMode=!!q.get('vote'), VOTER={id:null,name:null}, vView=null; // vView: null=auto | 'plan' | 'vote'
   var HART={allergie:1,ernaehrungsform:1}, ARTLBL={allergie:'Allergie',ernaehrungsform:'Ernährung',abneigung:'mag nicht',vorliebe:'mag'};
   var TYPLBL={abwesenheit:'abwesend',anwesenheit:'anwesend',hinweis:'Hinweis'};
   // Assistent-Widget: rotierender Beispiel-Hinweis (lehrt Fähigkeiten & Reichweite) + einmaliger Coachmark
@@ -506,13 +528,23 @@
       return '<li><b>'+d+':</b> '+names+(hard.length?' <span class="hx">⛔ '+hard.map(esc).join(', ')+'</span>':' <span class="sx">keine Einschränkung</span>')+'</li>';}).filter(Boolean).join('');
     document.getElementById('transp').innerHTML=ctx+(tp||'<li class="sx">—</li>');
     var wv=DATA.woche&&DATA.woche.vorschlaege&&DATA.woche.vorschlaege.tage&&DATA.woche.vorschlaege.tage.length;
-    if(DATA.woche&&DATA.woche.status==='fest'&&DATA.woche.plan){renderDecided();}
-    else if(wv){renderVoting(DATA.woche.vorschlaege.tage);}
-    else{var _pc=document.getElementById('planCards');if(_pc)_pc.innerHTML='';var _pe=document.getElementById('planEmpty');if(_pe){_pe.style.display='';_pe.innerHTML='🍽️ Noch kein Essensplan. <button class="btn-s" data-act="gen">✨ Vorschläge holen</button><br><span style="font-size:.8rem">…passend zu wer da ist, Diäten, Zeit &amp; Budget.</span>';}}
-    renderStepper();}
-  function renderStepper(){var el=document.getElementById('stepper');if(!el)return;
-    var st=(DATA.woche&&DATA.woche.status)||'planen';var idx=st==='fest'?2:(st==='voten'?1:0);var steps=['Wer da','Voten','Steht fest'];
-    el.innerHTML=steps.map(function(s,i){return '<span class="pstep'+(i===idx?' now':'')+(i<idx?' done':'')+'"><b class="pn">'+(i<idx?'✓':(i+1))+'</b>'+s+'</span>';}).join('<span class="psep">›</span>');}
+    var st=(DATA.woche&&DATA.woche.status)||'planen';
+    var page=st==='fest'?(vView==='plan'?'plan':'decided'):(wv?(vView==='plan'?'plan':'vote'):'plan');
+    var po=document.getElementById('planOnly');if(po)po.style.display=(page==='plan')?'':'none';
+    var _pc=document.getElementById('planCards'),_pe=document.getElementById('planEmpty');
+    if(page==='decided'){if(_pe)_pe.style.display='none';renderDecided();}
+    else if(page==='vote'){if(_pe)_pe.style.display='none';renderVoting(DATA.woche.vorschlaege.tage);}
+    else{if(_pc)_pc.innerHTML='';if(_pe){_pe.style.display='';
+      if(wv)_pe.innerHTML='✅ <b>Vorschläge stehen bereit.</b><br><span style="font-size:.8rem">Prüf noch, wer da ist – danach geht\'s ans Abstimmen.</span><button class="govote" data-act="govote">🗳️ Weiter zum Voten →</button>';
+      else _pe.innerHTML='🍽️ Noch kein Essensplan. <button class="btn-s" data-act="gen">✨ Vorschläge holen</button><br><span style="font-size:.8rem">…passend zu wer da ist, Diäten, Zeit &amp; Budget.</span>';}}
+    renderStepper(page);}
+  function renderStepper(page){var el=document.getElementById('stepper');if(!el)return;
+    var st=(DATA.woche&&DATA.woche.status)||'planen';
+    var wv=DATA.woche&&DATA.woche.vorschlaege&&DATA.woche.vorschlaege.tage&&DATA.woche.vorschlaege.tage.length;
+    page=page||(st==='fest'?'decided':(wv?'vote':'plan'));
+    var cur=page==='decided'?2:(page==='vote'?1:0);
+    var steps=[{t:'Wer da',act:'goplan',on:true},{t:'Voten',act:'govote',on:!!wv},{t:'Steht fest',act:'godecided',on:st==='fest'}];
+    el.innerHTML=steps.map(function(s,i){return '<span class="pstep'+(i===cur?' now':'')+(i<cur?' done':'')+(s.on?'':' off')+'" data-act="'+s.act+'"><b class="pn">'+(i<cur?'✓':(i+1))+'</b>'+s.t+'</span>';}).join('<span class="psep">›</span>');}
   // ── Vorschlags-Generierung (US-05): Kontext aus Anwesenheit + harten Ausschlüssen + Grundsätzen -> AI-Gerichte ──
   var DIETWORDS=/^(vegetarisch|vegan|pescetarisch|halal|koscher|flexitarisch|low[\s-]?carb|paleo|keto)$/i;
   function dayContext(d){var here=presentOn(d),g=guestsOn(d);if(!here.length&&!g.length)return null;
@@ -529,26 +561,34 @@
   function vnorm(s){return (s||'').toLowerCase().replace(/ä/g,'a').replace(/ö/g,'o').replace(/ü/g,'u').replace(/ß/g,'ss').replace(/[^a-z]/g,'');}
   function tagCoveredBy(cons,list){return vnorm(cons)&&(list||[]).some(function(o){var a=vnorm(o),b=vnorm(cons);return a&&b&&(a===b||a.indexOf(b)>=0||b.indexOf(a)>=0);});}
   function loadStimmen(){var wid=DATA.woche&&DATA.woche.id;if(!wid)return Promise.resolve();return get('stimme?select=tag,option_id,voter_id&haushalt=eq.'+HH+'&woche_id=eq.'+wid).then(function(s){DATA.stimmen=s||[];});}
+  function dishEmoji(t){t=(t||'').toLowerCase();var m=[['pasta|spaghetti|nudel|amatriciana|bolognese|carbonara|lasagne|penne','🍝'],['pizza|flammkuchen','🍕'],['salat|salad|tabouleh|couscous','🥗'],['ramen|nudelsuppe|pho','🍜'],['suppe|eintopf|gulasch','🍲'],['curry|dal|linsen','🍛'],['bowl|poke','🥣'],['risotto|pilz','🍄'],['reis|nasi|jambalaya','🍚'],['burger','🍔'],['taco|burrito|fajita|quesadilla|wrap','🌯'],['sushi|maki','🍣'],['fisch|lachs|kabeljau|seelachs|thunfisch|garnele|scampi|shrimp','🐟'],['ei|shakshuka|omelett|frittata|quiche|rührei','🍳'],['chili|bohnen','🌶️'],['falafel|kichererbsen|hummus','🧆'],['kartoffel|gratin|pommes','🥔'],['steak|rind|schnitzel|hähnchen|huhn|pute|hack|wurst|fleisch|gyros','🍖'],['tofu|teriyaki|wok|asiatisch|pad thai|gochujang','🥢'],['pancake|waffel|toast','🥞'],['gemüse|veggie|ratatouille|auflauf|ofen','🥦']];for(var i=0;i<m.length;i++){if(new RegExp(m[i][0]).test(t))return m[i][1];}return '🍽️';}
   function renderVoting(tage){var pe=document.getElementById('planEmpty');if(pe)pe.style.display='none';
     var vn=VOTER.name||(VOTER.id?nameOf(VOTER.id):'—');
-    var bar='<div class="votebar"><span class="vb-who">Du: <b>'+esc(vn)+'</b></span><span class="vb-switch">'+DATA.persons.map(function(p){return '<button class="vsw'+(p.id===VOTER.id?' on':'')+'" data-act="who" data-id="'+p.id+'" title="'+esc(p.name)+'">'+esc(initials(p.name))+'</button>';}).join('')+'</span><button class="btn-s vb-share" data-act="teilen">📲 Teilen</button></div>';
+    var back='<button class="voteback" data-act="goplan">← Wer ist da? / Plan</button>';
+    var bar='<div class="votebar"><span class="vb-who">Du: <b>'+esc(vn)+'</b></span><span class="vb-switch">'+DATA.persons.map(function(p){return '<button class="vsw'+(p.id===VOTER.id?' on':'')+'" data-act="who" data-id="'+p.id+'" title="'+esc(p.name)+'">'+esc(initials(p.name))+'</button>';}).join('')+'</span><button class="btn-s vb-share" data-act="teilen">🔗 Link teilen</button></div>';
+    var intro='<p class="voteintro">Pro Tag 3 Vorschläge – tipp deine Favoriten an (mehrere ok). 🏆 = die meisten Stimmen.</p>';
     var cards=(tage||[]).map(function(t){var here=presentOn(t.tag),g=guestsOn(t.tag);
       var names=here.map(function(p){return esc(p.name)+(p.rolle==='kind'?' 🧒':'');}).join(' & ');if(g.length)names+=(names?' · ':'')+g.map(function(e){return esc(e.gast_name||'Gast');}).join(', ')+' (Gast)';
-      if(!here.length&&!g.length)return '<div class="card"><div class="chd">'+esc(t.tag)+' <span class="cnote" style="font-weight:400">niemand da</span></div><div class="cnote">🍽️ auswärts</div></div>';
+      if(!here.length&&!g.length)return '<div class="card vday"><div class="vd-h">'+esc(t.tag)+' <span class="vd-who">niemand da</span></div><div class="awaycard cnote">🍽️ auswärts – kein Kochen</div></div>';
       var dc=dayContext(t.tag),cons=dc?[].concat(dc.diaeten,dc.vermeiden):[];
-      var comp=cons.length?'<div class="cnote" style="color:var(--green-ink);font-weight:600;margin:0 0 .3rem">✓ passt für alle: '+cons.map(esc).join(' · ')+'</div>':'';
+      var comp=cons.length?'<div class="cnote" style="color:var(--green-ink);font-weight:600;margin:.1rem 0">✓ passt für alle: '+cons.map(esc).join(' · ')+'</div>':'';
       var opts=(t.vorschlaege||[]);var maxv=0;opts.forEach(function(v,i){var n=votesFor(t.tag,optId(t.tag,v,i)).length;if(n>maxv)maxv=n;});
-      var rows=opts.map(function(v,i){var oid=optId(t.tag,v,i),vs=votesFor(t.tag,oid),lead=maxv>0&&vs.length===maxv;
+      var cells=opts.map(function(v,i){var oid=optId(t.tag,v,i),vs=votesFor(t.tag,oid),lead=maxv>0&&vs.length===maxv&&vs.length>0,mine=myVote(t.tag,oid);
         var confl=v.eigen?[]:cons.filter(function(c){return !tagCoveredBy(c,[].concat(v.diaeten_ok||[],v.allergene_frei||[]));});
-        var warn=confl.length?'<span class="vwarn" title="prüfen: '+esc(confl.join(', '))+'">⚠️</span>':'';
-        var tally=vs.map(function(s){return '<span class="av tv">'+esc(initials(nameOf(s.voter_id)))+'</span>';}).join('');
-        return '<div class="vopt'+(myVote(t.tag,oid)?' mine':'')+(lead?' lead':'')+'" data-act="vote" data-day="'+t.tag+'" data-oid="'+esc(oid)+'"><div class="vo-main"><b>'+esc(v.titel||'')+'</b> '+(v.eigen?'<span class="vtag">✍️ '+esc(v.eigen)+'</span> ':'')+warn+' <span class="auf">'+esc(v.aufwand||'')+'</span><div class="cnote">'+esc(v.kurz||'')+'</div></div><div class="vo-tally">'+tally+'<span class="vo-toggle">'+(myVote(t.tag,oid)?'✓':'👍')+'</span></div></div>';}).join('');
+        var warn=confl.length?' <span class="vwarn" title="prüfen: '+esc(confl.join(', '))+'">⚠️</span>':'';
+        var tally=vs.map(function(s){return '<span class="av tv" title="'+esc(nameOf(s.voter_id))+'">'+esc(initials(nameOf(s.voter_id)))+'</span>';}).join('');
+        var crown=lead?'<span class="vcrown">🏆</span>':'';var meta=[v.aufwand,v.kurz].filter(Boolean).map(esc).join(' · ');
+        return '<button class="vopt'+(mine?' mine':'')+(lead?' lead':'')+'" data-act="vote" data-day="'+esc(t.tag)+'" data-oid="'+esc(oid)+'">'
+          +'<span class="vtop"><span class="vemoji">'+dishEmoji(v.titel)+'</span><span class="vchips">'+crown+tally+'<span class="vo-toggle">'+(mine?'✓':'👍')+'</span></span></span>'
+          +'<b class="vname">'+esc(v.titel||'')+warn+'</b>'
+          +(v.eigen?'<span class="vmeta"><span class="vtag">✍️ '+esc(v.eigen)+'</span></span>':(meta?'<span class="vmeta">'+meta+'</span>':''))
+          +'</button>';}).join('');
       var none=votesFor(t.tag,'__none__');var noneline=none.length?'<div class="cnote" style="color:var(--warn,#a86400)">👎 '+none.map(function(s){return esc(nameOf(s.voter_id));}).join(', ')+' finden nichts dabei</div>':'';
-      var actions='<div class="vactions"><button class="lnk" data-act="own" data-day="'+t.tag+'">➕ eigener Vorschlag</button><button class="lnk" data-act="regenday" data-day="'+t.tag+'">↻ 3 neue</button><button class="lnk" data-act="none" data-day="'+t.tag+'">👎 nichts davon</button><button class="lnk" data-act="notda" data-day="'+t.tag+'">🙅 ich nicht dabei</button></div>';
-      return '<div class="card"><div class="chd">'+esc(t.tag)+' <span class="cnote" style="font-weight:400">'+names+'</span></div>'+comp+rows+noneline+actions+'</div>';}).join('');
+      var actions='<div class="vactions"><button class="lnk" data-act="own" data-day="'+esc(t.tag)+'">➕ eigener Vorschlag</button><button class="lnk" data-act="regenday" data-day="'+esc(t.tag)+'">↻ 3 neue</button><button class="lnk" data-act="none" data-day="'+esc(t.tag)+'">👎 nichts davon</button><button class="lnk" data-act="notda" data-day="'+esc(t.tag)+'">🙅 ich nicht dabei</button></div>';
+      return '<div class="card vday"><div class="vd-h">'+esc(t.tag)+' <span class="vd-who">'+names+'</span></div>'+comp+'<div class="opts">'+cells+'</div>'+noneline+actions+'</div>';}).join('');
     var voted={};DATA.stimmen.forEach(function(s){voted[s.voter_id]=1;});var miss=DATA.persons.filter(function(p){return !voted[p.id];}).map(function(p){return p.name;});
     var done='<span class="cnote">'+(DATA.persons.length-miss.length)+'/'+DATA.persons.length+' haben abgestimmt'+(miss.length?' · offen: '+esc(miss.join(', ')):'')+'</span>';
-    document.getElementById('planCards').innerHTML=bar+cards+'<div class="votefoot">'+done+'<button class="votebtn2" data-act="festlegen">✓ Woche festlegen →</button></div>';}
+    document.getElementById('planCards').innerHTML=back+bar+intro+cards+'<div class="votefoot">'+done+'<button class="votebtn2" data-act="festlegen">✓ Woche festlegen →</button></div>';}
   function renderDecided(){var pe=document.getElementById('planEmpty');if(pe)pe.style.display='none';var plan=DATA.woche.plan||{};var tage=(DATA.woche.vorschlaege&&DATA.woche.vorschlaege.tage)||[];
     var cards=tage.map(function(t){var here=presentOn(t.tag),g=guestsOn(t.tag);if(!here.length&&!g.length)return '<div class="dcard out"><b>'+esc(t.tag)+'</b> <span class="cnote">auswärts</span></div>';
       var ch=plan[t.tag],titel=ch?ch.titel:'—';
@@ -566,7 +606,15 @@
   function setPlanDay(tag,oid){var arr=DATA.woche.vorschlaege.tage,t=arr.filter(function(x){return x.tag===tag;})[0];if(!t)return;var v=(t.vorschlaege||[]).filter(function(x,i){return optId(tag,x,i)===oid;})[0];if(!v)return;DATA.woche.plan=DATA.woche.plan||{};DATA.woche.plan[tag]={id:oid,titel:v.titel};var wid=DATA.woche.id;if(wid)rest('PATCH','wochen?id=eq.'+wid,{plan:DATA.woche.plan});renderPlanen();}
   function reopenVote(){DATA.woche.status='voten';var wid=DATA.woche.id;if(wid)rest('PATCH','wochen?id=eq.'+wid,{status:'voten'});renderPlanen();}
   function einkauf(){var plan=DATA.woche.plan||{};var lines=DOW.map(function(d){return plan[d]?d+': '+plan[d].titel:null;}).filter(Boolean);var txt='🛒 Einkauf diese Woche (Gerichte):\n'+lines.join('\n')+'\n\n(Zutatenliste folgt im Rezept-Update.)';if(navigator.share)navigator.share({title:'Einkaufsliste',text:txt}).catch(function(){});else alert(txt);}
-  function teilen(){var url=location.origin+location.pathname+'?h='+encodeURIComponent(HH)+'&vote=1';var txt='🍽️ Was essen wir diese Woche? Stimm mit ab:';if(navigator.share)navigator.share({title:'Wochen-Voting',text:txt,url:url}).catch(function(){});else prompt('Link zum Teilen:',url);}
+  function teilen(){var url=location.origin+location.pathname+'?h='+encodeURIComponent(HH)+'&vote=1';openShare(url,'🍽️ Was essen wir diese Woche? Stimm mit ab:');}
+  function openShare(url,title){var ov=document.getElementById('shareov');if(!ov)return;
+    var inp=document.getElementById('shareurl');inp.value=url;
+    document.getElementById('shareWa').href='https://wa.me/?text='+encodeURIComponent((title?title+' ':'')+url);
+    var nat=document.getElementById('shareNative');nat.hidden=!navigator.share;nat._url=url;nat._title=title;
+    document.getElementById('sharemsg').textContent='';ov.hidden=false;
+    setTimeout(function(){try{inp.focus();inp.select();}catch(e){}},40);}
+  function copyUrl(){var inp=document.getElementById('shareurl'),msg=document.getElementById('sharemsg');var ok=function(){msg.textContent='Link kopiert ✓';};var fb=function(){try{inp.focus();inp.select();document.execCommand('copy');ok();}catch(e){msg.textContent='Bitte Link manuell markieren & kopieren';}};
+    if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(inp.value).then(ok,fb);else fb();}
   function festlegen(){var tage=DATA.woche&&DATA.woche.vorschlaege&&DATA.woche.vorschlaege.tage;if(!tage)return;
     var voted={};DATA.stimmen.forEach(function(s){voted[s.voter_id]=1;});var miss=DATA.persons.filter(function(p){return !voted[p.id];}).map(function(p){return p.name;});
     if(miss.length&&!confirm(miss.join(', ')+' ha'+(miss.length>1?'ben':'t')+' noch nicht abgestimmt. Trotzdem festlegen?'))return;
@@ -587,7 +635,14 @@
       else if(pe&&!onlyTag){pe.style.display='';pe.innerHTML='⚠️ Konnte gerade keine Vorschläge holen. <button class="btn-s" data-act="gen">Nochmal</button>';}
     }).catch(function(){if(!retry)generatePlan(true,onlyTag);else if(pe&&!onlyTag){pe.style.display='';pe.innerHTML='⚠️ offline. <button class="btn-s" data-act="gen">Nochmal</button>';}});}
   document.getElementById('planwrap').addEventListener('click',function(e){var b=e.target.closest('[data-act]');if(!b)return;var act=b.getAttribute('data-act'),day=b.getAttribute('data-day'),oid=b.getAttribute('data-oid'),id=b.getAttribute('data-id');
-    if(act==='gen')generatePlan();else if(act==='vote')setVote(day,oid);else if(act==='who')setVoter(id);else if(act==='teilen')teilen();else if(act==='own')addOwn(day);else if(act==='regenday')generatePlan(false,day);else if(act==='notda')notDa(day);else if(act==='none')setVote(day,'__none__');else if(act==='festlegen')festlegen();else if(act==='override')setPlanDay(day,oid);else if(act==='reopen')reopenVote();else if(act==='einkauf')einkauf();});
+    if(act==='gen')generatePlan();else if(act==='vote')setVote(day,oid);else if(act==='who')setVoter(id);else if(act==='teilen')teilen();else if(act==='own')addOwn(day);else if(act==='regenday')generatePlan(false,day);else if(act==='notda')notDa(day);else if(act==='none')setVote(day,'__none__');else if(act==='festlegen')festlegen();else if(act==='override')setPlanDay(day,oid);else if(act==='reopen')reopenVote();else if(act==='einkauf')einkauf();else if(act==='govote'){vView='vote';renderPlanen();}else if(act==='goplan'){vView='plan';renderPlanen();}});
+  document.getElementById('stepper').addEventListener('click',function(e){var b=e.target.closest('[data-act]');if(!b||b.classList.contains('off'))return;var act=b.getAttribute('data-act');
+    if(act==='goplan'){vView='plan';renderPlanen();}else if(act==='govote'){vView='vote';renderPlanen();}else if(act==='godecided'){vView=null;renderPlanen();}});
+  (function(){var ov=document.getElementById('shareov');if(!ov)return;
+    document.getElementById('shareCopy').addEventListener('click',copyUrl);
+    document.getElementById('shareClose').addEventListener('click',function(){ov.hidden=true;});
+    ov.addEventListener('click',function(e){if(e.target===ov)ov.hidden=true;});
+    document.getElementById('shareNative').addEventListener('click',function(){if(navigator.share)navigator.share({title:'Wochen-Voting',text:this._title||'',url:this._url}).catch(function(){});});})();
   // ── Identität für Link-Voter (kein Account) ──
   function askWhoAreYou(){var ov=document.getElementById('idov'),ch=document.getElementById('idchips');if(!ov||!ch)return;
     ch.innerHTML=DATA.persons.map(function(p){return '<button data-vid="'+p.id+'">'+esc(p.name)+(p.rolle==='kind'?' 🧒':'')+'</button>';}).join('')+'<button class="new" data-vnew="1">+ Ich bin neu</button>';
