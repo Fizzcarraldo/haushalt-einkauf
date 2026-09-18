@@ -220,13 +220,19 @@
   function stepPersons(){head(1,'active');state.roles=state.roles||[];
     ask('Damit das passt, lernen wir uns kurz kennen. 👋<br><b>Wer kocht &amp; isst mit?</b>',function(b,c){
       input.placeholder='Name eintippen – z. B. du …';
-      c.innerHTML='<div class="chips" data-list></div><button class="go" data-go disabled>Passt ›</button><div class="cnote" style="margin-top:.4rem">↓ Namen unten eintippen (Enter). Tippe 🧑 an, um jemanden als <b>Kind</b> 🧒 zu markieren.</div>';
+      c.innerHTML='<div class="chips" data-list></div><button class="go" data-go disabled>Passt ›</button><div class="cnote" style="margin-top:.4rem">↓ Namen unten eintippen (Enter). Tippe 👤 an, um jemanden als <b>Kind</b> 🧒 zu markieren.</div>';
       var list=c.querySelector('[data-list]'),go=c.querySelector('[data-go]');
-      function rp(){list.innerHTML=state.persons.map(function(n,i){return '<span class="chip d"><span class="rl" data-role="'+i+'" title="Erwachsen/Kind umschalten">'+(state.roles[i]==='kind'?'🧒':'🧑')+'</span> '+esc(n)+' <span class="x" data-rm="'+i+'">✕</span></span>';}).join('');
+      function rp(){list.innerHTML=state.persons.map(function(n,i){return '<span class="chip d"><span class="rl" data-role="'+i+'" title="Erwachsen/Kind umschalten">'+(state.roles[i]==='kind'?'🧒':'👤')+'</span> '+esc(n)+' <span class="x" data-rm="'+i+'">✕</span></span>';}).join('');
         list.querySelectorAll('[data-rm]').forEach(function(x){x.addEventListener('click',function(){var i=+x.getAttribute('data-rm');state.persons.splice(i,1);state.roles.splice(i,1);rp();});});
         list.querySelectorAll('[data-role]').forEach(function(x){x.addEventListener('click',function(){var i=+x.getAttribute('data-role');state.roles[i]=state.roles[i]==='kind'?'erwachsen':'kind';rp();});});
         go.disabled=!state.persons.length;go.textContent=state.persons.length?('Weiter mit '+state.persons.join(' & ')+' ›'):'Passt ›';}
-      function addN(v){(v||'').split(/,| und | & |&|\//i).map(function(s){return s.replace(/^(ich bin|wir sind|und)\s+/i,'').replace(/\s+und$/i,'').trim();}).filter(Boolean).forEach(function(n){state.persons.push(n);state.roles.push('erwachsen');});rp();}
+      function addN(v){(v||'').split(/,|;|\bund\b|&|\/|\+/i).map(function(s){return s
+        .replace(/^\s*(ich bin|ich heiße|ich heisse|wir sind|das ist|das sind|hier ist|hier sind|und|auch|noch|dann|genau|also)\s+/i,'')
+        .replace(/\s+(ist|sind|isst|essen|esse|kocht|kochen|koche|kommt|komme|macht|mache|mag|will)\b.*$/i,'')
+        .replace(/\s+(mit|dabei|dazu|auch)\b.*$/i,'')
+        .replace(/[^\p{L}\p{M}\s'’-]/gu,'').replace(/\s{2,}/g,' ').trim()
+        .replace(/(^|\s)(\p{L})/gu,function(m,p,ch){return p+ch.toUpperCase();});
+      }).filter(Boolean).forEach(function(n){state.persons.push(n);state.roles.push('erwachsen');});rp();}
       go.addEventListener('click',function(){if(!state.persons.length||busy)return;
         Promise.all(state.persons.map(function(n,i){return post('personen',{name:n,haushalt:HH,sort:i+1,rolle:state.roles[i]||'erwachsen'}).then(function(r){if(r&&r[0])state.ids[n]=r[0].id;});}))
           .then(function(){me(state.persons.join(' & '));head(1,'done');stepNogos();});});
@@ -381,7 +387,7 @@
   function renderProfil(){
     document.getElementById('pfPersons').innerHTML=DATA.persons.map(function(p){
       var chips=(p.praeferenzen||[]).map(function(x){return '<span class="pref'+(x.hart?' hart':'')+'"><span class="art">'+esc(ARTLBL[x.art]||x.art)+'</span>'+esc(x.wert)+'<span class="x" data-act="delpref" data-id="'+x.id+'">✕</span></span>';}).join('')||'<span class="cnote">keine</span>';
-      return '<div class="person"><div class="pn">'+(p.rolle==='kind'?'🧒':'👤')+' '+esc(p.name)+' <button class="rolbtn" data-act="togglerolle" data-id="'+p.id+'" data-rolle="'+(p.rolle||'erwachsen')+'">'+(p.rolle==='kind'?'🧒 Kind':'🧑 Erwachsen')+'</button><button class="del" data-act="delperson" data-id="'+p.id+'">Entfernen</button></div><div class="prefs">'+chips+'</div>'
+      return '<div class="person"><div class="pn">'+(p.rolle==='kind'?'🧒':'👤')+' '+esc(p.name)+' <button class="rolbtn" data-act="togglerolle" data-id="'+p.id+'" data-rolle="'+(p.rolle||'erwachsen')+'">'+(p.rolle==='kind'?'🧒 Kind':'👤 Erwachsen')+'</button><button class="del" data-act="delperson" data-id="'+p.id+'">Entfernen</button></div><div class="prefs">'+chips+'</div>'
         +'<div class="addrow"><select class="pa-art"><option value="vorliebe">mag</option><option value="abneigung">mag nicht</option><option value="allergie">Allergie (hart)</option><option value="ernaehrungsform">Ernährung (hart)</option></select><input class="pa-wert" placeholder="z. B. Lachs, asiatisch"><button class="btn-s" data-act="addpref" data-id="'+p.id+'">+</button></div></div>';}).join('')
       +'<div class="addrow"><input id="np-name" placeholder="Neue Person …"><button class="btn-s" data-act="addperson">+ Person</button></div>';
     var gr=DATA.regeln.filter(function(r){return r.typ==='wunsch';});
