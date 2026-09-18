@@ -38,6 +38,7 @@
   .chip.sug{border-style:dashed;color:var(--muted);background:none;cursor:pointer;} .chip.sug.sel{border-style:solid;font-weight:700;}
   .chip.sug.h.sel{border-color:var(--red-line);background:var(--red-bg);color:var(--red);} .chip.sug.g.sel{border-color:var(--blue-line);background:var(--blue-bg);color:var(--blue);}
   .chip.sug.diet.sel{border-color:var(--green);background:var(--green-bg);color:var(--green-ink);}
+  .chip.sug.eff.sel{border-color:var(--orange-line);background:var(--orange-bg);color:var(--orange);} .chip.d .rl{cursor:pointer;}
   .chip.sug.sel::after{content:"✓";margin-left:.28rem;font-weight:800;}
   .nameadd{display:flex;gap:.45rem;} .nameadd input{flex:1;font:600 .95rem/1 var(--sans);padding:.6rem .7rem;border-radius:11px;border:1.5px solid var(--blue-line);background:var(--card);color:var(--ink);}
   .nameadd .add{background:var(--blue);color:#fff;border:none;border-radius:11px;padding:0 1rem;font-weight:800;font-size:1.15rem;cursor:pointer;}
@@ -113,6 +114,7 @@
   .chip.add{border-style:dashed;color:var(--muted);background:none;cursor:pointer;}
   .person{border:1px solid var(--line2);border-radius:13px;padding:.6rem .7rem;margin:.4rem 0;background:var(--card2);}
   .person .pn{display:flex;align-items:center;gap:.4rem;font-weight:750;} .person .del{margin-left:auto;background:none;border:none;color:var(--red);font-weight:700;cursor:pointer;font-size:.78rem;}
+  .person .pn .rolbtn{margin-left:auto;font:700 .66rem/1 var(--mono);border:1px solid var(--line);background:var(--card);color:var(--muted);border-radius:999px;padding:.24rem .55rem;cursor:pointer;} .person .pn .del{margin-left:.5rem;}
   .prefs{display:flex;flex-wrap:wrap;gap:.35rem;margin:.35rem 0;}
   .pref{display:inline-flex;align-items:center;gap:.3rem;font-size:.8rem;padding:.2rem .5rem;border-radius:999px;border:1px solid var(--line);background:var(--card);}
   .pref.hart{border-color:var(--red-line);background:var(--red-bg);color:var(--red);font-weight:700;}
@@ -215,49 +217,63 @@
   function sel(c){return [].slice.call(c.querySelectorAll('.chip.sug.sel')).map(function(x){return x.textContent.replace(/[^\p{L} ]/gu,'').trim();});}
 
   function stepIntro(){ask('Hi! 🧑‍🍳 Ich bin euer <b>Küchenassistent</b>.<br>Von <b>„Was gibt’s diese Woche?"</b> bis zur fertigen <b>Einkaufsliste</b> nehm ich euch alles ab — <b>gekocht wird bei euch.</b>',null,{then:stepPersons});}
-  function stepPersons(){head(1,'active');
+  function stepPersons(){head(1,'active');state.roles=state.roles||[];
     ask('Damit das passt, lernen wir uns kurz kennen. 👋<br><b>Wer kocht &amp; isst mit?</b>',function(b,c){
       input.placeholder='Name eintippen – z. B. du …';
-      c.innerHTML='<div class="chips" data-list></div><button class="go" data-go disabled>Passt ›</button><div class="cnote" style="margin-top:.4rem">↓ Namen unten eintippen (Enter) – oder „Wir sind Peter &amp; Bo".</div>';
+      c.innerHTML='<div class="chips" data-list></div><button class="go" data-go disabled>Passt ›</button><div class="cnote" style="margin-top:.4rem">↓ Namen unten eintippen (Enter). Tippe 🧑 an, um jemanden als <b>Kind</b> 🧒 zu markieren.</div>';
       var list=c.querySelector('[data-list]'),go=c.querySelector('[data-go]');
-      function rp(){list.innerHTML=state.persons.map(function(n,i){return '<span class="chip d">'+(i===0?'🧑 ':'👤 ')+esc(n)+' <span class="x" data-rm="'+i+'">✕</span></span>';}).join('');
-        list.querySelectorAll('[data-rm]').forEach(function(x){x.addEventListener('click',function(){state.persons.splice(+x.getAttribute('data-rm'),1);rp();});});
+      function rp(){list.innerHTML=state.persons.map(function(n,i){return '<span class="chip d"><span class="rl" data-role="'+i+'" title="Erwachsen/Kind umschalten">'+(state.roles[i]==='kind'?'🧒':'🧑')+'</span> '+esc(n)+' <span class="x" data-rm="'+i+'">✕</span></span>';}).join('');
+        list.querySelectorAll('[data-rm]').forEach(function(x){x.addEventListener('click',function(){var i=+x.getAttribute('data-rm');state.persons.splice(i,1);state.roles.splice(i,1);rp();});});
+        list.querySelectorAll('[data-role]').forEach(function(x){x.addEventListener('click',function(){var i=+x.getAttribute('data-role');state.roles[i]=state.roles[i]==='kind'?'erwachsen':'kind';rp();});});
         go.disabled=!state.persons.length;go.textContent=state.persons.length?('Weiter mit '+state.persons.join(' & ')+' ›'):'Passt ›';}
-      function addN(v){(v||'').split(/,| und | & |&|\//i).map(function(s){return s.replace(/^(ich bin|wir sind|und)\s+/i,'').replace(/\s+und$/i,'').trim();}).filter(Boolean).forEach(function(n){state.persons.push(n);});rp();}
+      function addN(v){(v||'').split(/,| und | & |&|\//i).map(function(s){return s.replace(/^(ich bin|wir sind|und)\s+/i,'').replace(/\s+und$/i,'').trim();}).filter(Boolean).forEach(function(n){state.persons.push(n);state.roles.push('erwachsen');});rp();}
       go.addEventListener('click',function(){if(!state.persons.length||busy)return;
-        Promise.all(state.persons.map(function(n,i){return post('personen',{name:n,haushalt:HH,sort:i+1}).then(function(r){if(r&&r[0])state.ids[n]=r[0].id;});}))
+        Promise.all(state.persons.map(function(n,i){return post('personen',{name:n,haushalt:HH,sort:i+1,rolle:state.roles[i]||'erwachsen'}).then(function(r){if(r&&r[0])state.ids[n]=r[0].id;});}))
           .then(function(){me(state.persons.join(' & '));head(1,'done');stepNogos();});});
       curHandler=function(t){addN(t);};advanceFn=function(){go.click();};rp();
     },{focus:true});}
   function stepNogos(){head(2,'active');input.placeholder='Antworten oder erzählen …';
-    var diet=[['🍽️','alles'],['🥗','vegetarisch'],['🌱','vegan']];var alg=['🥜 Nüsse','🌾 Gluten','🥛 Laktose'];
+    var diet=[['🍽️','alles'],['🥗','vegetarisch'],['🌱','vegan'],['🐟','pescetarisch'],['☪️','halal']];
+    var alg=[['🥜 Nüsse','Nüsse','allergie'],['🌾 Gluten','Gluten','allergie'],['🥛 Laktose','Laktose','allergie'],['🐷 kein Schwein','kein Schweinefleisch','ernaehrungsform']];
     ask('Super, <b>'+esc(state.persons.join(' & '))+'</b> ✓<br>Kurz zum Essen: <b>Wie ernährt ihr euch?</b>',function(b,c){
       c.innerHTML='<div class="chips" data-diet>'+diet.map(function(d){return '<span class="chip sug diet'+(d[1]==='alles'?' sel':'')+'" data-v="'+d[1]+'">'+d[0]+' '+d[1]+'</span>';}).join('')+'</div>'
-        +'<div class="cnote" style="margin:.55rem 0 .2rem">⛔ Und <b>harte</b> Allergien / Unverträglichkeiten?</div>'
-        +'<div class="chips" data-alg>'+alg.map(function(x){return '<span class="chip sug h">'+x+'</span>';}).join('')+'</div>'
+        +'<div class="cnote" style="margin:.55rem 0 .2rem">⛔ Und was <b>geht gar nicht?</b> <span style="color:var(--muted)">(Allergien &amp; Tabus)</span></div>'
+        +'<div class="chips" data-alg>'+alg.map(function(a){return '<span class="chip sug h" data-art="'+a[2]+'" data-v="'+esc(a[1])+'">'+a[0]+'</span>';}).join('')+'</div>'
         +'<button class="go" data-go style="margin-top:.55rem">Weiter ›</button>';
       var dw=c.querySelector('[data-diet]'),aw=c.querySelector('[data-alg]');
       dw.querySelectorAll('.chip.sug').forEach(function(x){x.addEventListener('click',function(){dw.querySelectorAll('.chip.sug').forEach(function(y){y.classList.remove('sel');});x.classList.add('sel');});}); // Ernährungsweise = Einfachauswahl (Ziel)
-      aw.querySelectorAll('.chip.sug').forEach(function(x){x.addEventListener('click',function(){x.classList.toggle('sel');});});           // Allergien = Mehrfach (Verbot)
+      aw.querySelectorAll('.chip.sug').forEach(function(x){x.addEventListener('click',function(){x.classList.toggle('sel');});});           // Allergien/Tabus = Mehrfach (Verbot)
       var go=c.querySelector('[data-go]');
       go.addEventListener('click',function(){if(busy)return;
         var dsel=dw.querySelector('.chip.sug.sel'),dv=dsel?dsel.getAttribute('data-v'):'alles';
-        var algs=[].slice.call(aw.querySelectorAll('.chip.sug.sel')).map(function(x){return x.textContent.replace(/[^\p{L} ]/gu,'').trim();});
+        var sels=[].slice.call(aw.querySelectorAll('.chip.sug.sel'));
         var proms=[];state.persons.forEach(function(n){var pid=state.ids[n];if(!pid)return;
           if(dv&&dv!=='alles')proms.push(post('praeferenzen',{person_id:pid,art:'ernaehrungsform',wert:dv,hart:true,haushalt:HH}));
-          algs.forEach(function(w){proms.push(post('praeferenzen',{person_id:pid,art:'allergie',wert:w,hart:true,haushalt:HH}));});});
-        state.nogos=algs;var parts=[];if(dv!=='alles')parts.push(dv);if(algs.length)parts.push(algs.join(', '));
-        Promise.all(proms).then(function(){me(parts.join(' · ')||'alles, keine Allergien');head(2,'done');stepGrund();});});
-      curHandler=function(t){var s=document.createElement('span');s.className='chip sug h sel';s.textContent='✨ '+t;s.addEventListener('click',function(){s.classList.toggle('sel');});aw.appendChild(s);me(t);};
+          sels.forEach(function(x){proms.push(post('praeferenzen',{person_id:pid,art:x.getAttribute('data-art')||'allergie',wert:x.getAttribute('data-v'),hart:true,haushalt:HH}));});});
+        var labels=sels.map(function(x){return x.getAttribute('data-v');});state.nogos=labels;
+        var parts=[];if(dv!=='alles')parts.push(dv);if(labels.length)parts.push(labels.join(', '));
+        Promise.all(proms).then(function(){me(parts.join(' · ')||'alles, keine Tabus');head(2,'done');stepGrund();});});
+      curHandler=function(t){var s=document.createElement('span');s.className='chip sug h sel';s.setAttribute('data-art','allergie');s.setAttribute('data-v',t);s.textContent='✨ '+t;s.addEventListener('click',function(){s.classList.toggle('sel');});aw.appendChild(s);me(t);};
       advanceFn=function(){go.click();};});}
-  function stepGrund(){head(3,'active');var o=['🥦 viel Gemüse','💪 proteinreich','⚡ wenig Aufwand','🥩 wenig Fleisch','🔄 abwechslungsreich'];
-    ask('Und was ist euch beim Essen <b>wichtig?</b> Tipp an oder erzähl.',function(b,c){
-      c.innerHTML='<div class="chips">'+o.map(function(x){return '<span class="chip sug g">'+x+'</span>';}).join('')+'</div><button class="go" data-go>Weiter ›</button>';
-      wireSug(c);var go=c.querySelector('[data-go]');
-      go.addEventListener('click',function(){if(busy)return;state.grund=sel(c);
-        Promise.all(state.grund.map(function(w){return post('regeln',{typ:'wunsch',text:w,haushalt:HH});}))
-          .then(function(){me(state.grund.join(', ')||'—');head(3,'done');stepRhythm();});});
-      curHandler=function(t){var s=document.createElement('span');s.className='chip sug g sel';s.textContent='✨ '+t;s.addEventListener('click',function(){s.classList.toggle('sel');});c.querySelector('.chips').appendChild(s);me(t);};
+  function stepGrund(){head(3,'active');
+    var eff=[['⚡','meist schnell'],['🍳','mal so, mal so'],['🕒','gern mit Zeit']];
+    var wic=['🥦 viel Gemüse','💪 proteinreich','🥩 wenig Fleisch','🔄 Abwechslung','💶 günstig'];
+    ask('Fast fertig! <b>Wie viel Zeit</b> habt ihr abends fürs Kochen – und was ist euch <b>wichtig?</b>',function(b,c){
+      c.innerHTML='<div class="chips" data-eff>'+eff.map(function(e){return '<span class="chip sug eff'+(e[1]==='mal so, mal so'?' sel':'')+'" data-v="'+e[1]+'">'+e[0]+' '+e[1]+'</span>';}).join('')+'</div>'
+        +'<div class="cnote" style="margin:.55rem 0 .2rem">🎯 Wichtig beim Essen?</div>'
+        +'<div class="chips" data-wic>'+wic.map(function(x){return '<span class="chip sug g">'+x+'</span>';}).join('')+'</div>'
+        +'<button class="go" data-go style="margin-top:.55rem">Weiter ›</button>';
+      var ew=c.querySelector('[data-eff]'),ww=c.querySelector('[data-wic]');
+      ew.querySelectorAll('.chip.sug').forEach(function(x){x.addEventListener('click',function(){ew.querySelectorAll('.chip.sug').forEach(function(y){y.classList.remove('sel');});x.classList.add('sel');});}); // Aufwand = Einfachauswahl
+      ww.querySelectorAll('.chip.sug').forEach(function(x){x.addEventListener('click',function(){x.classList.toggle('sel');});});           // Wichtig = Mehrfach
+      var go=c.querySelector('[data-go]');
+      go.addEventListener('click',function(){if(busy)return;
+        var esel=ew.querySelector('.chip.sug.sel'),ev=esel?esel.getAttribute('data-v'):'';
+        var wics=[].slice.call(ww.querySelectorAll('.chip.sug.sel')).map(function(x){return x.textContent.replace(/[^\p{L} ]/gu,'').trim();});
+        var grund=[];if(ev&&ev!=='mal so, mal so')grund.push('Aufwand: '+ev);wics.forEach(function(w){grund.push(w);});state.grund=grund;
+        Promise.all(grund.map(function(w){return post('regeln',{typ:'wunsch',text:w,haushalt:HH});}))
+          .then(function(){me(grund.join(', ')||'—');head(3,'done');stepRhythm();});});
+      curHandler=function(t){var s=document.createElement('span');s.className='chip sug g sel';s.textContent='✨ '+t;s.addEventListener('click',function(){s.classList.toggle('sel');});ww.appendChild(s);me(t);};
       advanceFn=function(){go.click();};});}
   function stepRhythm(){head(4,'active');var names=state.persons;
     // Leichte Frage statt Wochen-Raster (das würde wie die Planen-Seite aussehen). Raster nur, wenn wirklich jemand regelmäßig weg ist.
@@ -331,7 +347,7 @@
     return get('wochen?select=id&haushalt=eq.'+HH+'&jahr=eq.'+w.jahr+'&kw=eq.'+w.kw).then(function(wr){
       var wid=wr&&wr[0]&&wr[0].id;
       return Promise.all([
-        get('personen?select=id,name,praeferenzen(id,art,wert,hart)&haushalt=eq.'+HH+'&order=sort'),
+        get('personen?select=id,name,rolle,praeferenzen(id,art,wert,hart)&haushalt=eq.'+HH+'&order=sort'),
         get('regeln?select=id,person_id,typ,wochentag,text,personen(name)&haushalt=eq.'+HH+'&order=created_at'),
         wid?get('woche_ereignisse?select=id,person_id,gast_name,typ,wochentag,text&haushalt=eq.'+HH+'&woche_id=eq.'+wid):Promise.resolve([])
       ]);
@@ -346,7 +362,7 @@
   function overridesOn(day){return DATA.ereignisse.filter(function(e){return (e.typ==='abwesenheit'||e.typ==='anwesenheit')&&e.wochentag===day;});}
   function renderPlanen(){var persons=DATA.persons;
     document.getElementById('plsub').textContent=persons.length?persons.map(function(p){return p.name;}).join(' & '):'euer Haushalt';
-    document.getElementById('legend').innerHTML=persons.map(function(p){return '<span><span class="av">'+esc(initials(p.name))+'</span> '+esc(p.name)+'</span>';}).join('')+'<span>👉 antippen = diese Woche da/weg</span>';
+    document.getElementById('legend').innerHTML=persons.map(function(p){return '<span><span class="av">'+esc(initials(p.name))+'</span> '+esc(p.name)+(p.rolle==='kind'?' 🧒':'')+'</span>';}).join('')+'<span>👉 antippen = diese Woche da/weg</span>';
     var changed=DOW.filter(function(d){return overridesOn(d).length;}).length;
     document.getElementById('wwsub').innerHTML=changed?('📅 <b>'+changed+' Tag'+(changed>1?'e':'')+' diese Woche geändert</b> – der Rest läuft wie immer.'):'✓ Läuft <b>wie immer</b> – tippt nur an, was <b>diese Woche</b> anders ist.';
     document.getElementById('agenda').innerHTML=DOW.map(function(d){var here=presentOn(d),hereIds={};here.forEach(function(p){hereIds[p.id]=1;});var g=guestsOn(d);var ov=overridesOn(d);
@@ -356,13 +372,16 @@
       var row='<div class="dayrow"><div class="dd"><span>'+d+'</span></div><div class="eaters">'+avs+'</div>'+st+'</div>';
       var note=ov.length?'<div class="daynote">📅 diese Woche geändert <button class="lnk" data-act="revert" data-day="'+d+'">↩︎ wieder wie immer</button><button class="lnk" data-act="promote" data-day="'+d+'">⭑ als Standard merken</button></div>':'';
       return '<div class="dayblock">'+row+note+'</div>';}).join('');
-    var tp=DOW.map(function(d){var here=presentOn(d);if(!here.length)return '';var hard=[];here.forEach(function(p){(p.praeferenzen||[]).forEach(function(x){if(HART[x.art])hard.push(x.wert);});});
-      return '<li><b>'+d+':</b> '+here.map(function(p){return esc(p.name);}).join(' & ')+(hard.length?' <span class="hx">⛔ '+hard.map(esc).join(', ')+'</span>':' <span class="sx">keine Einschränkung</span>')+'</li>';}).filter(Boolean).join('');
-    document.getElementById('transp').innerHTML=tp||'<li class="sx">—</li>';}
+    var grund=DATA.regeln.filter(function(r){return r.typ==='wunsch';}).map(function(r){return r.text;});
+    var ctx=grund.length?'<li><b>🏠 Grundsätze:</b> <span class="sx">'+grund.map(esc).join(' · ')+'</span></li>':'';
+    var tp=DOW.map(function(d){var here=presentOn(d);if(!here.length)return '';var hard=[];here.forEach(function(p){(p.praeferenzen||[]).forEach(function(x){if(HART[x.art]&&hard.indexOf(x.wert)<0)hard.push(x.wert);});});
+      var names=here.map(function(p){return esc(p.name)+(p.rolle==='kind'?' 🧒':'');}).join(' & ');
+      return '<li><b>'+d+':</b> '+names+(hard.length?' <span class="hx">⛔ '+hard.map(esc).join(', ')+'</span>':' <span class="sx">keine Einschränkung</span>')+'</li>';}).filter(Boolean).join('');
+    document.getElementById('transp').innerHTML=ctx+(tp||'<li class="sx">—</li>');}
   function renderProfil(){
     document.getElementById('pfPersons').innerHTML=DATA.persons.map(function(p){
       var chips=(p.praeferenzen||[]).map(function(x){return '<span class="pref'+(x.hart?' hart':'')+'"><span class="art">'+esc(ARTLBL[x.art]||x.art)+'</span>'+esc(x.wert)+'<span class="x" data-act="delpref" data-id="'+x.id+'">✕</span></span>';}).join('')||'<span class="cnote">keine</span>';
-      return '<div class="person"><div class="pn">👤 '+esc(p.name)+' <button class="del" data-act="delperson" data-id="'+p.id+'">Entfernen</button></div><div class="prefs">'+chips+'</div>'
+      return '<div class="person"><div class="pn">'+(p.rolle==='kind'?'🧒':'👤')+' '+esc(p.name)+' <button class="rolbtn" data-act="togglerolle" data-id="'+p.id+'" data-rolle="'+(p.rolle||'erwachsen')+'">'+(p.rolle==='kind'?'🧒 Kind':'🧑 Erwachsen')+'</button><button class="del" data-act="delperson" data-id="'+p.id+'">Entfernen</button></div><div class="prefs">'+chips+'</div>'
         +'<div class="addrow"><select class="pa-art"><option value="vorliebe">mag</option><option value="abneigung">mag nicht</option><option value="allergie">Allergie (hart)</option><option value="ernaehrungsform">Ernährung (hart)</option></select><input class="pa-wert" placeholder="z. B. Lachs, asiatisch"><button class="btn-s" data-act="addpref" data-id="'+p.id+'">+</button></div></div>';}).join('')
       +'<div class="addrow"><input id="np-name" placeholder="Neue Person …"><button class="btn-s" data-act="addperson">+ Person</button></div>';
     var gr=DATA.regeln.filter(function(r){return r.typ==='wunsch';});
@@ -373,6 +392,7 @@
   document.getElementById('vProfil').addEventListener('click',function(e){var b=e.target.closest('[data-act]');if(!b)return;var act=b.getAttribute('data-act'),id=b.getAttribute('data-id');
     if(act==='addperson'){var n=document.getElementById('np-name');if(n&&n.value.trim())post('personen',{name:n.value.trim(),haushalt:HH,sort:9}).then(refresh);}
     else if(act==='delperson'){if(confirm('Person entfernen?'))rest('DELETE','personen?id=eq.'+id).then(refresh);}
+    else if(act==='togglerolle'){var nr=b.getAttribute('data-rolle')==='kind'?'erwachsen':'kind';rest('PATCH','personen?id=eq.'+id,{rolle:nr}).then(refresh);}
     else if(act==='addpref'){var row=b.closest('.addrow'),art=row.querySelector('.pa-art').value,w=row.querySelector('.pa-wert').value.trim();if(w)post('praeferenzen',{person_id:id,art:art,wert:w,hart:!!HART[art],haushalt:HH}).then(refresh);}
     else if(act==='delpref'){rest('DELETE','praeferenzen?id=eq.'+id).then(refresh);}
     else if(act==='addgrund'){var g=document.getElementById('ng-text');if(g&&g.value.trim())post('regeln',{typ:'wunsch',text:g.value.trim(),haushalt:HH}).then(refresh);}
