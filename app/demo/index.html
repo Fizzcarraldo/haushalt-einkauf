@@ -69,6 +69,11 @@
   .vs{padding:.45rem 0;border-top:1px dashed var(--line2);} .vs:first-of-type{border-top:none;}
   .vt{display:flex;align-items:center;gap:.5rem;justify-content:space-between;font-size:.92rem;}
   .auf{flex:0 0 auto;font:700 .58rem/1 var(--mono);text-transform:uppercase;letter-spacing:.03em;color:var(--green-ink);background:var(--green-bg);border-radius:999px;padding:.16rem .45rem;white-space:nowrap;}
+  .stepper{display:flex;align-items:center;gap:.3rem;flex-wrap:wrap;margin:.1rem 0 .6rem;font-size:.8rem;}
+  .pstep{display:inline-flex;align-items:center;gap:.35rem;color:var(--muted);background:var(--card2);border:1px solid var(--line2);border-radius:999px;padding:.26rem .6rem;font-weight:600;}
+  .pstep .pn{display:inline-grid;place-items:center;width:1.15rem;height:1.15rem;border-radius:50%;background:var(--line);color:var(--card);font:800 .66rem/1 var(--mono);}
+  .pstep.now{color:var(--blue);border-color:var(--blue-line);background:var(--blue-bg);} .pstep.now .pn{background:var(--blue);color:#fff;}
+  .pstep.done{color:var(--green-ink);} .pstep.done .pn{background:var(--green);color:#fff;} .psep{color:var(--muted);}
   .dock{position:fixed;left:0;right:0;bottom:0;z-index:20;background:linear-gradient(to top,var(--paper) 78%,transparent);padding:.6rem .9rem calc(.6rem + env(safe-area-inset-bottom));}
   .dock .in{max-width:560px;margin:0 auto;}
   .votebtn{display:block;width:100%;background:var(--green);color:#fff;border:none;border-radius:14px;padding:.9rem;font:800 1.02rem/1 var(--sans);text-align:center;text-decoration:none;box-shadow:0 4px 16px color-mix(in oklab,var(--green) 40%,transparent);}
@@ -149,6 +154,7 @@
   <div class="view" id="vPlan">
     <div class="pl">
       <h1>🗓️ Diese Woche <span class="kw" id="kw"></span></h1><p class="sub" id="plsub">euer neuer Haushalt</p>
+      <div class="stepper" id="stepper"></div>
       <div class="card"><div class="chd">Wer isst wann?</div><p class="cnote" id="wwsub" style="margin:.1rem 0 .4rem"></p>
         <div class="legend2" id="legend"></div>
         <div class="agenda" id="agenda"></div>
@@ -343,7 +349,7 @@
 
   // ── App-Modus: Nav, Planen, Profil (alles scoped auf HH) ──
   function isoWeek(d){var t=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()));var dd=(t.getUTCDay()+6)%7;t.setUTCDate(t.getUTCDate()-dd+3);var f=new Date(Date.UTC(t.getUTCFullYear(),0,4));var w=1+Math.round(((t-f)/864e5-3+((f.getUTCDay()+6)%7))/7);return{jahr:t.getUTCFullYear(),kw:w};}
-  var DATA={persons:[],regeln:[],ereignisse:[]};
+  var DATA={persons:[],regeln:[],ereignisse:[],woche:null};
   var HART={allergie:1,ernaehrungsform:1}, ARTLBL={allergie:'Allergie',ernaehrungsform:'Ernährung',abneigung:'mag nicht',vorliebe:'mag'};
   var TYPLBL={abwesenheit:'abwesend',anwesenheit:'anwesend',hinweis:'Hinweis'};
   // Assistent-Widget: rotierender Beispiel-Hinweis (lehrt Fähigkeiten & Reichweite) + einmaliger Coachmark
@@ -385,8 +391,8 @@
     document.querySelectorAll('#nav button').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-v')===v);});document.getElementById('voteBtn').style.display=(v==='plan')?'block':'none';if(coached)hideCoach();}
   document.querySelectorAll('#nav button').forEach(function(b){b.addEventListener('click',function(){navTo(b.getAttribute('data-v'));});});
   function refresh(){var w=isoWeek(new Date());
-    return get('wochen?select=id&haushalt=eq.'+HH+'&jahr=eq.'+w.jahr+'&kw=eq.'+w.kw).then(function(wr){
-      var wid=wr&&wr[0]&&wr[0].id;
+    return get('wochen?select=id,vorschlaege,status,plan&haushalt=eq.'+HH+'&jahr=eq.'+w.jahr+'&kw=eq.'+w.kw).then(function(wr){
+      DATA.woche=(wr&&wr[0])||null;var wid=DATA.woche&&DATA.woche.id;
       return Promise.all([
         get('personen?select=id,name,rolle,praeferenzen(id,art,wert,hart)&haushalt=eq.'+HH+'&order=sort'),
         get('regeln?select=id,person_id,typ,wochentag,text,personen(name)&haushalt=eq.'+HH+'&order=created_at'),
@@ -419,7 +425,12 @@
       var names=here.map(function(p){return esc(p.name)+(p.rolle==='kind'?' 🧒':'');}).join(' & ');
       return '<li><b>'+d+':</b> '+names+(hard.length?' <span class="hx">⛔ '+hard.map(esc).join(', ')+'</span>':' <span class="sx">keine Einschränkung</span>')+'</li>';}).filter(Boolean).join('');
     document.getElementById('transp').innerHTML=ctx+(tp||'<li class="sx">—</li>');
-    var _pc=document.getElementById('planCards');if(_pc)_pc.innerHTML='';var _pe=document.getElementById('planEmpty');if(_pe){_pe.style.display='';_pe.innerHTML='🍽️ Noch kein Essensplan. <button class="btn-s" data-act="gen">✨ Vorschläge holen</button><br><span style="font-size:.8rem">…passend zu wer da ist, Diäten, Zeit &amp; Budget.</span>';}}
+    if(DATA.woche&&DATA.woche.vorschlaege&&DATA.woche.vorschlaege.tage&&DATA.woche.vorschlaege.tage.length){renderVorschlaege(DATA.woche.vorschlaege.tage);}
+    else{var _pc=document.getElementById('planCards');if(_pc)_pc.innerHTML='';var _pe=document.getElementById('planEmpty');if(_pe){_pe.style.display='';_pe.innerHTML='🍽️ Noch kein Essensplan. <button class="btn-s" data-act="gen">✨ Vorschläge holen</button><br><span style="font-size:.8rem">…passend zu wer da ist, Diäten, Zeit &amp; Budget.</span>';}}
+    renderStepper();}
+  function renderStepper(){var el=document.getElementById('stepper');if(!el)return;
+    var st=(DATA.woche&&DATA.woche.status)||'planen';var idx=st==='fest'?2:(st==='voten'?1:0);var steps=['Wer da','Voten','Steht fest'];
+    el.innerHTML=steps.map(function(s,i){return '<span class="pstep'+(i===idx?' now':'')+(i<idx?' done':'')+'"><b class="pn">'+(i<idx?'✓':(i+1))+'</b>'+s+'</span>';}).join('<span class="psep">›</span>');}
   // ── Vorschlags-Generierung (US-05): Kontext aus Anwesenheit + harten Ausschlüssen + Grundsätzen -> AI-Gerichte ──
   var DIETWORDS=/^(vegetarisch|vegan|pescetarisch|halal|koscher|flexitarisch|low[\s-]?carb|paleo|keto)$/i;
   function dayContext(d){var here=presentOn(d),g=guestsOn(d);if(!here.length&&!g.length)return null;
@@ -429,14 +440,20 @@
   function buildContext(){return {kw:isoWeek(new Date()).kw,grundsaetze:DATA.regeln.filter(function(r){return r.typ==='wunsch';}).map(function(r){return r.text;}),tage:DOW.map(dayContext).filter(Boolean)};}
   function renderVorschlaege(tage){var pe=document.getElementById('planEmpty');if(pe)pe.style.display='none';
     document.getElementById('planCards').innerHTML=(tage||[]).map(function(t){var here=presentOn(t.tag);var names=here.map(function(p){return esc(p.name)+(p.rolle==='kind'?' 🧒':'');}).join(' & ');var g=guestsOn(t.tag).map(function(e){return esc(e.gast_name||'Gast')+' (Gast)';});if(g.length)names+=(names?' · ':'')+g.join(', ');
-      return '<div class="card"><div class="chd">'+esc(t.tag)+' <span class="cnote" style="font-weight:400">'+names+'</span></div>'
+      var dc=dayContext(t.tag),cons=dc?[].concat(dc.diaeten,dc.vermeiden):[];
+      var comp=cons.length?'<div class="cnote" style="color:var(--green-ink);font-weight:600;margin:0 0 .35rem">✓ passt für alle: '+cons.map(esc).join(' · ')+'</div>':'';
+      return '<div class="card"><div class="chd">'+esc(t.tag)+' <span class="cnote" style="font-weight:400">'+names+'</span></div>'+comp
         +(t.vorschlaege||[]).map(function(v){return '<div class="vs"><div class="vt"><b>'+esc(v.titel||'')+'</b> <span class="auf">'+esc(v.aufwand||'')+'</span></div><div class="cnote">'+esc(v.kurz||'')+'</div></div>';}).join('')
         +'</div>';}).join('')+'<button class="btn-s" data-act="gen" style="margin:.2rem 0 .6rem">↻ Neue Vorschläge</button>';}
   function generatePlan(retry){var ctx=buildContext(),pe=document.getElementById('planEmpty'),pc=document.getElementById('planCards');
     if(!ctx.tage.length){if(pe){pe.style.display='';pe.innerHTML='🍽️ Diese Woche ist niemand da zum Kochen.';}return;}
     if(pc)pc.innerHTML='';if(pe){pe.style.display='';pe.innerHTML='🍳 Ich koche Vorschläge aus … <span class="cnote">passend zu wer da ist, Diäten, Zeit &amp; Budget</span>';}
     fetch(FN,{method:'POST',headers:H,body:JSON.stringify({generate:true,context:ctx,haushalt:HH})}).then(function(r){return r.json();}).then(function(res){
-      if(res&&res.plan&&res.plan.tage&&res.plan.tage.length){renderVorschlaege(res.plan.tage);}
+      if(res&&res.plan&&res.plan.tage&&res.plan.tage.length){
+        renderVorschlaege(res.plan.tage);
+        if(!DATA.woche)DATA.woche={};DATA.woche.vorschlaege=res.plan;DATA.woche.status='voten';renderStepper();
+        ensureWoche().then(function(wid){if(wid)rest('PATCH','wochen?id=eq.'+wid,{vorschlaege:res.plan,status:'voten'});});  // persistieren
+      }
       else if(!retry){generatePlan(true);}   // ein stiller Retry (AI liefert selten unvollständig)
       else if(pe){pe.style.display='';pe.innerHTML='⚠️ Konnte gerade keine Vorschläge holen. <button class="btn-s" data-act="gen">Nochmal</button>';}
     }).catch(function(){if(retry&&pe){pe.style.display='';pe.innerHTML='⚠️ offline. <button class="btn-s" data-act="gen">Nochmal</button>';}else if(!retry){generatePlan(true);}});}
@@ -503,7 +520,7 @@
   function ssend(){var t=(stext.value||'').trim();if(!t)return;sme(t);shist.push({role:'user',content:t});stext.value='';
     var ty=document.createElement('div');ty.className='msg bot typing';ty.innerHTML='<span></span><span></span><span></span>';slog.appendChild(ty);slog.scrollTop=slog.scrollHeight;
     var w=isoWeek(new Date());
-    fetch(FN,{method:'POST',headers:H,body:JSON.stringify({messages:shist,scope:curScope==='dauer'?'haushalt':'woche',jahr:w.jahr,kw:w.kw,haushalt:HH,benutzer:(DATA.persons[0]&&DATA.persons[0].name)||''})}).then(function(r){return r.json();})
+    fetch(FN,{method:'POST',headers:H,body:JSON.stringify({messages:shist,scope:curScope==='dauer'?'haushalt':'woche',jahr:w.jahr,kw:w.kw,haushalt:HH,benutzer:(DATA.persons[0]&&DATA.persons[0].name)||'',kontext:{phase:(DATA.woche&&DATA.woche.status)||'planen',kw:w.kw,hat_vorschlaege:!!(DATA.woche&&DATA.woche.vorschlaege)}})}).then(function(r){return r.json();})
       .then(function(res){ty.remove();if(res.error){sbot('⚠️ '+res.error);return;}sbot(res.reply||'Erledigt.');shist.push({role:'assistant',content:res.reply||''});(res.changes||[]).forEach(chg);refresh();})
       .catch(function(){ty.remove();sbot('⚠️ offline');});}
   document.getElementById('ssend').addEventListener('click',ssend);
