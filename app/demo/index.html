@@ -154,6 +154,25 @@
   #vOnb.docking.go{transform:translateY(20px) scale(.045);opacity:0;}
   #inbar.fold{transition:opacity .28s ease,transform .28s ease;opacity:0;transform:translateY(34px);pointer-events:none;}
   .flyav{position:fixed;left:0;top:0;z-index:60;width:2rem;height:2rem;border-radius:50%;display:grid;place-items:center;font-size:1.05rem;background:var(--card);box-shadow:0 6px 22px rgba(0,0,0,.28),0 0 0 1.5px color-mix(in oklab,var(--green) 55%,transparent);transition:transform .62s cubic-bezier(.55,0,.2,1),opacity .3s ease;will-change:transform;}
+  /* ── Der Koch als lebende Figur: ein Coin, der zwischen Start · Chat · Leiste wandert ── */
+  .chef{position:relative;display:inline-grid;place-items:center;--sz:2rem;width:var(--sz);height:var(--sz);border-radius:50%;background:var(--card);flex:0 0 auto;}
+  .chef .cf{position:relative;z-index:2;font-size:calc(var(--sz)*.56);line-height:1;will-change:transform;}
+  .chef .ring{position:absolute;inset:-2px;border-radius:50%;background:conic-gradient(from 0deg,var(--green),var(--blue),var(--green));-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 2.5px),#000 calc(100% - 2px));mask:radial-gradient(farthest-side,transparent calc(100% - 2.5px),#000 calc(100% - 2px));opacity:.85;animation:cspin 9s linear infinite;}
+  .chef .steam{position:absolute;top:-.05em;left:50%;font-size:calc(var(--sz)*.28);opacity:0;pointer-events:none;transform:translate(-50%,0);}
+  .chef.hero{--sz:5rem;box-shadow:0 12px 32px color-mix(in oklab,var(--green) 22%,transparent),0 2px 8px rgba(0,0,0,.1);animation:cpop .6s cubic-bezier(.2,.9,.2,1.25) both;}
+  .chef.hero .cf{animation:cbob 3.6s ease-in-out infinite;}
+  .chef.hero .steam{animation:csteam 5.2s ease-in-out 1s infinite;}
+  .chef.mid{--sz:2.6rem;}
+  .chef.mid .cf{animation:cbob 4.2s ease-in-out infinite;}
+  .chef.mid .steam{animation:csteam 6s ease-in-out 1.6s infinite;}
+  .chef.flychef{position:fixed;left:0;top:0;z-index:70;pointer-events:none;transform-origin:top left;box-shadow:0 10px 26px rgba(0,0,0,.3),0 0 0 1.5px color-mix(in oklab,var(--green) 45%,transparent);}
+  .cheroWrap{display:flex;justify-content:center;padding:.7rem 0 .1rem;flex:0 0 auto;}
+  .ctrail{position:fixed;z-index:69;font-size:.82rem;pointer-events:none;transform:translate(-50%,-50%);animation:ctrailf .5s ease-out forwards;}
+  @keyframes cbob{0%,100%{transform:translateY(0)}50%{transform:translateY(-9%)}}
+  @keyframes cspin{to{transform:rotate(360deg)}}
+  @keyframes csteam{0%{opacity:0;transform:translate(-50%,0) scale(.7)}18%{opacity:.85}55%{opacity:0;transform:translate(-50%,-95%) scale(1.15)}100%{opacity:0}}
+  @keyframes cpop{0%{opacity:0;transform:scale(.5) translateY(12px)}100%{opacity:1;transform:none}}
+  @keyframes ctrailf{0%{opacity:.9;transform:translate(-50%,-50%) scale(.6)}100%{opacity:0;transform:translate(-50%,-150%) scale(1.15)}}
 </style>
 </head>
 <body>
@@ -161,6 +180,7 @@
   <div class="nav" id="nav"><button data-v="plan" class="on">🗓️ Diese Woche</button><button data-v="profil">⚙️ Profil</button></div>
 
   <div class="view on" id="vOnb">
+    <div class="cheroWrap"><span class="chef hero" id="chero"><span class="cf">🧑‍🍳</span><i class="ring"></i><b class="steam">✨</b></span></div>
     <div class="head"><span class="oc" data-oc="1">👤 Wer</span><span class="oc" data-oc="2">🥗 Ernährung</span><span class="oc" data-oc="3">🎯 Wichtig</span><span class="oc" data-oc="4">🗓️ Rhythmus</span></div>
     <div class="log" id="log"></div>
   </div>
@@ -201,7 +221,7 @@
   <div class="idov" id="idov" hidden><div class="idcard"><h3>🧑‍🍳 Wer bist du?</h3><p class="cnote">Stimm mit ab, was diese Woche gekocht wird – ohne App, ohne Account.</p><div class="idchips" id="idchips"></div></div></div>
   <div class="sback" id="sback"></div>
   <div class="sheet" id="sheet"><div class="grab"></div>
-    <div class="shd"><span class="chefav">🧑‍🍳</span><b>Assistent</b> <span class="scoperow"><button data-sc="woche" class="on w">📅 Woche</button><button data-sc="dauer" class="d">∞ Dauerhaft</button></span><button class="x" id="closeA">✕</button></div>
+    <div class="shd"><span class="chef mid" id="schef"><span class="cf">🧑‍🍳</span><i class="ring"></i><b class="steam">✨</b></span><b>Assistent</b> <span class="scoperow"><button data-sc="woche" class="on w">📅 Woche</button><button data-sc="dauer" class="d">∞ Dauerhaft</button></span><button class="x" id="closeA">✕</button></div>
     <div class="qk" id="qk"></div>
     <div class="log" id="slog"></div>
     <div class="sin"><input id="stext" placeholder="Sag's einfach …"><button class="snd" id="ssend">→</button></div>
@@ -383,26 +403,66 @@
     document.getElementById('kw').textContent='KW '+isoWeek(new Date()).kw;navTo('plan');refresh();}
   function enterApp(){document.getElementById('vOnb').classList.remove('on');document.getElementById('inbar').style.display='none';revealApp();startRot();showCoach();}
   // Andock-Sequenz: der Chat faltet sich in die Pill, der Chef-Avatar fliegt mit (Shared Element)
+  // Der Koch als geteiltes Element: fliegt im Bogen von A→B, skaliert dabei, hinterlässt ✨-Dampf, landet mit Squash.
+  function spawnTrail(a,b){
+    if(reduce)return;
+    for(var i=1;i<=3;i++){(function(i){
+      setTimeout(function(){
+        var t=i/4;
+        var x=a.left+a.width/2+((b.left+b.width/2)-(a.left+a.width/2))*t;
+        var y=a.top+a.height/2+((b.top+b.height/2)-(a.top+a.height/2))*t;
+        var p=document.createElement('b');p.className='ctrail';p.textContent='✨';
+        p.style.left=x+'px';p.style.top=y+'px';document.body.appendChild(p);
+        setTimeout(function(){if(p.parentNode)p.remove();},520);
+      },90*i);
+    })(i);}
+  }
+  function coinFly(fromEl,toEl,arc,opt){
+    opt=opt||{};
+    if(reduce||!fromEl||!toEl){if(toEl)toEl.style.visibility='';return;}
+    var a=opt.fromRect||fromEl.getBoundingClientRect();
+    var b=opt.toRect||toEl.getBoundingClientRect();
+    if(!a.width||!b.width){toEl.style.visibility='';return;}
+    var BASE=48;
+    var fly=document.createElement('span');fly.className='chef flychef';fly.style.setProperty('--sz',BASE+'px');
+    fly.innerHTML='<span class="cf">🧑‍🍳</span><i class="ring"></i>';document.body.appendChild(fly);
+    var sA=a.width/BASE, sB=b.width/BASE, sMid=(sA+sB)/2*1.06;
+    var midx=(a.left+b.left)/2;
+    var lift=arc==='rise'?Math.max(48,Math.abs(a.top-b.top)*0.2):Math.max(26,Math.abs(a.top-b.top)*0.12);
+    var apex=Math.min(a.top,b.top)-lift;
+    fromEl.style.visibility='hidden';toEl.style.visibility='hidden';
+    spawnTrail(a,b);
+    var an=fly.animate([
+      {transform:'translate('+a.left+'px,'+a.top+'px) scale('+sA+')',offset:0},
+      {transform:'translate('+midx+'px,'+apex+'px) scale('+sMid+')',offset:.5},
+      {transform:'translate('+b.left+'px,'+b.top+'px) scale('+sB+')',offset:1}
+    ],{duration:arc==='rise'?440:560,easing:'cubic-bezier(.4,.05,.2,1)',fill:'both'});
+    an.onfinish=function(){
+      if(fly.parentNode)fly.remove();fromEl.style.visibility='';toEl.style.visibility='';
+      try{toEl.animate([{transform:'scale(.72)'},{transform:'scale(1.12)',offset:.55},{transform:'scale(1)'}],{duration:300,easing:'cubic-bezier(.2,.9,.2,1.1)'});}catch(e){}
+    };
+  }
+  // Zielposition des Chat-Kochs messen, BEVOR das Sheet aufklappt (sonst mitten in der Transition falsch).
+  function sheetChefRect(scf){
+    var prev=sheet.style.transition;sheet.style.transition='none';
+    var was=sheet.classList.contains('open');sheet.classList.add('open');
+    var r=scf.getBoundingClientRect();
+    if(!was)sheet.classList.remove('open');sheet.style.transition=prev;return r;
+  }
   function dockAndEnter(){
     if(reduce){enterApp();return;}
     var onb=document.getElementById('vOnb'),bar=document.getElementById('inbar'),pill=document.getElementById('openA');
     revealApp();                                   // App hinter dem Chat aufbauen
-    var av=pill.querySelector('.av2'),tr=av.getBoundingClientRect();
-    var fly=document.createElement('div');fly.className='flyav';fly.textContent='🧑‍🍳';
-    fly.style.opacity='0';fly.style.transform='translate('+(window.innerWidth/2-16)+'px,'+(window.innerHeight*0.30)+'px) scale(1.7)';
-    document.body.appendChild(fly);av.style.visibility='hidden';
+    var av=pill.querySelector('.av2'),hero=document.getElementById('chero');
+    coinFly(hero||onb,av,'dive');                  // großer Start-Koch taucht in die Leiste
     bar.classList.add('fold');onb.classList.add('docking');
-    requestAnimationFrame(function(){requestAnimationFrame(function(){
-      onb.classList.add('go');
-      fly.style.opacity='1';fly.style.transform='translate('+tr.left+'px,'+tr.top+'px) scale(1)';
-    });});
+    requestAnimationFrame(function(){requestAnimationFrame(function(){onb.classList.add('go');});});
     setTimeout(function(){
-      fly.remove();av.style.visibility='';
       onb.classList.remove('on','docking','go');onb.removeAttribute('style');
       bar.style.display='none';bar.classList.remove('fold');
       pill.classList.add('arrive');setTimeout(function(){pill.classList.remove('arrive');},780);
       startRot();wait(360,showCoach);
-    },700);
+    },640);
   }
   function navTo(v){document.getElementById('vPlan').classList.toggle('on',v==='plan');document.getElementById('vProfil').classList.toggle('on',v==='profil');
     document.querySelectorAll('#nav button').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-v')===v);});document.getElementById('voteBtn').style.display='none';if(coached)hideCoach();}
@@ -600,8 +660,19 @@
     qk.querySelectorAll('button').forEach(function(bn){bn.addEventListener('click',function(){stext.value=bn.getAttribute('data-q');stext.focus();});});
     slog.innerHTML='';sbot(SCFG[sc].greet);}
   document.querySelectorAll('.scoperow button').forEach(function(x){x.addEventListener('click',function(){applyScope(x.getAttribute('data-sc'));});});
-  function openS(){hideCoach();sheet.classList.add('open');sback.classList.add('open');if(!sseed){sseed=true;applyScope('woche');}}
-  function closeS(){sheet.classList.remove('open');sback.classList.remove('open');}
+  function openS(){
+    hideCoach();
+    var pill=document.getElementById('openA'),av=pill&&pill.querySelector('.av2'),scf=sheet.querySelector('.chef');
+    var tgt=(!reduce&&av&&scf)?sheetChefRect(scf):null;   // Endposition messen, bevor das Sheet aufklappt
+    sheet.classList.add('open');sback.classList.add('open');
+    if(!sseed){sseed=true;applyScope('woche');}
+    if(tgt)coinFly(av,scf,'rise',{toRect:tgt});           // Koch steigt aus der Leiste in den Chat-Kopf
+  }
+  function closeS(){
+    var pill=document.getElementById('openA'),av=pill&&pill.querySelector('.av2'),scf=sheet.querySelector('.chef');
+    if(!reduce&&av&&scf)coinFly(scf,av,'dive');            // Koch wandert zurück in die Leiste
+    sheet.classList.remove('open');sback.classList.remove('open');
+  }
   document.getElementById('openA').addEventListener('click',openS);
   document.getElementById('closeA').addEventListener('click',closeS);
   sback.addEventListener('click',closeS);
