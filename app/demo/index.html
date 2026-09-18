@@ -66,6 +66,9 @@
   .dchip{font:700 .72rem/1 var(--mono);min-width:2rem;padding:.34rem .1rem;text-align:center;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--muted);cursor:pointer;} .dchip.on{background:var(--red-bg);border-color:var(--red-line);color:var(--red);}
   .dayblock{display:flex;flex-direction:column;} .daynote{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;font-size:.74rem;color:var(--orange);padding:.28rem .3rem .1rem 2.7rem;} .daynote .lnk{background:none;border:none;color:var(--blue);font-weight:700;font-size:.74rem;cursor:pointer;padding:0;}
   .empty{background:color-mix(in oklab,var(--blue) 7%,var(--card));border:1px dashed var(--blue-line);border-radius:12px;padding:.8rem;text-align:center;color:var(--muted);font-size:.88rem;}
+  .vs{padding:.45rem 0;border-top:1px dashed var(--line2);} .vs:first-of-type{border-top:none;}
+  .vt{display:flex;align-items:center;gap:.5rem;justify-content:space-between;font-size:.92rem;}
+  .auf{flex:0 0 auto;font:700 .58rem/1 var(--mono);text-transform:uppercase;letter-spacing:.03em;color:var(--green-ink);background:var(--green-bg);border-radius:999px;padding:.16rem .45rem;white-space:nowrap;}
   .dock{position:fixed;left:0;right:0;bottom:0;z-index:20;background:linear-gradient(to top,var(--paper) 78%,transparent);padding:.6rem .9rem calc(.6rem + env(safe-area-inset-bottom));}
   .dock .in{max-width:560px;margin:0 auto;}
   .votebtn{display:block;width:100%;background:var(--green);color:#fff;border:none;border-radius:14px;padding:.9rem;font:800 1.02rem/1 var(--sans);text-align:center;text-decoration:none;box-shadow:0 4px 16px color-mix(in oklab,var(--green) 40%,transparent);}
@@ -152,7 +155,10 @@
         <div class="chips" style="margin-top:.5rem"><button class="chip add" id="addGast">＋ Gast / Besonderheit</button></div>
       </div>
       <details class="acc"><summary>🔍 Was fließt in die Planung ein?</summary><ul class="tb" id="transp"></ul></details>
-      <div class="empty">🍽️ Noch kein Essensplan — als Nächstes würdet ihr <b>abstimmen &amp; kochen</b>.<br><span style="font-size:.8rem">(Vorschläge kommen im nächsten Schritt der App.)</span></div>
+      <div id="planwrap">
+        <div id="planEmpty" class="empty">🍽️ Noch kein Essensplan. <button class="btn-s" data-act="gen">✨ Vorschläge holen</button><br><span style="font-size:.8rem">…passend zu wer da ist, Diäten, Zeit &amp; Budget.</span></div>
+        <div id="planCards"></div>
+      </div>
     </div>
   </div>
 
@@ -412,7 +418,29 @@
     var tp=DOW.map(function(d){var here=presentOn(d);if(!here.length)return '';var hard=[];here.forEach(function(p){(p.praeferenzen||[]).forEach(function(x){if(HART[x.art]&&hard.indexOf(x.wert)<0)hard.push(x.wert);});});
       var names=here.map(function(p){return esc(p.name)+(p.rolle==='kind'?' 🧒':'');}).join(' & ');
       return '<li><b>'+d+':</b> '+names+(hard.length?' <span class="hx">⛔ '+hard.map(esc).join(', ')+'</span>':' <span class="sx">keine Einschränkung</span>')+'</li>';}).filter(Boolean).join('');
-    document.getElementById('transp').innerHTML=ctx+(tp||'<li class="sx">—</li>');}
+    document.getElementById('transp').innerHTML=ctx+(tp||'<li class="sx">—</li>');
+    var _pc=document.getElementById('planCards');if(_pc)_pc.innerHTML='';var _pe=document.getElementById('planEmpty');if(_pe){_pe.style.display='';_pe.innerHTML='🍽️ Noch kein Essensplan. <button class="btn-s" data-act="gen">✨ Vorschläge holen</button><br><span style="font-size:.8rem">…passend zu wer da ist, Diäten, Zeit &amp; Budget.</span>';}}
+  // ── Vorschlags-Generierung (US-05): Kontext aus Anwesenheit + harten Ausschlüssen + Grundsätzen -> AI-Gerichte ──
+  var DIETWORDS=/^(vegetarisch|vegan|pescetarisch|halal|koscher|flexitarisch|low[\s-]?carb|paleo|keto)$/i;
+  function dayContext(d){var here=presentOn(d),g=guestsOn(d);if(!here.length&&!g.length)return null;
+    var di=[],ve=[];here.forEach(function(p){(p.praeferenzen||[]).forEach(function(x){if(!HART[x.art])return;var w=(x.wert||'').trim();if(!w)return;
+      if(x.art==='ernaehrungsform'&&DIETWORDS.test(w)){if(di.indexOf(w)<0)di.push(w);}else{if(ve.indexOf(w)<0)ve.push(w);}});});
+    return {tag:d,personen:here.map(function(p){return {name:p.name,rolle:p.rolle||'erwachsen'};}),gaeste:g.map(function(e){return e.gast_name||'Gast';}),diaeten:di,vermeiden:ve};}
+  function buildContext(){return {kw:isoWeek(new Date()).kw,grundsaetze:DATA.regeln.filter(function(r){return r.typ==='wunsch';}).map(function(r){return r.text;}),tage:DOW.map(dayContext).filter(Boolean)};}
+  function renderVorschlaege(tage){var pe=document.getElementById('planEmpty');if(pe)pe.style.display='none';
+    document.getElementById('planCards').innerHTML=(tage||[]).map(function(t){var here=presentOn(t.tag);var names=here.map(function(p){return esc(p.name)+(p.rolle==='kind'?' 🧒':'');}).join(' & ');var g=guestsOn(t.tag).map(function(e){return esc(e.gast_name||'Gast')+' (Gast)';});if(g.length)names+=(names?' · ':'')+g.join(', ');
+      return '<div class="card"><div class="chd">'+esc(t.tag)+' <span class="cnote" style="font-weight:400">'+names+'</span></div>'
+        +(t.vorschlaege||[]).map(function(v){return '<div class="vs"><div class="vt"><b>'+esc(v.titel||'')+'</b> <span class="auf">'+esc(v.aufwand||'')+'</span></div><div class="cnote">'+esc(v.kurz||'')+'</div></div>';}).join('')
+        +'</div>';}).join('')+'<button class="btn-s" data-act="gen" style="margin:.2rem 0 .6rem">↻ Neue Vorschläge</button>';}
+  function generatePlan(retry){var ctx=buildContext(),pe=document.getElementById('planEmpty'),pc=document.getElementById('planCards');
+    if(!ctx.tage.length){if(pe){pe.style.display='';pe.innerHTML='🍽️ Diese Woche ist niemand da zum Kochen.';}return;}
+    if(pc)pc.innerHTML='';if(pe){pe.style.display='';pe.innerHTML='🍳 Ich koche Vorschläge aus … <span class="cnote">passend zu wer da ist, Diäten, Zeit &amp; Budget</span>';}
+    fetch(FN,{method:'POST',headers:H,body:JSON.stringify({generate:true,context:ctx,haushalt:HH})}).then(function(r){return r.json();}).then(function(res){
+      if(res&&res.plan&&res.plan.tage&&res.plan.tage.length){renderVorschlaege(res.plan.tage);}
+      else if(!retry){generatePlan(true);}   // ein stiller Retry (AI liefert selten unvollständig)
+      else if(pe){pe.style.display='';pe.innerHTML='⚠️ Konnte gerade keine Vorschläge holen. <button class="btn-s" data-act="gen">Nochmal</button>';}
+    }).catch(function(){if(retry&&pe){pe.style.display='';pe.innerHTML='⚠️ offline. <button class="btn-s" data-act="gen">Nochmal</button>';}else if(!retry){generatePlan(true);}});}
+  document.getElementById('planwrap').addEventListener('click',function(e){if(e.target.closest('[data-act="gen"]'))generatePlan();});
   function renderProfil(){
     document.getElementById('pfPersons').innerHTML=DATA.persons.map(function(p){
       var chips=(p.praeferenzen||[]).map(function(x){return '<span class="pref'+(x.hart?' hart':'')+'"><span class="art">'+esc(ARTLBL[x.art]||x.art)+'</span>'+esc(x.wert)+'<span class="x" data-act="delpref" data-id="'+x.id+'">✕</span></span>';}).join('')||'<span class="cnote">keine</span>';
