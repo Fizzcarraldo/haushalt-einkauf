@@ -252,10 +252,11 @@
       curHandler=function(t){addN(t);};advanceFn=function(){go.click();};rp();
     },{focus:true});}
   function stepNogos(){head(2,'active');input.placeholder='Antworten oder erzählen …';
-    var diet=[['🍽️','alles'],['🥗','vegetarisch'],['🌱','vegan'],['🐟','pescetarisch'],['☪️','halal']];
+    var diet=[['🍽️','alles'],['🥗','vegetarisch'],['🌱','vegan'],['🐟','pescetarisch']];
     var alg=[['🥜 Nüsse','Nüsse','allergie'],['🌾 Gluten','Gluten','allergie'],['🥛 Laktose','Laktose','allergie'],['🐷 kein Schwein','kein Schweinefleisch','ernaehrungsform']];
     ask('Super, <b>'+esc(state.persons.join(' & '))+'</b> ✓<br>Kurz zum Essen: <b>Wie ernährt ihr euch?</b>',function(b,c){
       c.innerHTML='<div class="chips" data-diet>'+diet.map(function(d){return '<span class="chip sug diet'+(d[1]==='alles'?' sel':'')+'" data-v="'+d[1]+'">'+d[0]+' '+d[1]+'</span>';}).join('')+'</div>'
+        +'<div class="cnote" style="margin:.3rem 0 0">Etwas anderes (halal, koscher, Low-Carb …)? Sag&apos;s mir einfach unten.</div>'
         +'<div class="cnote" style="margin:.55rem 0 .2rem">⛔ Und was <b>geht gar nicht?</b> <span style="color:var(--muted)">(Allergien &amp; Tabus)</span></div>'
         +'<div class="chips" data-alg>'+alg.map(function(a){return '<span class="chip sug h" data-art="'+a[2]+'" data-v="'+esc(a[1])+'">'+a[0]+'</span>';}).join('')+'</div>'
         +'<button class="go" data-go style="margin-top:.55rem">Weiter ›</button>';
@@ -277,10 +278,14 @@
       function selectOrAddTabu(wert,art){var w=normT(wert);if(!w)return;var found=null;
         aw.querySelectorAll('.chip.sug').forEach(function(c){var cv=normT(c.getAttribute('data-v'));if(!cv)return;if(cv===w||(Math.min(cv.length,w.length)>=4&&(cv.indexOf(w)>=0||w.indexOf(cv)>=0)))found=c;});
         if(found)found.classList.add('sel');else addTabu(wert,art);}
+      function addDiet(name){var v=(name||'').toString().trim();if(!v||v.toLowerCase()==='null'||v.toLowerCase()==='none')return;
+        var ex=dw.querySelector('.chip.sug[data-v="'+v.replace(/"/g,'')+'"]');
+        if(!ex){ex=document.createElement('span');ex.className='chip sug diet';ex.setAttribute('data-v',v);ex.textContent='✨ '+v;ex.addEventListener('click',function(){dw.querySelectorAll('.chip.sug').forEach(function(y){y.classList.remove('sel');});ex.classList.add('sel');});dw.appendChild(ex);}
+        dw.querySelectorAll('.chip.sug').forEach(function(y){y.classList.remove('sel');});ex.classList.add('sel');}
       curHandler=function(t){me(t);var ty=typing();busy=true;
         aiParse('ernaehrung',t).then(function(p){ty.remove();busy=false;
           if(p){
-            if(p.diet&&p.diet!=='alles'){var dc=dw.querySelector('.chip.sug[data-v="'+p.diet+'"]');if(dc){dw.querySelectorAll('.chip.sug').forEach(function(y){y.classList.remove('sel');});dc.classList.add('sel');}else{selectOrAddTabu(p.diet,'ernaehrungsform');}}
+            if(p.diet)addDiet(p.diet);   // benannte Ernährungsweise (halal, koscher, low-carb, …) als grüner Chip
             (p.tabus||[]).forEach(function(x){selectOrAddTabu(String(x.wert||'').trim(),x.art);});
           } else { selectOrAddTabu(t,'allergie'); }  // Fallback: als Allergie/Tabu
         });};
