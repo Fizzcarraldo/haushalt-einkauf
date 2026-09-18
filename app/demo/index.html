@@ -220,6 +220,14 @@
   .appfoot .coach{margin:0 0 .5rem;}
   .kbgrid{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-top:.6rem;}
   .kbcard{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--card);} .kbcard .kbh{height:64px;display:grid;place-items:center;font-size:1.8rem;background:linear-gradient(135deg,color-mix(in oklab,var(--green) 15%,var(--card)),color-mix(in oklab,var(--blue) 15%,var(--card)));} .kbcard .kbn{padding:.4rem .5rem;font-size:.8rem;font-weight:700;}
+  /* ── Onboarding-Reveal + Party ── */
+  #vOnb{position:fixed;inset:0;z-index:35;background:var(--paper);} #vOnb.onbexit{transform:translateX(103%);transition:transform .62s cubic-bezier(.3,.85,.2,1);}
+  .appbar,.cockpit,#stepper,.appfoot,#vPlan,#vProfil,#vKochbuch{transition:filter .55s ease,transform .55s cubic-bezier(.2,.8,.2,1);}
+  body.onbrevealing .appbar,body.onbrevealing .cockpit,body.onbrevealing #stepper,body.onbrevealing .appfoot,body.onbrevealing #vPlan,body.onbrevealing #vProfil,body.onbrevealing #vKochbuch{filter:blur(3.5px) brightness(.84) saturate(.92);transform:scale(.965);}
+  #party{position:absolute;inset:0;z-index:6;display:grid;place-content:center;justify-items:center;gap:.35rem;text-align:center;padding:1rem;background:var(--paper);}
+  #party[hidden]{display:none;} #party .pchef{font-size:3.6rem;animation:pbounce .7s cubic-bezier(.2,.9,.2,1.2) both;} #party .pt{font:800 1.7rem/1.05 var(--sans);letter-spacing:-.01em;} #party .ps{color:var(--muted);font-size:1rem;}
+  @keyframes pbounce{0%{transform:scale(.4) rotate(-8deg);opacity:0}45%{transform:scale(1.18) rotate(4deg)}70%{transform:scale(.94)}100%{transform:scale(1) rotate(0);opacity:1}}
+  #confetti{position:fixed;inset:0;z-index:60;pointer-events:none;}
 </style>
 </head>
 <body>
@@ -236,8 +244,9 @@
     <div class="cheroWrap"><span class="chef hero" id="chero"><span class="cf">🧑‍🍳</span><i class="ring"></i><b class="steam">✨</b></span></div>
     <div class="head"><span class="oc" data-oc="1">👤 Wer</span><span class="oc" data-oc="2">🥗 Ernährung</span><span class="oc" data-oc="3">🎯 Wichtig</span><span class="oc" data-oc="4">🗓️ Rhythmus</span></div>
     <div class="log" id="log"></div>
+    <div class="inbar" id="inbar"><input id="text" placeholder="Antworten oder erzählen …" aria-label="Nachricht"><button class="snd" id="send">→</button></div>
+    <div class="party" id="party" hidden><div class="pchef">🧑‍🍳</div><div class="pt">🎉 Geschafft!</div><div class="ps">Eure Woche ist startklar.</div></div>
   </div>
-  <div class="inbar" id="inbar"><input id="text" placeholder="Antworten oder erzählen …" aria-label="Nachricht"><button class="snd" id="send">→</button></div>
 
   <div class="view" id="vPlan">
     <div class="pl">
@@ -285,6 +294,7 @@
     <div class="log" id="slog"></div>
     <div class="sin"><input id="stext" placeholder="Sag's einfach …"><button class="snd" id="ssend">→</button></div>
   </div>
+  <canvas id="confetti"></canvas>
 
 <script>
 (function(){
@@ -511,12 +521,32 @@
     var r=scf.getBoundingClientRect();
     if(!was)sheet.classList.remove('open');sheet.style.transition=prev;return r;
   }
-  function dockAndEnter(){
-    if(reduce){enterApp();return;}
-    var onb=document.getElementById('vOnb'),bar=document.getElementById('inbar');
-    bar.classList.add('fold');onb.classList.add('docking');
-    requestAnimationFrame(function(){requestAnimationFrame(function(){onb.classList.add('go');});});
-    setTimeout(function(){onb.removeAttribute('style');onb.classList.remove('docking','go');bar.classList.remove('fold');enterApp();},560);
+  var _cv,_ctx,_parts=[],_raf=null;
+  function fireConfetti(){ if(reduce)return; var cv=document.getElementById('confetti');if(!cv)return;_cv=cv;_ctx=_ctx||cv.getContext('2d');
+    var W=cv.width=cv.offsetWidth||window.innerWidth,H=cv.height=cv.offsetHeight||window.innerHeight;
+    var cols=['#3f9b2f','#2472c8','#f5c542','#ff6b6b','#8bd97a','#5aa2ea','#ffb23e'];
+    for(var i=0;i<90;i++)_parts.push({x:W*(0.28+Math.random()*0.44),y:H*0.26,vx:(Math.random()-0.5)*8,vy:-5-Math.random()*8,g:0.24+Math.random()*0.12,rot:Math.random()*6.28,vr:(Math.random()-0.5)*0.5,w:5+Math.random()*5,h:8+Math.random()*7,c:cols[i%cols.length],life:0,max:80+Math.random()*45});
+    if(!_raf)_raf=requestAnimationFrame(_ctick);
+  }
+  function _ctick(){var cv=_cv,ctx=_ctx;if(!cv||!ctx){_raf=null;return;}var W=cv.width,H=cv.height;ctx.clearRect(0,0,W,H);var alive=false;
+    for(var i=0;i<_parts.length;i++){var p=_parts[i];p.life++;if(p.life>p.max)continue;alive=true;p.vy+=p.g;p.vx*=0.99;p.x+=p.vx;p.y+=p.vy;p.rot+=p.vr;var a=p.life>p.max-22?(p.max-p.life)/22:1;ctx.save();ctx.globalAlpha=Math.max(0,a);ctx.translate(p.x,p.y);ctx.rotate(p.rot);ctx.fillStyle=p.c;ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);ctx.restore();}
+    _parts=_parts.filter(function(p){return p.life<=p.max;});
+    if(alive)_raf=requestAnimationFrame(_ctick);else{_raf=null;ctx.clearRect(0,0,W,H);}
+  }
+  function showParty(){var e=document.getElementById('party');if(e)e.hidden=false;}
+  function hideParty(){var e=document.getElementById('party');if(e)e.hidden=true;}
+  function dockAndEnter(){                                  // Onboarding-Reveal: App zieht hinter dem Chat hervor, mit Party 🎉
+    var onb=document.getElementById('vOnb');
+    revealApp();                                            // App/Board hinter dem Onboarding aufbauen
+    document.body.classList.add('onbrevealing');            // App gedimmt & unscharf
+    showParty();fireConfetti();                             // 🎉 Geschafft!-Belohnung
+    if(reduce){hideParty();document.body.classList.remove('onbrevealing');onb.classList.remove('on');document.body.classList.add('entered');showCoach();return;}
+    setTimeout(function(){
+      onb.classList.add('onbexit');                         // Onboarding fährt nach rechts (mit Party) raus
+      document.body.classList.remove('onbrevealing');        // App zieht scharf in den Fokus
+      fireConfetti();
+      setTimeout(function(){onb.classList.remove('on','onbexit');hideParty();document.body.classList.add('entered');showCoach();},660);
+    },950);
   }
   var navMode='week';
   function setF(label,act){var fa=document.getElementById('faction');if(!fa)return;fa.hidden=false;fa.textContent=label;fa.setAttribute('data-act',act);}
