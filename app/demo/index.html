@@ -59,6 +59,9 @@
   .agenda .av{cursor:pointer;transition:transform .1s ease;} .agenda .av:active{transform:scale(.9);}
   .av.off{background:var(--card);color:var(--muted);border:1px solid var(--line);text-decoration:line-through;}
   .spill{font:700 .72rem/1 var(--sans);padding:.3rem .55rem;border-radius:999px;white-space:nowrap;flex-shrink:0;} .spill.cook{background:var(--green-bg);color:var(--green-ink);} .spill.out{background:var(--grey-bg);color:var(--muted);}
+  .wegrow{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin:.4rem 0;} .wegrow .wegname{font-weight:700;font-size:.86rem;min-width:4.5rem;} .wegdays{display:flex;gap:.25rem;flex-wrap:wrap;}
+  .dchip{font:700 .72rem/1 var(--mono);min-width:2rem;padding:.34rem .1rem;text-align:center;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--muted);cursor:pointer;} .dchip.on{background:var(--red-bg);border-color:var(--red-line);color:var(--red);}
+  .dayblock{display:flex;flex-direction:column;} .daynote{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;font-size:.74rem;color:var(--orange);padding:.28rem .3rem .1rem 2.7rem;} .daynote .lnk{background:none;border:none;color:var(--blue);font-weight:700;font-size:.74rem;cursor:pointer;padding:0;}
   .empty{background:color-mix(in oklab,var(--blue) 7%,var(--card));border:1px dashed var(--blue-line);border-radius:12px;padding:.8rem;text-align:center;color:var(--muted);font-size:.88rem;}
   .dock{position:fixed;left:0;right:0;bottom:0;z-index:20;background:linear-gradient(to top,var(--paper) 78%,transparent);padding:.6rem .9rem calc(.6rem + env(safe-area-inset-bottom));}
   .dock .in{max-width:560px;margin:0 auto;}
@@ -139,7 +142,7 @@
   <div class="view" id="vPlan">
     <div class="pl">
       <h1>🗓️ Diese Woche <span class="kw" id="kw"></span></h1><p class="sub" id="plsub">euer neuer Haushalt</p>
-      <div class="card"><div class="chd">Wer isst wann?</div>
+      <div class="card"><div class="chd">Wer isst wann?</div><p class="cnote" id="wwsub" style="margin:.1rem 0 .4rem"></p>
         <div class="legend2" id="legend"></div>
         <div class="agenda" id="agenda"></div>
         <div class="chips" style="margin-top:.5rem"><button class="chip add" id="addGast">＋ Gast / Besonderheit</button></div>
@@ -154,7 +157,7 @@
       <h1>⚙️ Profil <span class="scope-d">∞ dauerhaft</span></h1><p class="sub">gilt in jeder Woche</p>
       <div class="card"><div class="chd">👤 Personen &amp; Präferenzen</div><p class="cnote">Allergie/Ernährung = <b style="color:var(--red)">hart</b> · Vorliebe/Abneigung = weich.</p><div id="pfPersons"></div></div>
       <div class="card"><div class="chd">🎯 Grundsätze</div><div id="pfGrund"></div></div>
-      <div class="card"><div class="chd">📌 Wiederkehrende Regeln</div><div id="pfRegeln"></div></div>
+      <div class="card"><div class="chd">🗓️ Rhythmus &amp; feste Regeln</div><p class="cnote">Euer Standard – wird auf „Diese Woche" automatisch übernommen.</p><div id="pfRegeln"></div></div>
     </div>
   </div>
 
@@ -237,17 +240,24 @@
       curHandler=function(t){var s=document.createElement('span');s.className='chip sug g sel';s.textContent='✨ '+t;s.addEventListener('click',function(){s.classList.toggle('sel');});c.querySelector('.chips').appendChild(s);me(t);};
       advanceFn=function(){go.click();};});}
   function stepRhythm(){head(4,'active');var names=state.persons;
-    var h='<tr><th></th>'+DOW.map(function(d){return '<th>'+d+'</th>';}).join('')+'</tr>';
-    var rows=names.map(function(n,i){return '<tr><td>'+(i===0?'🧑 ':'👤 ')+esc(n)+'</td>'+DOW.map(function(){return '<td><span class="c"></span></td>';}).join('')+'</tr>';}).join('');
-    ask('Fast fertig! <b>Wer ist abends typischerweise da?</b> Tippen = da/weg.',function(b,c){
-      c.innerHTML='<table class="mx">'+h+rows+'</table><button class="go" data-go>Fertig ✓</button>';
-      c.querySelectorAll('.c').forEach(function(x){x.addEventListener('click',function(){x.classList.toggle('off');});});
-      var go=c.querySelector('[data-go]');
-      go.addEventListener('click',function(){if(busy)return;var proms=[];
-        [].slice.call(c.querySelectorAll('table.mx tr')).slice(1).forEach(function(tr,ri){var n=names[ri],pid=state.ids[n];
-          [].slice.call(tr.querySelectorAll('.c')).forEach(function(cell,ci){ if(cell.classList.contains('off')&&pid){ proms.push(post('regeln',{person_id:pid,typ:'abwesenheit',wochentag:DOW[ci],text:'regelmäßig abends weg',haushalt:HH})); } });});
-        Promise.all(proms).then(function(){me('Rhythmus gesetzt');head(4,'done');stepDone();});});
-      curHandler=function(t){me(t);};advanceFn=function(){go.click();};});}
+    // Leichte Frage statt Wochen-Raster (das würde wie die Planen-Seite aussehen). Raster nur, wenn wirklich jemand regelmäßig weg ist.
+    ask('Fast fertig! Eine Sache noch: <b>Seid ihr abends meistens alle da?</b>',function(b,c){
+      c.innerHTML='<div class="chips"><button class="go" data-yes>👍 Ja, fast immer</button><button class="go" data-no style="background:var(--orange-bg);color:var(--orange);border-color:var(--orange-line)">📅 Manche sind regelmäßig weg</button></div>'
+        +'<div class="cnote" style="margin-top:.4rem">Den Rest der Woche pflegt ihr später einfach auf „Diese Woche" – nur wenn mal was anders ist.</div>';
+      var yes=c.querySelector('[data-yes]'),no=c.querySelector('[data-no]');
+      yes.addEventListener('click',function(){if(busy)return;me('meistens alle da');head(4,'done');stepDone();});
+      no.addEventListener('click',function(){if(busy)return;
+        c.innerHTML='<div class="cnote" style="margin-bottom:.5rem">Tippt die Tage an, an denen jemand <b>regelmäßig weg</b> ist – der Rest gilt als „da".</div>'
+          +names.map(function(n,i){return '<div class="wegrow" data-p="'+i+'"><span class="wegname">'+(i===0?'🧑 ':'👤 ')+esc(n)+'</span><span class="wegdays">'+DOW.map(function(d){return '<button class="dchip" data-d="'+d+'">'+d+'</button>';}).join('')+'</span></div>';}).join('')
+          +'<button class="go" data-go style="margin-top:.5rem">Fertig ✓</button>';
+        c.querySelectorAll('.dchip').forEach(function(x){x.addEventListener('click',function(){x.classList.toggle('on');});});
+        var go=c.querySelector('[data-go]');
+        go.addEventListener('click',function(){if(busy)return;var proms=[];
+          [].slice.call(c.querySelectorAll('.wegrow')).forEach(function(row){var pid=state.ids[names[+row.getAttribute('data-p')]];
+            row.querySelectorAll('.dchip.on').forEach(function(ch){if(pid)proms.push(post('regeln',{person_id:pid,typ:'abwesenheit',wochentag:ch.getAttribute('data-d'),text:'regelmäßig abends weg',haushalt:HH}));});});
+          Promise.all(proms).then(function(){me('Rhythmus gesetzt');head(4,'done');stepDone();});});
+        advanceFn=function(){go.click();};scr();});
+      curHandler=function(t){me(t);};advanceFn=function(){yes.click();};});}
   function stepDone(){ask('🎉 <b>Startklar!</b> Euer Haushalt steht — hier ist eure Woche.<br>Ab jetzt bin ich <b>unten</b> immer dabei: tippt mich an, wann immer sich was ändert. 👇',null,{then:function(){wait(reduce?300:640,dockAndEnter);}});}
 
   function sendText(){if(busy)return;var v=(input.value||'').trim();if(!v){if(advanceFn)advanceFn();return;}if(curHandler)curHandler(v);input.value='';scr();}
@@ -312,14 +322,19 @@
     var awW=DATA.ereignisse.some(function(e){return e.typ==='abwesenheit'&&e.wochentag===day&&e.person_id===p.id;});
     return !(awR||awW);});}
   function guestsOn(day){return DATA.ereignisse.filter(function(e){return e.typ==='gast'&&e.wochentag===day;});}
+  function overridesOn(day){return DATA.ereignisse.filter(function(e){return (e.typ==='abwesenheit'||e.typ==='anwesenheit')&&e.wochentag===day;});}
   function renderPlanen(){var persons=DATA.persons;
     document.getElementById('plsub').textContent=persons.map(function(p){return p.name;}).join(' & ')+' · Haushalt '+HH;
-    document.getElementById('legend').innerHTML=persons.map(function(p){return '<span><span class="av">'+esc(initials(p.name))+'</span> '+esc(p.name)+'</span>';}).join('')+'<span>👉 Namen antippen = da / weg</span>';
-    document.getElementById('agenda').innerHTML=DOW.map(function(d){var here=presentOn(d),hereIds={};here.forEach(function(p){hereIds[p.id]=1;});var g=guestsOn(d);
+    document.getElementById('legend').innerHTML=persons.map(function(p){return '<span><span class="av">'+esc(initials(p.name))+'</span> '+esc(p.name)+'</span>';}).join('')+'<span>👉 antippen = diese Woche da/weg</span>';
+    var changed=DOW.filter(function(d){return overridesOn(d).length;}).length;
+    document.getElementById('wwsub').innerHTML=changed?('📅 <b>'+changed+' Tag'+(changed>1?'e':'')+' diese Woche geändert</b> – der Rest läuft wie immer.'):'✓ Läuft <b>wie immer</b> – tippt nur an, was <b>diese Woche</b> anders ist.';
+    document.getElementById('agenda').innerHTML=DOW.map(function(d){var here=presentOn(d),hereIds={};here.forEach(function(p){hereIds[p.id]=1;});var g=guestsOn(d);var ov=overridesOn(d);
       var avs=persons.map(function(p){var on=hereIds[p.id];return '<span class="av'+(on?'':' off')+'" data-pid="'+p.id+'" data-day="'+d+'" title="antippen: diese Woche da/weg">'+esc(initials(p.name))+'</span>';}).join('')
         +g.map(function(x){return '<span class="av" style="background:var(--orange)">'+esc(initials(x.gast_name||'G'))+'</span>';}).join('');
       var st=(here.length||g.length)?'<span class="spill cook">Kochen</span>':'<span class="spill out">Auswärts</span>';
-      return '<div class="dayrow"><div class="dd"><span>'+d+'</span></div><div class="eaters">'+avs+'</div>'+st+'</div>';}).join('');
+      var row='<div class="dayrow"><div class="dd"><span>'+d+'</span></div><div class="eaters">'+avs+'</div>'+st+'</div>';
+      var note=ov.length?'<div class="daynote">📅 diese Woche geändert <button class="lnk" data-act="revert" data-day="'+d+'">↩︎ wieder wie immer</button><button class="lnk" data-act="promote" data-day="'+d+'">⭑ als Standard merken</button></div>':'';
+      return '<div class="dayblock">'+row+note+'</div>';}).join('');
     var tp=DOW.map(function(d){var here=presentOn(d);if(!here.length)return '';var hard=[];here.forEach(function(p){(p.praeferenzen||[]).forEach(function(x){if(HART[x.art])hard.push(x.wert);});});
       return '<li><b>'+d+':</b> '+here.map(function(p){return esc(p.name);}).join(' & ')+(hard.length?' <span class="hx">⛔ '+hard.map(esc).join(', ')+'</span>':' <span class="sx">keine Einschränkung</span>')+'</li>';}).filter(Boolean).join('');
     document.getElementById('transp').innerHTML=tp||'<li class="sx">—</li>';}
@@ -353,7 +368,16 @@
         if(!wasPresent){ if(permAbs) return post('woche_ereignisse',{woche_id:wid,person_id:pid,typ:'anwesenheit',wochentag:day,text:'diese Woche da',haushalt:HH}); return null; }
         return post('woche_ereignisse',{woche_id:wid,person_id:pid,typ:'abwesenheit',wochentag:day,text:'diese Woche weg',haushalt:HH}); })
       .then(refresh);}
-  document.getElementById('agenda').addEventListener('click',function(e){var a=e.target.closest('.av[data-pid]');if(a)togglePresence(a.getAttribute('data-pid'),a.getAttribute('data-day'));});
+  // Ausnahme-Tag zurücksetzen (wieder wie immer) bzw. als neuen Standard in den Rhythmus übernehmen
+  function revertDay(day){rest('DELETE','woche_ereignisse?haushalt=eq.'+HH+'&wochentag=eq.'+day+'&typ=in.(abwesenheit,anwesenheit)').then(refresh);}
+  function promoteDay(day){var here={};presentOn(day).forEach(function(p){here[p.id]=1;});var proms=[];
+    DATA.persons.forEach(function(p){var hasRule=DATA.regeln.some(function(r){return r.typ==='abwesenheit'&&r.wochentag===day&&r.person_id===p.id;});
+      if(here[p.id]){if(hasRule)proms.push(rest('DELETE','regeln?haushalt=eq.'+HH+'&person_id=eq.'+p.id+'&wochentag=eq.'+day+'&typ=eq.abwesenheit'));}
+      else{if(!hasRule)proms.push(post('regeln',{person_id:p.id,typ:'abwesenheit',wochentag:day,text:'regelmäßig weg',haushalt:HH}));}});
+    Promise.all(proms).then(function(){return rest('DELETE','woche_ereignisse?haushalt=eq.'+HH+'&wochentag=eq.'+day+'&typ=in.(abwesenheit,anwesenheit)');}).then(refresh);}
+  document.getElementById('agenda').addEventListener('click',function(e){var act=e.target.closest('[data-act]');
+    if(act){var day=act.getAttribute('data-day'),k=act.getAttribute('data-act');if(k==='revert')revertDay(day);else if(k==='promote')promoteDay(day);return;}
+    var a=e.target.closest('.av[data-pid]');if(a)togglePresence(a.getAttribute('data-pid'),a.getAttribute('data-day'));});
 
   // ── Assistent-Sheet (echte Function, beide Scopes) ──
   var sheet=document.getElementById('sheet'),sback=document.getElementById('sback'),slog=document.getElementById('slog'),stext=document.getElementById('stext'),shist=[],sseed=false,curScope='woche';
