@@ -273,12 +273,16 @@
         var parts=[];if(dv!=='alles')parts.push(dv);if(labels.length)parts.push(labels.join(', '));
         Promise.all(proms).then(function(){me(parts.join(' · ')||'alles, keine Tabus');head(2,'done');stepGrund();});});
       function addTabu(wert,art){if(!wert)return;var s=document.createElement('span');s.className='chip sug h sel';s.setAttribute('data-art',art==='ernaehrungsform'?'ernaehrungsform':'allergie');s.setAttribute('data-v',wert);s.textContent='✨ '+wert;s.addEventListener('click',function(){s.classList.toggle('sel');});aw.appendChild(s);}
+      function normT(s){return (s||'').toLowerCase().replace(/ä/g,'a').replace(/ö/g,'o').replace(/ü/g,'u').replace(/ß/g,'ss').replace(/^kein(e|en)?\s+/,'').replace(/(allergie|unvertraglichkeit|intoleranz)$/,'').replace(/[^a-z]/g,'');}
+      function selectOrAddTabu(wert,art){var w=normT(wert);if(!w)return;var found=null;
+        aw.querySelectorAll('.chip.sug').forEach(function(c){var cv=normT(c.getAttribute('data-v'));if(!cv)return;if(cv===w||(Math.min(cv.length,w.length)>=4&&(cv.indexOf(w)>=0||w.indexOf(cv)>=0)))found=c;});
+        if(found)found.classList.add('sel');else addTabu(wert,art);}
       curHandler=function(t){me(t);var ty=typing();busy=true;
         aiParse('ernaehrung',t).then(function(p){ty.remove();busy=false;
           if(p){
-            if(p.diet&&p.diet!=='alles'){var dc=dw.querySelector('.chip.sug[data-v="'+p.diet+'"]');if(dc){dw.querySelectorAll('.chip.sug').forEach(function(y){y.classList.remove('sel');});dc.classList.add('sel');}else{addTabu(p.diet,'ernaehrungsform');}}
-            (p.tabus||[]).forEach(function(x){addTabu(String(x.wert||'').trim(),x.art);});
-          } else { addTabu(t,'allergie'); }  // Fallback: als Allergie
+            if(p.diet&&p.diet!=='alles'){var dc=dw.querySelector('.chip.sug[data-v="'+p.diet+'"]');if(dc){dw.querySelectorAll('.chip.sug').forEach(function(y){y.classList.remove('sel');});dc.classList.add('sel');}else{selectOrAddTabu(p.diet,'ernaehrungsform');}}
+            (p.tabus||[]).forEach(function(x){selectOrAddTabu(String(x.wert||'').trim(),x.art);});
+          } else { selectOrAddTabu(t,'allergie'); }  // Fallback: als Allergie/Tabu
         });};
       advanceFn=function(){go.click();};});}
   function stepGrund(){head(3,'active');
