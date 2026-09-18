@@ -170,7 +170,7 @@
   .ccard.dh{border-left-color:var(--blue);}
   /* Andock-Sequenz: Onboarding-Chat faltet sich in die Pill */
   #vOnb.docking{position:fixed;inset:0;z-index:40;transform-origin:50% 100%;transition:transform .66s cubic-bezier(.55,0,.2,1),opacity .5s ease .16s;will-change:transform,opacity;}
-  #vOnb.docking.go{transform:translateY(20px) scale(.045);opacity:0;}
+  #vOnb.docking.go{transform:translateY(10px) scale(.82);opacity:0;}
   #inbar.fold{transition:opacity .28s ease,transform .28s ease;opacity:0;transform:translateY(34px);pointer-events:none;}
   .flyav{position:fixed;left:0;top:0;z-index:60;width:2rem;height:2rem;border-radius:50%;display:grid;place-items:center;font-size:1.05rem;background:var(--card);box-shadow:0 6px 22px rgba(0,0,0,.28),0 0 0 1.5px color-mix(in oklab,var(--green) 55%,transparent);transition:transform .62s cubic-bezier(.55,0,.2,1),opacity .3s ease;will-change:transform;}
   /* ── Der Koch als lebende Figur: ein Coin, der zwischen Start · Chat · Leiste wandert ── */
@@ -184,14 +184,17 @@
   .chef.mid{--sz:2.6rem;}
   .chef.mid .cf{animation:cbob 4.2s ease-in-out infinite;}
   .chef.mid .steam{animation:csteam 6s ease-in-out 1.6s infinite;}
-  .chef.flychef{position:fixed;left:0;top:0;z-index:70;pointer-events:none;transform-origin:top left;box-shadow:0 10px 26px rgba(0,0,0,.3),0 0 0 1.5px color-mix(in oklab,var(--green) 45%,transparent);}
+  .chef.flychef{position:fixed;left:0;top:0;z-index:70;pointer-events:none;transform-origin:top left;box-shadow:0 8px 24px rgba(0,0,0,.2),0 0 0 1.5px color-mix(in oklab,var(--green) 40%,transparent),0 0 24px color-mix(in oklab,var(--blue) 30%,transparent);}
+  .chef.flychef .ring{animation:none;opacity:.7;}
   .cheroWrap{display:flex;justify-content:center;padding:.7rem 0 .1rem;flex:0 0 auto;}
-  .ctrail{position:fixed;z-index:69;font-size:.82rem;pointer-events:none;transform:translate(-50%,-50%);animation:ctrailf .5s ease-out forwards;}
+  .cspark{position:fixed;z-index:69;pointer-events:none;transform:translate(-50%,-50%);opacity:.85;filter:drop-shadow(0 0 3px color-mix(in oklab,var(--green) 55%,transparent));animation:csparkf .56s ease-out forwards;}
+  @keyframes csparkf{0%{opacity:.9;transform:translate(-50%,-50%) scale(.45)}100%{opacity:0;transform:translate(-50%,-62%) scale(1)}}
+  .cland{position:fixed;z-index:59;pointer-events:none;border-radius:50%;border:2px solid color-mix(in oklab,var(--green) 55%,transparent);animation:clandf .5s ease-out forwards;}
+  @keyframes clandf{0%{opacity:.7;transform:translate(-50%,-50%) scale(.55)}100%{opacity:0;transform:translate(-50%,-50%) scale(2.1)}}
   @keyframes cbob{0%,100%{transform:translateY(0)}50%{transform:translateY(-9%)}}
   @keyframes cspin{to{transform:rotate(360deg)}}
   @keyframes csteam{0%{opacity:0;transform:translate(-50%,0) scale(.7)}18%{opacity:.85}55%{opacity:0;transform:translate(-50%,-95%) scale(1.15)}100%{opacity:0}}
   @keyframes cpop{0%{opacity:0;transform:scale(.5) translateY(12px)}100%{opacity:1;transform:none}}
-  @keyframes ctrailf{0%{opacity:.9;transform:translate(-50%,-50%) scale(.6)}100%{opacity:0;transform:translate(-50%,-150%) scale(1.15)}}
 </style>
 </head>
 <body>
@@ -425,19 +428,18 @@
     document.getElementById('kw').textContent='KW '+isoWeek(new Date()).kw;navTo('plan');refresh();}
   function enterApp(){document.getElementById('vOnb').classList.remove('on');document.getElementById('inbar').style.display='none';revealApp();startRot();showCoach();}
   // Andock-Sequenz: der Chat faltet sich in die Pill, der Chef-Avatar fliegt mit (Shared Element)
-  // Der Koch als geteiltes Element: fliegt im Bogen von A→B, skaliert dabei, hinterlässt ✨-Dampf, landet mit Squash.
-  function spawnTrail(a,b){
-    if(reduce)return;
-    for(var i=1;i<=3;i++){(function(i){
-      setTimeout(function(){
-        var t=i/4;
-        var x=a.left+a.width/2+((b.left+b.width/2)-(a.left+a.width/2))*t;
-        var y=a.top+a.height/2+((b.top+b.height/2)-(a.top+a.height/2))*t;
-        var p=document.createElement('b');p.className='ctrail';p.textContent='✨';
-        p.style.left=x+'px';p.style.top=y+'px';document.body.appendChild(p);
-        setTimeout(function(){if(p.parentNode)p.remove();},520);
-      },90*i);
-    })(i);}
+  // Der Koch als geteiltes Element: fliegt im Bogen von A→B, skaliert scharf runter, ✨-Schweif auf der Bahn, weiche Landung.
+  function dropSpark(x,y){
+    var s=document.createElement('b');s.className='cspark';s.textContent='✨';
+    s.style.left=(x+(Math.random()*10-5))+'px';s.style.top=(y+(Math.random()*8-4))+'px';
+    s.style.fontSize=(0.5+Math.random()*0.28)+'rem';
+    document.body.appendChild(s);setTimeout(function(){if(s.parentNode)s.remove();},560);
+  }
+  function landRipple(b){
+    if(reduce)return;var r=document.createElement('span');r.className='cland';
+    var d=Math.max(b.width,b.height);r.style.width=r.style.height=d+'px';
+    r.style.left=(b.left+b.width/2)+'px';r.style.top=(b.top+b.height/2)+'px';
+    document.body.appendChild(r);setTimeout(function(){if(r.parentNode)r.remove();},520);
   }
   function coinFly(fromEl,toEl,arc,opt){
     opt=opt||{};
@@ -445,23 +447,27 @@
     var a=opt.fromRect||fromEl.getBoundingClientRect();
     var b=opt.toRect||toEl.getBoundingClientRect();
     if(!a.width||!b.width){toEl.style.visibility='';return;}
-    var BASE=48;
+    var BASE=Math.max(a.width,b.width,40);                 // groß rendern, nur runterskalieren → scharfes Emoji
     var fly=document.createElement('span');fly.className='chef flychef';fly.style.setProperty('--sz',BASE+'px');
     fly.innerHTML='<span class="cf">🧑‍🍳</span><i class="ring"></i>';document.body.appendChild(fly);
-    var sA=a.width/BASE, sB=b.width/BASE, sMid=(sA+sB)/2*1.06;
+    var sA=a.width/BASE, sB=b.width/BASE, sMid=(sA+sB)/2*1.05;
     var midx=(a.left+b.left)/2;
-    var lift=arc==='rise'?Math.max(48,Math.abs(a.top-b.top)*0.2):Math.max(26,Math.abs(a.top-b.top)*0.12);
-    var apex=Math.min(a.top,b.top)-lift;
+    var lift=arc==='rise'?Math.max(52,Math.abs(a.top-b.top)*0.22):Math.max(30,Math.abs(a.top-b.top)*0.14);
+    var apex=Math.min(a.top,b.top)-lift, tilt=arc==='rise'?-7:7;
     fromEl.style.visibility='hidden';toEl.style.visibility='hidden';
-    spawnTrail(a,b);
     var an=fly.animate([
-      {transform:'translate('+a.left+'px,'+a.top+'px) scale('+sA+')',offset:0},
-      {transform:'translate('+midx+'px,'+apex+'px) scale('+sMid+')',offset:.5},
-      {transform:'translate('+b.left+'px,'+b.top+'px) scale('+sB+')',offset:1}
-    ],{duration:arc==='rise'?440:560,easing:'cubic-bezier(.4,.05,.2,1)',fill:'both'});
+      {transform:'translate('+a.left+'px,'+a.top+'px) scale('+sA+') rotate(0deg)',offset:0},
+      {transform:'translate('+midx+'px,'+apex+'px) scale('+sMid+') rotate('+tilt+'deg)',offset:.5},
+      {transform:'translate('+b.left+'px,'+b.top+'px) scale('+sB+') rotate(0deg)',offset:1}
+    ],{duration:arc==='rise'?520:640,easing:'cubic-bezier(.3,.05,.2,1)',fill:'both'});
+    var last=-1;                                           // ✨ exakt dort, wo der Flieger gerade ist
+    (function tick(ts){if(an.playState==='finished'||!fly.parentNode)return;
+      if(last<0||ts-last>62){last=ts;var r=fly.getBoundingClientRect();dropSpark(r.left+r.width/2,r.top+r.height*0.42);}
+      requestAnimationFrame(tick);})(0);
     an.onfinish=function(){
       if(fly.parentNode)fly.remove();fromEl.style.visibility='';toEl.style.visibility='';
-      try{toEl.animate([{transform:'scale(.72)'},{transform:'scale(1.12)',offset:.55},{transform:'scale(1)'}],{duration:300,easing:'cubic-bezier(.2,.9,.2,1.1)'});}catch(e){}
+      try{toEl.animate([{transform:'scale(.86)'},{transform:'scale(1.07)',offset:.5},{transform:'scale(1)'}],{duration:340,easing:'cubic-bezier(.2,.85,.25,1)'});}catch(e){}
+      landRipple(b);
     };
   }
   // Zielposition des Chat-Kochs messen, BEVOR das Sheet aufklappt (sonst mitten in der Transition falsch).
