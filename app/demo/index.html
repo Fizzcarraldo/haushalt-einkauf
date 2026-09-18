@@ -195,11 +195,42 @@
   @keyframes cspin{to{transform:rotate(360deg)}}
   @keyframes csteam{0%{opacity:0;transform:translate(-50%,0) scale(.7)}18%{opacity:.85}55%{opacity:0;transform:translate(-50%,-95%) scale(1.15)}100%{opacity:0}}
   @keyframes cpop{0%{opacity:0;transform:scale(.5) translateY(12px)}100%{opacity:1;transform:none}}
+  /* ── Prototyp-Rahmen: App-Bar · Cockpit · Stepper · Footer-Aktionsleiste ── */
+  .appbar{flex:0 0 auto;display:flex;align-items:center;gap:.5rem;padding:.45rem .8rem;background:var(--card);border-bottom:1px solid var(--line2);max-width:560px;width:100%;margin:0 auto;}
+  .appbar[hidden]{display:none;}
+  .appbar .kw{font:700 .66rem/1 var(--mono);color:var(--muted);background:var(--card2);border-radius:999px;padding:.24rem .5rem;}
+  .appbar .ab-brand{border:none;background:none;color:var(--ink);font:750 .9rem/1 var(--sans);cursor:pointer;padding:.2rem .1rem;}
+  .appbar .ab-ico{margin-left:auto;display:flex;gap:.15rem;}
+  .appbar .ab-ico button{width:2rem;height:2rem;border:none;background:none;border-radius:9px;font-size:1.05rem;cursor:pointer;color:var(--ink);}
+  .appbar .ab-ico button.active{background:var(--green-bg);}
+  .cockpit{flex:0 0 auto;position:relative;display:flex;align-items:center;gap:.55rem;padding:.6rem .9rem;background:var(--card);border-bottom:1px solid var(--line2);max-width:560px;width:100%;margin:0 auto;}
+  .cockpit[hidden]{display:none;} .cockpit::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:var(--ai);}
+  .cockpit .ck-body{flex:1;min-width:0;} .cockpit .ck-name{font:700 .55rem/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--green-ink);display:block;}
+  .cockpit .ck-status{font-size:.9rem;font-weight:600;line-height:1.25;display:block;margin-top:.12rem;} .cockpit .ck-status .warn{color:var(--orange);font-weight:700;}
+  #stepper{flex:0 0 auto;max-width:560px;width:100%;margin:0 auto;padding:.4rem .9rem;} #stepper[hidden]{display:none;}
+  .backbar{width:100%;text-align:left;border:none;background:var(--card2);color:var(--green-ink);font:700 .82rem/1 var(--sans);border-radius:10px;padding:.5rem .7rem;cursor:pointer;}
+  #vPlan.on,#vProfil.on,#vKochbuch.on{overflow-y:auto;}
+  .appfoot{flex:0 0 auto;position:relative;background:var(--paper);border-top:1px solid var(--line2);padding:.55rem .9rem calc(.55rem + env(safe-area-inset-bottom));max-width:560px;width:100%;margin:0 auto;}
+  .appfoot[hidden]{display:none;}
+  .foot-row{display:flex;gap:.5rem;align-items:stretch;}
+  .faction{flex:1;border:none;border-radius:13px;background:var(--ai);color:#fff;font:800 .95rem/1 var(--sans);display:flex;align-items:center;justify-content:center;gap:.4rem;padding:.85rem;cursor:pointer;box-shadow:0 4px 14px color-mix(in oklab,var(--blue) 24%,transparent);}
+  .faction.ghost{background:var(--green-bg);color:var(--green-ink);box-shadow:none;} .faction[hidden]{display:none;}
+  .fchat{width:3.1rem;flex:0 0 auto;border:1px solid color-mix(in oklab,var(--green) 32%,var(--line));background:var(--card2);border-radius:13px;display:grid;place-items:center;font-size:1.25rem;cursor:pointer;position:relative;}
+  .fchat::after{content:"";position:absolute;top:.35rem;right:.35rem;width:.42rem;height:.42rem;border-radius:50%;background:var(--ai);}
+  .appfoot .coach{margin:0 0 .5rem;}
+  .kbgrid{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-top:.6rem;}
+  .kbcard{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--card);} .kbcard .kbh{height:64px;display:grid;place-items:center;font-size:1.8rem;background:linear-gradient(135deg,color-mix(in oklab,var(--green) 15%,var(--card)),color-mix(in oklab,var(--blue) 15%,var(--card)));} .kbcard .kbn{padding:.4rem .5rem;font-size:.8rem;font-weight:700;}
 </style>
 </head>
 <body>
   <div class="tbar"><span>🧪 <b>TESTMODUS</b> · Haushalt <span id="hh"></span></span><a class="reset" href="?">🔄 Neuer Test-User</a></div>
-  <div class="nav" id="nav"><button data-v="plan" class="on">🗓️ Diese Woche</button><button data-v="profil">⚙️ Profil</button></div>
+  <header class="appbar" id="appbar" hidden>
+    <span class="kw" id="kw">KW –</span>
+    <button class="ab-brand" data-nav="week">🗓️ Diese Woche</button>
+    <span class="ab-ico"><button data-nav="kochbuch" title="Kochbuch">📖</button><button data-nav="profil" title="Profil">⚙️</button></span>
+  </header>
+  <div class="cockpit" id="cockpit" hidden><span class="chef mid" id="ckav"><span class="cf">🧑‍🍳</span><i class="ring"></i><b class="steam">✨</b></span><div class="ck-body"><span class="ck-name" id="ckname">Koch</span><span class="ck-status" id="ckstatus">…</span></div><p class="sub" id="plsub" hidden></p></div>
+  <div class="stepper" id="stepper" hidden></div>
 
   <div class="view on" id="vOnb">
     <div class="cheroWrap"><span class="chef hero" id="chero"><span class="cf">🧑‍🍳</span><i class="ring"></i><b class="steam">✨</b></span></div>
@@ -210,8 +241,6 @@
 
   <div class="view" id="vPlan">
     <div class="pl">
-      <h1>🗓️ Diese Woche <span class="kw" id="kw"></span></h1><p class="sub" id="plsub">euer neuer Haushalt</p>
-      <div class="stepper" id="stepper"></div>
       <div id="planOnly">
       <div class="card"><div class="chd">Wer isst wann?</div><p class="cnote" id="wwsub" style="margin:.1rem 0 .4rem"></p>
         <div class="legend2" id="legend"></div>
@@ -229,18 +258,23 @@
 
   <div class="view" id="vProfil">
     <div class="pl">
-      <h1>⚙️ Profil <span class="scope-d">∞ dauerhaft</span></h1><p class="sub">gilt in jeder Woche</p>
       <div class="card"><div class="chd">👤 Personen &amp; Präferenzen</div><p class="cnote">Allergie/Ernährung = <b style="color:var(--red)">hart</b> · Vorliebe/Abneigung = weich.</p><div id="pfPersons"></div></div>
       <div class="card"><div class="chd">🎯 Grundsätze</div><div id="pfGrund"></div></div>
       <div class="card"><div class="chd">🗓️ Rhythmus &amp; feste Regeln</div><p class="cnote">Euer Standard – wird auf „Diese Woche" automatisch übernommen.</p><div id="pfRegeln"></div></div>
     </div>
   </div>
 
-  <div class="dock" id="dock" style="display:none"><div class="in">
-    <a class="votebtn" id="voteBtn" href="#">🗳️ Weiter zum Voten →</a>
+  <div class="view" id="vKochbuch">
+    <div class="pl">
+      <div class="card"><div class="chd">📖 Kochbuch</div><p class="cnote">Eure Rezept-Bibliothek – wächst mit jeder gekochten Woche. <b>Kommt im Rezept-Sprint.</b></p></div>
+      <div class="kbgrid" id="kbgrid"></div>
+    </div>
+  </div>
+
+  <footer class="appfoot" id="appfoot" hidden>
     <div class="coach" id="coach" hidden>👋 <b>Das bin ich</b> – euer Assistent. Sag mir jederzeit, was sich ändert; ich pflege <b>Plan &amp; Profil</b> für euch.<button class="ok" id="coachOk">Alles klar</button></div>
-    <button class="askbar" id="openA"><span class="av2">🧑‍🍳</span><span class="lbl"><span class="who">Assistent <span class="reach">Plan &amp; Profil</span></span><span class="hint">„<i id="askrot">Freitag kommt Besuch</i>"</span></span><span class="cta">Frag mich <span class="spark">✨</span></span><span class="sheen"></span></button>
-  </div></div>
+    <div class="foot-row"><button class="faction" id="faction" data-act=""></button><button class="fchat" id="openA" aria-label="Chat öffnen">💬</button></div>
+  </footer>
 
   <div class="idov" id="idov" hidden><div class="idcard"><h3>🧑‍🍳 Wer bist du?</h3><p class="cnote">Stimm mit ab, was diese Woche gekocht wird – ohne App, ohne Account.</p><div class="idchips" id="idchips"></div></div></div>
   <div class="idov" id="shareov" hidden><div class="idcard"><h3>🔗 Voting teilen</h3><p class="cnote">Link kopieren und per WhatsApp schicken – jede/r kann ohne App abstimmen.</p><input class="shareurl" id="shareurl" readonly><div class="sharebtns"><button class="btn-s" id="shareCopy">📋 Link kopieren</button><a class="btn-s wa" id="shareWa" target="_blank" rel="noopener">🟢 WhatsApp</a><button class="lnk" id="shareNative" hidden>📲 Teilen…</button><button class="lnk" id="shareClose">Schließen</button></div><span class="cnote" id="sharemsg"></span></div></div>
@@ -424,9 +458,9 @@
   function showCoach(){if(coached)return;coached=true;var c=document.getElementById('coach');if(c)c.hidden=false;}
   function hideCoach(){var c=document.getElementById('coach');if(c)c.hidden=true;}
   var _ok=document.getElementById('coachOk');if(_ok)_ok.addEventListener('click',function(e){e.stopPropagation();hideCoach();});
-  function revealApp(){document.getElementById('nav').classList.add('on');document.getElementById('dock').style.display='block';
-    document.getElementById('kw').textContent='KW '+isoWeek(new Date()).kw;navTo('plan');refresh();}
-  function enterApp(){document.getElementById('vOnb').classList.remove('on');document.getElementById('inbar').style.display='none';revealApp();startRot();showCoach();}
+  function revealApp(){['appbar','cockpit','stepper','appfoot'].forEach(function(id){var e=document.getElementById(id);if(e)e.hidden=false;});
+    document.getElementById('kw').textContent='KW '+isoWeek(new Date()).kw;navTo('week');refresh();}
+  function enterApp(){document.getElementById('vOnb').classList.remove('on');document.getElementById('inbar').style.display='none';revealApp();showCoach();}
   // Andock-Sequenz: der Chat faltet sich in die Pill, der Chef-Avatar fliegt mit (Shared Element)
   // Der Koch als geteiltes Element: fliegt im Bogen von A→B, skaliert scharf runter, ✨-Schweif auf der Bahn, weiche Landung.
   function dropSpark(x,y){
@@ -479,22 +513,26 @@
   }
   function dockAndEnter(){
     if(reduce){enterApp();return;}
-    var onb=document.getElementById('vOnb'),bar=document.getElementById('inbar'),pill=document.getElementById('openA');
-    revealApp();                                   // App hinter dem Chat aufbauen
-    var av=pill.querySelector('.av2'),hero=document.getElementById('chero');
-    coinFly(hero||onb,av,'dive');                  // großer Start-Koch taucht in die Leiste
+    var onb=document.getElementById('vOnb'),bar=document.getElementById('inbar');
     bar.classList.add('fold');onb.classList.add('docking');
     requestAnimationFrame(function(){requestAnimationFrame(function(){onb.classList.add('go');});});
-    setTimeout(function(){
-      onb.classList.remove('on','docking','go');onb.removeAttribute('style');
-      bar.style.display='none';bar.classList.remove('fold');
-      pill.classList.add('arrive');setTimeout(function(){pill.classList.remove('arrive');},780);
-      startRot();wait(360,showCoach);
-    },640);
+    setTimeout(function(){onb.removeAttribute('style');onb.classList.remove('docking','go');bar.classList.remove('fold');enterApp();},560);
   }
-  function navTo(v){document.getElementById('vPlan').classList.toggle('on',v==='plan');document.getElementById('vProfil').classList.toggle('on',v==='profil');
-    document.querySelectorAll('#nav button').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-v')===v);});document.getElementById('voteBtn').style.display='none';if(coached)hideCoach();}
-  document.querySelectorAll('#nav button').forEach(function(b){b.addEventListener('click',function(){navTo(b.getAttribute('data-v'));});});
+  var navMode='week';
+  function setF(label,act){var fa=document.getElementById('faction');if(!fa)return;fa.hidden=false;fa.textContent=label;fa.setAttribute('data-act',act);}
+  function voterMissing(){var voted={};DATA.stimmen.forEach(function(s){voted[s.voter_id]=1;});var miss=DATA.persons.filter(function(p){return !voted[p.id];}).map(function(p){return p.name;});return miss.length?miss.join(', '):'';}
+  function renderKochbuch(){var g=document.getElementById('kbgrid');if(!g)return;var rec=[['🍝','Pasta al Pomodoro'],['🍄','Pilz-Risotto'],['🍛','Kichererbsen-Curry'],['🍳','Shakshuka'],['🧆','Ofen-Falafel'],['🥗','Couscous-Salat']];g.innerHTML=rec.map(function(r){return '<div class="kbcard"><div class="kbh">'+r[0]+'</div><div class="kbn">'+r[1]+'</div></div>';}).join('');}
+  function navTo(v){navMode=(v==='plan'||v==='week')?'week':v;var m=navMode;
+    document.getElementById('vPlan').classList.toggle('on',m==='week');
+    document.getElementById('vProfil').classList.toggle('on',m==='profil');
+    document.getElementById('vKochbuch').classList.toggle('on',m==='kochbuch');
+    document.querySelectorAll('.appbar .ab-ico button').forEach(function(b){b.classList.toggle('active',b.getAttribute('data-nav')===m);});
+    var stp=document.getElementById('stepper'),cs=document.getElementById('ckstatus');
+    if(m==='week'){renderPlanen();}
+    else if(m==='profil'){renderProfil();if(cs)cs.innerHTML='⚙️ Euer Haushalt';if(stp)stp.innerHTML='<button class="backbar" data-act="goweek">← Zurück zur Woche</button>';var fa=document.getElementById('faction');if(fa){fa.className='faction ghost';setF('＋ Person','addperson');}}
+    else if(m==='kochbuch'){renderKochbuch();if(cs)cs.innerHTML='📖 Euer Kochbuch';if(stp)stp.innerHTML='<button class="backbar" data-act="goweek">← Zurück zur Woche</button>';var fk=document.getElementById('faction');if(fk){fk.className='faction ghost';setF('＋ Rezept','addrezept');}}
+    if(coached&&m!=='week')hideCoach();}
+  document.querySelectorAll('.appbar [data-nav]').forEach(function(b){b.addEventListener('click',function(){navTo(b.getAttribute('data-nav'));});});
   function refresh(){var w=isoWeek(new Date());
     return get('wochen?select=id,vorschlaege,status,plan&haushalt=eq.'+HH+'&jahr=eq.'+w.jahr+'&kw=eq.'+w.kw).then(function(wr){
       DATA.woche=(wr&&wr[0])||null;var wid=DATA.woche&&DATA.woche.id;
@@ -541,9 +579,14 @@
     if(page==='decided'){if(_pe)_pe.style.display='none';renderDecided();}
     else if(page==='vote'){if(_pe)_pe.style.display='none';renderVoting(DATA.woche.vorschlaege.tage);}
     else{if(_pc)_pc.innerHTML='';if(_pe){_pe.style.display='';
-      if(wv)_pe.innerHTML='✅ <b>Vorschläge stehen bereit.</b><br><span style="font-size:.8rem">Prüf noch, wer da ist – danach geht\'s ans Abstimmen.</span><button class="govote" data-act="govote">🗳️ Weiter zum Voten →</button>';
-      else _pe.innerHTML='🍽️ Noch kein Essensplan. <button class="btn-s" data-act="gen">✨ Vorschläge holen</button><br><span style="font-size:.8rem">…passend zu wer da ist, Diäten, Zeit &amp; Budget.</span>';}}
-    renderStepper(page);}
+      if(wv)_pe.innerHTML='✅ <b>Vorschläge stehen bereit.</b><br><span style="font-size:.85rem">Prüf noch, wer da ist – dann unten <b>„Weiter zum Voten"</b>.</span>';
+      else _pe.innerHTML='🍽️ <b>Noch kein Essensplan.</b><br><span style="font-size:.85rem">Unten <b>„✨ Vorschläge holen"</b> – passend zu wer da ist, Diäten, Zeit &amp; Budget.</span>';}}
+    if(navMode==='week'){var cs=document.getElementById('ckstatus'),fa=document.getElementById('faction');if(fa){fa.hidden=false;fa.className='faction';}
+      if(page==='decided'){if(cs)cs.innerHTML='Die Woche steht 🎉 — Zeit einzukaufen.';setF('🛒 Einkaufsliste','einkauf');}
+      else if(page==='vote'){var miss=voterMissing();if(cs)cs.innerHTML='Stimmt ab.'+(miss?' <span class="warn">'+esc(miss)+' fehlt noch.</span>':' <b>Alle durch.</b>');setF('✓ Woche festlegen','festlegen');}
+      else{if(wv){if(cs)cs.innerHTML='Vorschläge stehen bereit — <b>weiter zum Voten.</b>';setF('🗳️ Weiter zum Voten','govote');}else{if(cs)cs.innerHTML='Lass uns die Woche planen — <b>wer isst mit?</b>';setF('✨ Vorschläge holen','gen');}}
+      renderStepper(page);}
+  }
   function renderStepper(page){var el=document.getElementById('stepper');if(!el)return;
     var st=(DATA.woche&&DATA.woche.status)||'planen';
     var wv=DATA.woche&&DATA.woche.vorschlaege&&DATA.woche.vorschlaege.tage&&DATA.woche.vorschlaege.tage.length;
@@ -594,13 +637,13 @@
       return '<div class="card vday"><div class="vd-h">'+esc(t.tag)+' <span class="vd-who">'+names+'</span></div>'+comp+'<div class="opts">'+cells+'</div>'+noneline+actions+'</div>';}).join('');
     var voted={};DATA.stimmen.forEach(function(s){voted[s.voter_id]=1;});var miss=DATA.persons.filter(function(p){return !voted[p.id];}).map(function(p){return p.name;});
     var done='<span class="cnote">'+(DATA.persons.length-miss.length)+'/'+DATA.persons.length+' haben abgestimmt'+(miss.length?' · offen: '+esc(miss.join(', ')):'')+'</span>';
-    document.getElementById('planCards').innerHTML=back+bar+intro+cards+'<div class="votefoot">'+done+'<button class="votebtn2" data-act="festlegen">✓ Woche festlegen →</button></div>';}
+    document.getElementById('planCards').innerHTML=back+bar+intro+cards+'<div class="votefoot">'+done+'</div>';}
   function renderDecided(){var pe=document.getElementById('planEmpty');if(pe)pe.style.display='none';var plan=DATA.woche.plan||{};var tage=(DATA.woche.vorschlaege&&DATA.woche.vorschlaege.tage)||[];
     var cards=tage.map(function(t){var here=presentOn(t.tag),g=guestsOn(t.tag);if(!here.length&&!g.length)return '<div class="dcard out"><b>'+esc(t.tag)+'</b> <span class="cnote">auswärts</span></div>';
       var ch=plan[t.tag],titel=ch?ch.titel:'—';
       var alt=(t.vorschlaege||[]).map(function(v,i){var oid=optId(t.tag,v,i);return '<button class="lnk'+(ch&&ch.id===oid?' on':'')+'" data-act="override" data-day="'+t.tag+'" data-oid="'+esc(oid)+'">'+esc(v.titel)+'</button>';}).join('');
       return '<div class="dcard"><div class="dc-h"><b>'+esc(t.tag)+'</b> <span class="dc-dish">'+esc(titel)+'</span></div><div class="dc-alt">wechseln: '+alt+'</div></div>';}).join('');
-    document.getElementById('planCards').innerHTML='<div class="cnote" style="margin:.2rem 0 .5rem">✓ <b>Die Woche steht fest.</b> Tippe unten ein Gericht an, um es zu wechseln.</div>'+cards+'<div class="votefoot"><button class="lnk" data-act="reopen">↩︎ Abstimmung öffnen</button><button class="votebtn2" data-act="einkauf">🛒 Einkaufsliste →</button></div>';}
+    document.getElementById('planCards').innerHTML='<div class="cnote" style="margin:.2rem 0 .5rem">✓ <b>Die Woche steht fest.</b> Tippe unten ein Gericht an, um es zu wechseln.</div>'+cards+'<div class="votefoot"><button class="lnk" data-act="reopen">↩︎ Abstimmung öffnen</button></div>';}
   function setVoter(id){var p=DATA.persons.filter(function(x){return x.id===id;})[0];if(p){VOTER={id:p.id,name:p.name};renderPlanen();}}
   function setVote(tag,oid){if(!VOTER.id){askWhoAreYou();return;}var wid=DATA.woche&&DATA.woche.id;if(!wid)return;var mine=myVote(tag,oid);
     if(mine)DATA.stimmen=DATA.stimmen.filter(function(s){return !(s.tag===tag&&s.option_id===oid&&s.voter_id===VOTER.id);});else DATA.stimmen.push({tag:tag,option_id:oid,voter_id:VOTER.id});renderPlanen();
@@ -640,10 +683,12 @@
       } else if(!retry){generatePlan(true,onlyTag);}
       else if(pe&&!onlyTag){pe.style.display='';pe.innerHTML='⚠️ Konnte gerade keine Vorschläge holen. <button class="btn-s" data-act="gen">Nochmal</button>';}
     }).catch(function(){if(!retry)generatePlan(true,onlyTag);else if(pe&&!onlyTag){pe.style.display='';pe.innerHTML='⚠️ offline. <button class="btn-s" data-act="gen">Nochmal</button>';}});}
-  document.getElementById('planwrap').addEventListener('click',function(e){var b=e.target.closest('[data-act]');if(!b)return;var act=b.getAttribute('data-act'),day=b.getAttribute('data-day'),oid=b.getAttribute('data-oid'),id=b.getAttribute('data-id');
-    if(act==='gen')generatePlan();else if(act==='vote')setVote(day,oid);else if(act==='who')setVoter(id);else if(act==='teilen')teilen();else if(act==='own')addOwn(day);else if(act==='regenday')generatePlan(false,day);else if(act==='notda')notDa(day);else if(act==='none')setVote(day,'__none__');else if(act==='festlegen')festlegen();else if(act==='override')setPlanDay(day,oid);else if(act==='reopen')reopenVote();else if(act==='einkauf')einkauf();else if(act==='govote'){vView='vote';renderPlanen();}else if(act==='goplan'){vView='plan';renderPlanen();}});
-  document.getElementById('stepper').addEventListener('click',function(e){var b=e.target.closest('[data-act]');if(!b||b.classList.contains('off'))return;var act=b.getAttribute('data-act');
-    if(act==='goplan'){vView='plan';renderPlanen();}else if(act==='govote'){vView='vote';renderPlanen();}else if(act==='godecided'){vView=null;renderPlanen();}});
+  function doAct(act,day,oid,id){
+    if(act==='gen')generatePlan();else if(act==='vote')setVote(day,oid);else if(act==='who')setVoter(id);else if(act==='teilen')teilen();else if(act==='own')addOwn(day);else if(act==='regenday')generatePlan(false,day);else if(act==='notda')notDa(day);else if(act==='none')setVote(day,'__none__');else if(act==='festlegen')festlegen();else if(act==='override')setPlanDay(day,oid);else if(act==='reopen')reopenVote();else if(act==='einkauf')einkauf();else if(act==='govote'){vView='vote';renderPlanen();}else if(act==='goplan'){vView='plan';renderPlanen();}else if(act==='godecided'){vView=null;renderPlanen();}else if(act==='goweek'){navTo('week');}else if(act==='addperson'){navTo('profil');alert('Neue Person: über „＋ hinzufügen" im Personen-Block.');}else if(act==='addrezept'){alert('Rezepte kommen im Rezept-Sprint.');}
+  }
+  document.getElementById('planwrap').addEventListener('click',function(e){var b=e.target.closest('[data-act]');if(!b)return;doAct(b.getAttribute('data-act'),b.getAttribute('data-day'),b.getAttribute('data-oid'),b.getAttribute('data-id'));});
+  document.getElementById('stepper').addEventListener('click',function(e){var b=e.target.closest('[data-act]');if(!b||b.classList.contains('off'))return;doAct(b.getAttribute('data-act'));});
+  document.getElementById('faction').addEventListener('click',function(){var a=this.getAttribute('data-act');if(a)doAct(a);});
   (function(){var ov=document.getElementById('shareov');if(!ov)return;
     document.getElementById('shareCopy').addEventListener('click',copyUrl);
     document.getElementById('shareClose').addEventListener('click',function(){ov.hidden=true;});
