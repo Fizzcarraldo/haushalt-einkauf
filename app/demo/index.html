@@ -295,7 +295,7 @@
 </style>
 </head>
 <body>
-  <div class="tbar"><span>🧪 <b>TESTMODUS</b> · Haushalt <span id="hh"></span></span><a class="reset" href="?">🔄 Neuer Test-User</a></div>
+  <div class="tbar"><span>🧪 <b>TESTMODUS</b> · Haushalt <span id="hh"></span></span><button class="reset" id="dbgAnim" style="margin-left:auto">🎬 Loader</button><a class="reset" href="?">🔄 Neuer Test-User</a></div>
   <header class="appbar" id="appbar" hidden>
     <span class="kw" id="kw">KW –</span>
     <button class="ab-brand" data-nav="week">🗓️ Diese Woche</button>
@@ -832,6 +832,7 @@
       '<div class="gbar" id="gbar"><i></i></div></div>';
     var ck=document.getElementById('ckav');if(ck)ck.classList.add('busy');
     var cs=document.getElementById('ckstatus');if(cs)cs.innerHTML='Ich stelle <b>eure Woche</b> zusammen …';
+    var fa0=document.getElementById('faction');if(fa0){fa0.textContent='⏳ Der Koch arbeitet …';fa0.setAttribute('data-act','');}   // Footer gesperrt während Loader (auch im Debug)
     if(!reduce){var ti=1;(function rotate(){gt(2200,function(){var el=document.getElementById('gthought');if(!el)return;el.classList.add('swap');gt(280,function(){var e2=document.getElementById('gthought');if(!e2)return;var th=TH[ti++];if(ti>=TH.length)ti=1;e2.querySelector('.gtx').innerHTML=th.t;e2.querySelector('.gsrc').textContent=th.src;el.classList.remove('swap');rotate();});});})();}
     requestAnimationFrame(fitGenwk);gt(80,fitGenwk);   // Höhe an den Viewport anpassen (kein Scrollen)
   }
@@ -882,6 +883,29 @@
       }).catch(function(){if(GEN!==token)return;if(attempt<2)fetchTry(attempt+1);else{state.err=true;conclude();}});
     })(1);
   }
+  // ── DEBUG: Loader-Animation ohne echte Generierung abspielen (Testmodus-Button „🎬 Loader" oder Konsole: genDemo()) ──
+  var _genDebug=false,_dbgSaved=null;
+  function demoPersons(){return [{name:'Anna',rolle:'erwachsen'},{name:'Ben',rolle:'erwachsen'},{name:'Chris',rolle:'erwachsen'},{name:'Dana',rolle:'erwachsen'},{name:'Elif',rolle:'erwachsen'}];}
+  function demoCtx(){var mk=function(tag,names,g){return {tag:tag,personen:names.map(function(n){return {name:n,rolle:'erwachsen'};}),gaeste:g||[],diaeten:['vegetarisch','glutenfrei'],vermeiden:['Nüsse']};};
+    var all=['Anna','Ben','Chris','Dana','Elif'];
+    return {kw:isoWeek(new Date()).kw,grundsaetze:['viel Gemüse','günstig'],
+      tage:[mk('Mo',['Ben','Chris','Dana','Elif']),mk('Di',all),mk('Mi',all),mk('Do',all),mk('Fr',all,['Lisa'])]};}  // Sa/So fehlen -> ausgegraut, Mo ohne Anna, Fr Gast
+  function debugStop(){_genDebug=false;GEN={};stopGenTimers();_generating=false;
+    if(_dbgSaved){DATA.persons=_dbgSaved;_dbgSaved=null;}
+    var ck=document.getElementById('ckav');if(ck)ck.classList.remove('busy');
+    var bt=document.getElementById('dbgAnim');if(bt)bt.textContent='🎬 Loader';
+    var po=document.getElementById('planOnly');if(po)po.style.display='';renderPlanen();}
+  function debugGenToggle(){
+    if(_genDebug){debugStop();return;}
+    _genDebug=true;var bt=document.getElementById('dbgAnim');if(bt)bt.textContent='⏹ Stop';
+    _dbgSaved=DATA.persons;DATA.persons=demoPersons();                 // konsistenter Demo-Haushalt (Avatar-Stack)
+    var ctx=demoCtx(),token=GEN={};GENSTART=Date.now();stopGenTimers();_generating=true;
+    (function loop(){ if(GEN!==token||!_genDebug)return; stopGenTimers();
+      renderGenLoader(ctx);
+      runWeekWalk(ctx,token,function(){ if(GEN!==token||!_genDebug)return; startFinalizing(token); if(!reduce)gt(2600,loop); });   // Schleife: Walk -> Finalize -> wieder von vorn
+    })();
+  }
+  (function(){var bt=document.getElementById('dbgAnim');if(bt)bt.addEventListener('click',debugGenToggle);window.genDemo=debugGenToggle;})();
   function doAct(act,day,oid,id){
     if(act==='gen')generatePlan();else if(act==='vote')setVote(day,oid);else if(act==='who')setVoter(id);else if(act==='teilen')teilen();else if(act==='own')addOwn(day);else if(act==='regenday')generatePlan(false,day);else if(act==='notda')notDa(day);else if(act==='none')setVote(day,'__none__');else if(act==='festlegen')festlegen();else if(act==='override')setPlanDay(day,oid);else if(act==='reopen')reopenVote();else if(act==='einkauf')einkauf();else if(act==='govote'){vView='vote';renderPlanen();}else if(act==='goplan'){vView='plan';renderPlanen();}else if(act==='godecided'){vView=null;renderPlanen();}else if(act==='goweek'){navTo('week');}else if(act==='addperson'){navTo('profil');alert('Neue Person: über „＋ hinzufügen" im Personen-Block.');}else if(act==='addrezept'){alert('Rezepte kommen im Rezept-Sprint.');}
   }
