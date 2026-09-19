@@ -235,7 +235,8 @@
   #confetti{position:fixed;inset:0;width:100%;height:100%;z-index:60;pointer-events:none;}
   .go.golos{background:var(--ai);color:#fff;border-color:transparent;font-weight:800;font-size:1rem;padding:.7rem 1.15rem;box-shadow:0 4px 14px color-mix(in oklab,var(--blue) 26%,transparent);}
   /* ── Generierungs-Screen: „Die Woche entsteht" (ein Gesicht, echte Daten, überbrückt die Wartezeit) ── */
-  .genwk{animation:glin .34s ease both;padding:.1rem 0 .2rem;}
+  .genwk{animation:glin .34s ease both;padding:.1rem 0 .2rem;display:flex;flex-direction:column;min-height:0;overflow:hidden;}
+  .genwk>.gscope,.genwk>.gthought,.genwk>.gscan,.genwk>.gbar{flex:0 0 auto;}
   @keyframes glin{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
   .gscope{display:flex;flex-wrap:wrap;gap:.32rem;margin:.05rem 0 .78rem;}
   .gschip{display:inline-flex;align-items:center;gap:.3rem;font-size:.73rem;font-weight:650;color:var(--muted);background:var(--card2);border:1px solid var(--line2);border-radius:999px;padding:.18rem .55rem;}
@@ -248,21 +249,22 @@
   .gstack .gav.more{background:var(--card2);color:var(--muted);border-color:var(--card);}
   .gstack .gav.guest{box-shadow:0 0 0 2px var(--orange),0 1px 2px rgba(0,0,0,.18);}
   .gschip .gstack{margin-right:.15rem;}
-  .gthought{min-height:4.2em;margin:.1rem 0 .8rem;transition:opacity .28s ease,transform .28s ease;}
+  .gthought{min-height:3.3em;margin:.1rem 0 .6rem;transition:opacity .28s ease,transform .28s ease;}
   .gthought.swap{opacity:0;transform:translateY(5px);}
   .gtx{display:block;font-weight:750;font-size:1.02rem;line-height:1.3;letter-spacing:-.01em;}
   .gsrc{display:inline-flex;align-items:center;gap:.22rem;margin-top:.45rem;font:700 .64rem/1 var(--mono);letter-spacing:.04em;text-transform:uppercase;color:var(--muted);background:var(--card2);border:1px solid var(--line2);border-radius:999px;padding:.18rem .5rem;}
   .gsrc::before{content:"↳";opacity:.75;font-weight:800;}
-  .gwk{display:flex;flex-direction:column;gap:.34rem;margin:.1rem 0 .7rem;}
-  .gwrow{display:flex;align-items:center;gap:.55rem;padding:.26rem .4rem;border-radius:.7rem;border:1px solid transparent;opacity:.4;transform:translateX(-4px);transition:opacity .42s cubic-bezier(.3,.8,.3,1),transform .42s cubic-bezier(.3,.8,.3,1),background .3s,border-color .3s,box-shadow .3s;box-sizing:border-box;}
+  .gwk{display:flex;flex-direction:column;gap:.3rem;margin:.1rem 0 .55rem;flex:1 1 auto;min-height:0;justify-content:center;}
+  .gwrow{display:flex;align-items:stretch;gap:.55rem;padding:.22rem .4rem;border-radius:.7rem;border:1px solid transparent;opacity:.4;transform:translateX(-4px);flex:1 1 0;min-height:1.6rem;max-height:3.5rem;transition:opacity .42s cubic-bezier(.3,.8,.3,1),transform .42s cubic-bezier(.3,.8,.3,1),background .3s,border-color .3s,box-shadow .3s;box-sizing:border-box;}
+  .gwrow .gwd,.gwrow .gwtick{align-self:center;}
   .gwrow.on,.gwrow.done{opacity:1;transform:none;}
   .gwrow.on{background:var(--green-bg);border-color:color-mix(in oklab,var(--green) 26%,transparent);box-shadow:0 8px 22px -12px color-mix(in oklab,var(--green) 65%,transparent);}
-  .gwrow.off{opacity:.5;min-height:2.4rem;}
+  .gwrow.off{opacity:.5;flex:0 0 auto;min-height:1.7rem;max-height:none;align-items:center;}
   .gwrow .gwd{flex:0 0 auto;width:2rem;font-weight:800;font-size:.9rem;line-height:1;}
   .gwrow.off .gwd{color:var(--muted);}
-  .gwtiles{display:flex;gap:.45rem;flex:1;min-width:0;}
+  .gwtiles{display:flex;gap:.45rem;flex:1;min-width:0;align-self:stretch;}
   .gwoff{flex:1;display:inline-flex;align-items:center;gap:.35rem;color:var(--muted);font-size:.8rem;font-weight:600;}
-  .gtile{position:relative;flex:1 1 0;min-width:0;height:2.85rem;border-radius:.6rem;overflow:hidden;border:1px solid var(--line2);background:var(--card2);box-shadow:0 3px 8px -4px rgba(0,0,0,.14);}
+  .gtile{position:relative;flex:1 1 0;min-width:0;height:auto;min-height:0;border-radius:.6rem;overflow:hidden;border:1px solid var(--line2);background:var(--card2);box-shadow:0 3px 8px -4px rgba(0,0,0,.14);}
   .gtile .gph{position:absolute;inset:0;opacity:.32;transition:opacity .5s ease;}
   .gtile.dev .gph{opacity:1;animation:gdev .6s cubic-bezier(.3,.8,.3,1) both;}
   @keyframes gdev{0%{filter:blur(8px) saturate(.3);opacity:0;transform:scale(1.12)}60%{opacity:1}100%{filter:none;opacity:1;transform:none}}
@@ -805,6 +807,12 @@
   function gStat(txt){var s=document.getElementById('gstat');if(!s)return;s.classList.add('swap');gt(200,function(){var s2=document.getElementById('gstat');if(!s2)return;s2.innerHTML=txt;s2.classList.remove('swap');});}
   function gProg(f){var b=document.querySelector('#gbar i');if(b)b.style.width=Math.round(f*100)+'%';}
   function gCount(n,tot){var c=document.getElementById('gcount');if(c)c.textContent=n+' / '+tot;}
+  function fitGenwk(){var wk=document.querySelector('.genwk');if(!wk)return;   // Screen füllt Stepper→Footer, ohne Scrollen
+    wk.style.height='auto';var foot=document.getElementById('appfoot'),top=wk.getBoundingClientRect().top;
+    var footTop=(foot&&!foot.hasAttribute('hidden'))?foot.getBoundingClientRect().top:window.innerHeight;
+    var h=footTop-top-10;if(h>200)wk.style.height=h+'px';}
+  window.addEventListener('resize',function(){if(_generating)fitGenwk();});
+  if(window.visualViewport)window.visualViewport.addEventListener('resize',function(){if(_generating)fitGenwk();});
   function renderGenLoader(ctx){
     var pc=document.getElementById('planCards'),pe=document.getElementById('planEmpty'),po=document.getElementById('planOnly');
     if(pe)pe.style.display='none';if(po)po.style.display='none';if(!pc)return;
@@ -823,6 +831,7 @@
     var ck=document.getElementById('ckav');if(ck)ck.classList.add('busy');
     var cs=document.getElementById('ckstatus');if(cs)cs.innerHTML='Ich stelle <b>eure Woche</b> zusammen …';
     if(!reduce){var ti=1;(function rotate(){gt(1500,function(){var el=document.getElementById('gthought');if(!el)return;el.classList.add('swap');gt(280,function(){var e2=document.getElementById('gthought');if(!e2)return;var th=TH[ti++];if(ti>=TH.length)ti=1;e2.querySelector('.gtx').innerHTML=th.t;e2.querySelector('.gsrc').textContent=th.src;el.classList.remove('swap');rotate();});});})();}
+    requestAnimationFrame(fitGenwk);gt(80,fitGenwk);   // Höhe an den Viewport anpassen (kein Scrollen)
   }
   function runWeekWalk(ctx,token,done){
     var pc=document.getElementById('planCards'),tot=ctx.tage.length,plan=ctx.tage.map(function(t){return t.tag;});
