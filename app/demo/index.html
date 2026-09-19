@@ -264,8 +264,8 @@
   .gwrow.off .gwd{color:var(--muted);}
   .gwtiles{display:flex;gap:.45rem;flex:1;min-width:0;align-self:stretch;}
   .gwoff{flex:1;display:inline-flex;align-items:center;gap:.35rem;color:var(--muted);font-size:.8rem;font-weight:600;}
-  .gtile{position:relative;flex:1 1 0;min-width:0;height:auto;min-height:0;border-radius:.6rem;overflow:hidden;border:1px solid var(--line2);background:var(--card2);box-shadow:0 3px 8px -4px rgba(0,0,0,.14);}
-  .gtile .gph{position:absolute;inset:0;opacity:.32;transition:opacity .5s ease;}
+  .gtile{position:relative;flex:1 1 0;min-width:0;height:auto;min-height:0;border-radius:.6rem;overflow:hidden;border:1px solid var(--line2);background:var(--card2);box-shadow:0 3px 8px -4px rgba(0,0,0,.14);container-type:size;}
+  .gtile .gph{position:absolute;inset:0;display:grid;place-items:center;line-height:1;font-size:1.2rem;font-size:52cqh;opacity:.34;transition:opacity .5s ease;}
   .gtile.dev .gph{opacity:1;animation:gdev .6s cubic-bezier(.3,.8,.3,1) both;}
   @keyframes gdev{0%{filter:blur(8px) saturate(.3);opacity:0;transform:scale(1.12)}60%{opacity:1}100%{filter:none;opacity:1;transform:none}}
   .gtile::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 20%,rgba(255,255,255,.5) 50%,transparent 80%);transform:translateX(-120%);animation:gsh 1.2s ease-in-out infinite;}
@@ -769,6 +769,8 @@
     DATA.woche.plan=plan;DATA.woche.status='fest';var wid=DATA.woche.id;if(wid)rest('PATCH','wochen?id=eq.'+wid,{plan:plan,status:'fest'});renderPlanen();}
   // ── „Die Woche entsteht" — Generierungs-Screen: ein Gesicht, echte Daten, überbrückt die Wartezeit ──
   var LONGDAY={Mo:'Montag',Di:'Dienstag',Mi:'Mittwoch',Do:'Donnerstag',Fr:'Freitag',Sa:'Samstag',So:'Sonntag'};
+  // generische Gericht-Emojis (pflanzlich/neutral) als „Ideen"-Platzhalter beim Laden — echte Gerichte kommen beim Reveal
+  var GEMOJI=['🍲','🥘','🍝','🍚','🫕','🥗','🍜','🥙','🧆','🍛','🫑','🍅','🥕','🌽','🥔','🍠','🥦','🍆','🍄','🥑','🌯','🍞'];
   var _genReveal=false,_generating=false,_gtimers=[],GEN=null,GENSTART=0;
   function gt(ms,fn){var id=setTimeout(fn,reduce?0:ms);_gtimers.push(id);return id;}
   function stopGenTimers(){_gtimers.forEach(clearTimeout);_gtimers=[];}
@@ -820,7 +822,7 @@
     var TH=genThoughts(ctx);
     var rows=DOW.map(function(d,di){
       if(!planned[d])return '<div class="gwrow off" data-d="'+d+'"><span class="gwd">'+d+'</span><span class="gwoff">🚶 auswärts</span></div>';
-      var tiles='';for(var j=0;j<3;j++){tiles+='<div class="gtile"><span class="gph" style="background:'+gPhBg((di*40+j*90)%360)+'"></span></div>';}
+      var tiles='';for(var j=0;j<3;j++){tiles+='<div class="gtile"><span class="gph" style="background:'+gPhBg((di*40+j*90)%360)+'">'+GEMOJI[(di*3+j)%GEMOJI.length]+'</span></div>';}
       return '<div class="gwrow" data-d="'+d+'"><span class="gwd">'+d+'</span><span class="gwtiles">'+tiles+'</span><span class="gwtick"></span></div>';
     }).join('');
     pc.innerHTML='<div class="genwk">'+genScopeHtml(ctx)+
@@ -830,7 +832,7 @@
       '<div class="gbar" id="gbar"><i></i></div></div>';
     var ck=document.getElementById('ckav');if(ck)ck.classList.add('busy');
     var cs=document.getElementById('ckstatus');if(cs)cs.innerHTML='Ich stelle <b>eure Woche</b> zusammen …';
-    if(!reduce){var ti=1;(function rotate(){gt(1500,function(){var el=document.getElementById('gthought');if(!el)return;el.classList.add('swap');gt(280,function(){var e2=document.getElementById('gthought');if(!e2)return;var th=TH[ti++];if(ti>=TH.length)ti=1;e2.querySelector('.gtx').innerHTML=th.t;e2.querySelector('.gsrc').textContent=th.src;el.classList.remove('swap');rotate();});});})();}
+    if(!reduce){var ti=1;(function rotate(){gt(2200,function(){var el=document.getElementById('gthought');if(!el)return;el.classList.add('swap');gt(280,function(){var e2=document.getElementById('gthought');if(!e2)return;var th=TH[ti++];if(ti>=TH.length)ti=1;e2.querySelector('.gtx').innerHTML=th.t;e2.querySelector('.gsrc').textContent=th.src;el.classList.remove('swap');rotate();});});})();}
     requestAnimationFrame(fitGenwk);gt(80,fitGenwk);   // Höhe an den Viewport anpassen (kein Scrollen)
   }
   function runWeekWalk(ctx,token,done){
@@ -842,8 +844,8 @@
       var d=plan[idx],row=pc.querySelector('.gwrow[data-d="'+d+'"]');if(!row){idx++;stepDay();return;}
       row.classList.add('on');gStat('🍳 stelle <b>'+esc(LONGDAY[d]||d)+'</b> zusammen …');
       var tiles=row.querySelectorAll('.gtile'),j=0;
-      (function dev(){if(GEN!==token)return;if(j<tiles.length){tiles[j].classList.add('dev');j++;gt(150,dev);}else{row.classList.remove('on');row.classList.add('done');dn++;idx++;gProg(dn/tot);gCount(dn,tot);gt(320,stepDay);}})();}
-    gt(700,stepDay);
+      (function dev(){if(GEN!==token)return;if(j<tiles.length){tiles[j].classList.add('dev');j++;gt(175,dev);}else{row.classList.remove('on');row.classList.add('done');dn++;idx++;gProg(dn/tot);gCount(dn,tot);gt(400,stepDay);}})();}
+    gt(900,stepDay);
   }
   var _finSteps=['⚖️ prüfe gegen eure Regeln …','🎯 wähle die besten drei …','🍳 richte an …','✨ gleich fertig …'];
   function startFinalizing(token){var b=document.getElementById('gbar');if(b)b.classList.add('wait');if(reduce)return;var i=0;(function loop(){if(GEN!==token)return;gStat(_finSteps[i%_finSteps.length]);i++;gt(1600,loop);})();}
@@ -862,7 +864,7 @@
     var state={data:null,err:false,walkDone:false,done:false};
     function bail(){_generating=false;stopGenTimers();var ck=document.getElementById('ckav');if(ck)ck.classList.remove('busy');if(po)po.style.display='';if(pc)pc.innerHTML='';if(pe){pe.style.display='';pe.innerHTML='⚠️ Konnte gerade keine Vorschläge holen. <button class="btn-s" data-act="gen">Nochmal</button>';}}
     function conclude(){if(state.done||GEN!==token)return;if(!state.walkDone||(!state.data&&!state.err))return;state.done=true;
-      var wait=Math.max(reduce?0:450,(reduce?0:2200)-(Date.now()-GENSTART));
+      var wait=Math.max(reduce?0:700,(reduce?0:4800)-(Date.now()-GENSTART));
       gt(wait,function(){if(GEN!==token)return;stopGenTimers();var ck=document.getElementById('ckav');if(ck)ck.classList.remove('busy');
         var res=state.data;
         if(state.err||!(res&&res.plan&&res.plan.tage&&res.plan.tage.length)){bail();return;}
