@@ -228,6 +228,7 @@
   #party[hidden]{display:none;} #party .pchef{font-size:3.6rem;animation:pbounce .7s cubic-bezier(.2,.9,.2,1.2) both;} #party .pt{font:800 1.7rem/1.05 var(--sans);letter-spacing:-.01em;} #party .ps{color:var(--muted);font-size:1rem;}
   @keyframes pbounce{0%{transform:scale(.4) rotate(-8deg);opacity:0}45%{transform:scale(1.18) rotate(4deg)}70%{transform:scale(.94)}100%{transform:scale(1) rotate(0);opacity:1}}
   #confetti{position:fixed;inset:0;z-index:60;pointer-events:none;}
+  .go.golos{background:var(--ai);color:#fff;border-color:transparent;font-weight:800;font-size:1rem;padding:.7rem 1.15rem;box-shadow:0 4px 14px color-mix(in oklab,var(--blue) 26%,transparent);}
 </style>
 </head>
 <body>
@@ -347,9 +348,9 @@
     return parsed.some(function(n){return n.split(/\s+/).length>2;});
   }
 
-  function stepIntro(){ask('Hi! 🧑‍🍳 Ich bin euer <b>Küchenassistent</b>.<br>Von <b>„Was gibt’s diese Woche?"</b> bis zur fertigen <b>Einkaufsliste</b> nehm ich euch alles ab — <b>gekocht wird bei euch.</b>',null,{then:stepPersons});}
+  function stepIntro(){stepPersons();}
   function stepPersons(){head(1,'active');state.roles=state.roles||[];
-    ask('Damit das passt, lernen wir uns kurz kennen. 👋<br><b>Wer kocht &amp; isst mit?</b>',function(b,c){
+    ask('Hi! 🧑‍🍳 Ich richte mit dir die App ein.<br><b>Wer kocht &amp; isst mit?</b>',function(b,c){
       input.placeholder='Name eintippen – z. B. du …';
       c.innerHTML='<div class="chips" data-list></div><button class="go" data-go disabled>Passt ›</button><div class="cnote" style="margin-top:.4rem">↓ Namen unten eintippen (Enter). Tippe 👤 an, um jemanden als <b>Kind</b> 🧒 zu markieren.</div>';
       var list=c.querySelector('[data-list]'),go=c.querySelector('[data-go]');
@@ -446,7 +447,7 @@
           Promise.all(proms).then(function(){me('Rhythmus gesetzt');head(4,'done');stepDone();});});
         advanceFn=function(){go.click();};scr();});
       curHandler=function(t){me(t);};advanceFn=function(){yes.click();};});}
-  function stepDone(){ask('🎉 <b>Startklar!</b> Euer Haushalt steht — hier ist eure Woche.<br>Ab jetzt bin ich <b>unten</b> immer dabei: tippt mich an, wann immer sich was ändert. 👇',null,{then:function(){wait(reduce?300:640,dockAndEnter);}});}
+  function stepDone(){ask('Perfekt — ich hab alles eingetragen. <b>Bereit?</b> 🎉',function(b,c){c.innerHTML='<div class="chips"><button class="go golos" data-golos>Los geht\'s →</button></div>';var g=c.querySelector('[data-golos]');if(g)g.addEventListener('click',dockAndEnter);});}
 
   function sendText(){if(busy)return;var v=(input.value||'').trim();if(!v){if(advanceFn)advanceFn();return;}if(curHandler)curHandler(v);input.value='';scr();}
   sendBtn.addEventListener('click',sendText);
