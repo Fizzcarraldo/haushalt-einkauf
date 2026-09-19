@@ -237,7 +237,8 @@
   /* ── Generierungs-Screen: „Die Woche entsteht" (ein Gesicht, echte Daten, überbrückt die Wartezeit) ── */
   body.generating #vPlan .pl{overflow:hidden;}   /* Loader füllt exakt -> kein weißer Leerraum aus dem 9rem-Bottom-Padding */
   .genwk{animation:glin .34s ease both;padding:.1rem 0 .2rem;display:flex;flex-direction:column;min-height:0;overflow:hidden;}
-  .genwk>.gscope,.genwk>.gthought,.genwk>.gscan,.genwk>.gbar{flex:0 0 auto;}
+  .genwk>.gscope,.genwk>.gthought,.genwk>.gfoot{flex:0 0 auto;}
+  .gfoot{display:flex;align-items:center;gap:.6rem;margin-top:.15rem;} .gfoot .gbar{flex:1;}
   @keyframes glin{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
   .gscope{display:flex;flex-wrap:wrap;gap:.32rem;margin:.05rem 0 .78rem;}
   .gschip{display:inline-flex;align-items:center;gap:.3rem;font-size:.73rem;font-weight:650;color:var(--muted);background:var(--card2);border:1px solid var(--line2);border-radius:999px;padding:.18rem .55rem;}
@@ -250,7 +251,7 @@
   .gstack .gav.more{background:var(--card2);color:var(--muted);border-color:var(--card);}
   .gstack .gav.guest{box-shadow:0 0 0 2px var(--orange),0 1px 2px rgba(0,0,0,.18);}
   .gschip .gstack{margin-right:.15rem;}
-  .gthought{height:4em;margin:.1rem 0 .5rem;transition:opacity .28s ease,transform .28s ease;overflow:hidden;}
+  .gthought{height:4em;margin:.4rem 0 .3rem;transition:opacity .28s ease,transform .28s ease;overflow:hidden;}
   .gthought.swap{opacity:0;transform:translateY(5px);}
   .gtx{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-weight:750;font-size:1.02rem;line-height:1.3;letter-spacing:-.01em;}
   .gsrc{display:inline-flex;align-items:center;gap:.22rem;margin-top:.3rem;font:700 .64rem/1 var(--mono);letter-spacing:.04em;text-transform:uppercase;color:var(--muted);background:var(--card2);border:1px solid var(--line2);border-radius:999px;padding:.18rem .5rem;}
@@ -827,10 +828,9 @@
       return '<div class="gwrow" data-d="'+d+'"><span class="gwd">'+d+'</span><span class="gwtiles">'+tiles+'</span><span class="gwtick"></span></div>';
     }).join('');
     pc.innerHTML='<div class="genwk">'+genScopeHtml(ctx)+
-      '<div class="gthought" id="gthought"><span class="gtx">'+TH[0].t+'</span><span class="gsrc">'+esc(TH[0].src)+'</span></div>'+
       '<div class="gwk">'+rows+'</div>'+
-      '<div class="gscan"><span class="gstat" id="gstat">🔎 durchsuche mein Rezept-Repertoire …</span><span class="gcount" id="gcount">0 / '+ctx.tage.length+'</span></div>'+
-      '<div class="gbar" id="gbar"><i></i></div></div>';
+      '<div class="gthought" id="gthought"><span class="gtx">'+TH[0].t+'</span><span class="gsrc">'+esc(TH[0].src)+'</span></div>'+     /* Gedanke unten (guter Inhalt, gute Position) */
+      '<div class="gfoot"><div class="gbar" id="gbar"><i></i></div><span class="gcount" id="gcount">0 / '+ctx.tage.length+'</span></div></div>';
     var ck=document.getElementById('ckav');if(ck)ck.classList.add('busy');
     document.body.classList.add('generating');   // .pl-Scroll aus -> kein weißer Leerraum
     var cs=document.getElementById('ckstatus');if(cs)cs.innerHTML='Ich stelle <b>eure Woche</b> zusammen …';
