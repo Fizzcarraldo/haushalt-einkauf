@@ -234,6 +234,46 @@
   @keyframes pbounce{0%{transform:scale(.4) rotate(-8deg);opacity:0}45%{transform:scale(1.18) rotate(4deg)}70%{transform:scale(.94)}100%{transform:scale(1) rotate(0);opacity:1}}
   #confetti{position:fixed;inset:0;width:100%;height:100%;z-index:60;pointer-events:none;}
   .go.golos{background:var(--ai);color:#fff;border-color:transparent;font-weight:800;font-size:1rem;padding:.7rem 1.15rem;box-shadow:0 4px 14px color-mix(in oklab,var(--blue) 26%,transparent);}
+  /* ── Vorschlags-Generierung: „Der Koch sucht" ── */
+  .genloader{padding:.2rem 0 .3rem;animation:glin .34s ease both;}
+  @keyframes glin{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+  .glhead{display:flex;align-items:center;gap:.65rem;margin:.1rem .1rem .85rem;}
+  .glchef{position:relative;font-size:1.55rem;display:inline-grid;place-items:center;width:2.7rem;height:2.7rem;border-radius:50%;background:var(--green-bg);flex:0 0 auto;animation:glbob 1.7s ease-in-out infinite;}
+  @keyframes glbob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+  .glsteam{position:absolute;top:-.15rem;right:-.05rem;font-size:.8rem;opacity:0;animation:glsteam 1.9s ease-in-out infinite;}
+  @keyframes glsteam{0%{opacity:0;transform:translateY(3px) scale(.7)}35%{opacity:.85}100%{opacity:0;transform:translateY(-9px) scale(1.15)}}
+  .gltitle{font-weight:800;font-size:1.02rem;letter-spacing:-.01em;}
+  .glsub{font-size:.83rem;color:var(--muted);}
+  .glsteps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.55rem;}
+  .glstep{display:flex;align-items:flex-start;gap:.6rem;opacity:.32;transform:translateX(-5px);transition:opacity .4s ease,transform .4s ease;}
+  .glstep.act,.glstep.done{opacity:1;transform:none;}
+  .glmark{flex:0 0 auto;width:1.2rem;height:1.2rem;border-radius:50%;border:2px solid var(--line);margin-top:.06rem;position:relative;box-sizing:border-box;transition:border-color .3s,background .3s;}
+  .glstep.act .glmark{border-color:var(--line);border-top-color:var(--green);animation:glspin .7s linear infinite;}
+  @keyframes glspin{to{transform:rotate(360deg)}}
+  .glstep.done .glmark{border-color:var(--green);background:var(--green);animation:none;}
+  .glstep.done .glmark::after{content:"✓";position:absolute;inset:-2px;display:grid;place-items:center;color:#fff;font-size:.74rem;font-weight:900;}
+  .gltxt{display:flex;flex-direction:column;gap:.16rem;min-width:0;}
+  .gllabel{font-weight:650;font-size:.92rem;}
+  .gldetail{font-size:.8rem;color:var(--muted);display:flex;flex-wrap:wrap;gap:.3rem;align-items:center;}
+  .glchip{background:var(--card2);border:1px solid var(--line2);border-radius:999px;padding:.06rem .52rem;font-size:.77rem;font-weight:650;color:var(--ink);}
+  .glchip.ok{border-color:color-mix(in oklab,var(--green) 55%,transparent);color:var(--green-ink);background:var(--green-bg);}
+  .glchip.no{border-color:color-mix(in oklab,var(--orange) 45%,transparent);color:var(--orange);}
+  .glcards{display:flex;gap:.5rem;margin-top:1rem;}
+  .glcard{flex:1;border:1px solid var(--line2);border-radius:.75rem;padding:.65rem;background:var(--card);position:relative;overflow:hidden;min-width:0;}
+  .glcard::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 25%,rgba(255,255,255,.5) 50%,transparent 75%);transform:translateX(-100%);animation:glsh 1.35s ease-in-out infinite;}
+  .glcard:nth-child(2)::after{animation-delay:.18s}.glcard:nth-child(3)::after{animation-delay:.36s}
+  @keyframes glsh{to{transform:translateX(100%)}}
+  .glline{height:.62rem;border-radius:.32rem;background:var(--card2);margin-bottom:.42rem;}
+  .glline.w1{width:82%}.glline.w2{width:56%}
+  .glpills{display:flex;gap:.28rem;margin-top:.6rem}.glpills i{width:1.15rem;height:1.15rem;border-radius:50%;background:var(--card2);display:block}
+  .glbar{height:3px;border-radius:3px;background:var(--line2);overflow:hidden;margin-top:1rem;position:relative;}
+  .glbar i{position:absolute;top:0;bottom:0;width:38%;border-radius:3px;background:var(--ai);animation:glbar 1.5s cubic-bezier(.5,.1,.5,.9) infinite;}
+  @keyframes glbar{0%{left:-40%}100%{left:102%}}
+  .genreveal .vday{animation:glrise .5s cubic-bezier(.2,.8,.2,1) both;}
+  .genreveal .vday:nth-child(2){animation-delay:.07s}.genreveal .vday:nth-child(3){animation-delay:.14s}.genreveal .vday:nth-child(4){animation-delay:.21s}.genreveal .vday:nth-child(5){animation-delay:.28s}.genreveal .vday:nth-child(6){animation-delay:.35s}.genreveal .vday:nth-child(n+7){animation-delay:.42s}
+  @keyframes glrise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  @media (prefers-color-scheme:dark){.glcard::after{background:linear-gradient(100deg,transparent 25%,rgba(255,255,255,.07) 50%,transparent 75%)}}
+  @media (prefers-reduced-motion:reduce){.glchef,.glsteam,.glcard::after,.glbar i{animation:none!important}.glstep{opacity:1!important;transform:none!important}.genreveal .vday{animation:none!important}}
 </style>
 </head>
 <body>
@@ -545,6 +585,7 @@
   function hideParty(){var e=document.getElementById('party');if(e)e.hidden=true;}
   function dockAndEnter(){                                  // Onboarding-Reveal: App zieht hinter dem Chat hervor, mit Party 🎉
     var onb=document.getElementById('vOnb');
+    pendingIntro='🎉 <b>Geschafft!</b> Eure Woche ist startklar — <b>hol dir unten Vorschläge</b>. 👇';  // erste Chat-Blase
     revealApp();                                            // App/Board hinter dem Onboarding aufbauen
     document.body.classList.add('onbrevealing');            // App gedimmt & unscharf
     showParty();fireConfetti();                             // 🎉 Geschafft!-Belohnung
@@ -675,7 +716,8 @@
       return '<div class="card vday"><div class="vd-h">'+esc(t.tag)+' <span class="vd-who">'+names+'</span></div>'+comp+'<div class="opts">'+cells+'</div>'+noneline+actions+'</div>';}).join('');
     var voted={};DATA.stimmen.forEach(function(s){voted[s.voter_id]=1;});var miss=DATA.persons.filter(function(p){return !voted[p.id];}).map(function(p){return p.name;});
     var done='<span class="cnote">'+(DATA.persons.length-miss.length)+'/'+DATA.persons.length+' haben abgestimmt'+(miss.length?' · offen: '+esc(miss.join(', ')):'')+'</span>';
-    document.getElementById('planCards').innerHTML=back+bar+intro+cards+'<div class="votefoot">'+done+'</div>';}
+    var _pcv=document.getElementById('planCards');_pcv.innerHTML=back+bar+intro+cards+'<div class="votefoot">'+done+'</div>';
+    if(_genReveal){_genReveal=false;_pcv.classList.add('genreveal');setTimeout(function(){_pcv.classList.remove('genreveal');},1000);}}
   function renderDecided(){var pe=document.getElementById('planEmpty');if(pe)pe.style.display='none';var plan=DATA.woche.plan||{};var tage=(DATA.woche.vorschlaege&&DATA.woche.vorschlaege.tage)||[];
     var cards=tage.map(function(t){var here=presentOn(t.tag),g=guestsOn(t.tag);if(!here.length&&!g.length)return '<div class="dcard out"><b>'+esc(t.tag)+'</b> <span class="cnote">auswärts</span></div>';
       var ch=plan[t.tag],titel=ch?ch.titel:'—';
@@ -707,20 +749,49 @@
     if(miss.length&&!confirm(miss.join(', ')+' ha'+(miss.length>1?'ben':'t')+' noch nicht abgestimmt. Trotzdem festlegen?'))return;
     var plan={};tage.forEach(function(t){if(!presentOn(t.tag).length&&!guestsOn(t.tag).length)return;var opts=t.vorschlaege||[];if(!opts.length)return;var best=null,bn=-1;opts.forEach(function(v,i){var oid=optId(t.tag,v,i),n=votesFor(t.tag,oid).length;if(n>bn){bn=n;best={id:oid,titel:v.titel};}});if(best)plan[t.tag]=best;});
     DATA.woche.plan=plan;DATA.woche.status='fest';var wid=DATA.woche.id;if(wid)rest('PATCH','wochen?id=eq.'+wid,{plan:plan,status:'fest'});renderPlanen();}
+  // ── „Der Koch sucht" — Generierungs-Erlebnis: spiegelt die echten Wünsche des Users, macht den Prozess wertig ──
+  var GENT=null,GENSTART=0,_genReveal=false;
+  function genCrit(ctx){var P={},G={},D={},A={};(ctx.tage||[]).forEach(function(t){(t.personen||[]).forEach(function(p){P[p.name]=1;});(t.gaeste||[]).forEach(function(g){G[g]=1;});(t.diaeten||[]).forEach(function(d){D[d]=1;});(t.vermeiden||[]).forEach(function(v){A[v]=1;});});
+    return {days:(ctx.tage||[]).length,persons:Object.keys(P),guests:Object.keys(G),diets:Object.keys(D),avoid:Object.keys(A),wishes:(ctx.grundsaetze||[])};}
+  function genSteps(c){var chip=function(a,cls){return a.map(function(x){return '<span class="glchip'+(cls?' '+cls:'')+'">'+esc(x)+'</span>';}).join('');};
+    var who=c.persons.concat(c.guests.map(function(g){return g+' (Gast)';}));
+    var s=[{icon:'👥',label:'Wer diese Woche mitisst',detail:who.length?chip(who):'euer Haushalt'}];
+    if(c.diets.length||c.avoid.length)s.push({icon:'🥗',label:'Eure Ernährung & No-Gos',detail:chip(c.diets,'ok')+chip(c.avoid.map(function(x){return '⛔ '+x;}),'no')});
+    s.push({icon:'⏱️',label:'Zeit & Budget im Alltag',detail:c.wishes.length?chip(c.wishes):'schnell · günstig · alltagstauglich'});
+    s.push({icon:'🔄',label:'Abwechslung über die Woche',detail:'nichts doppelt gedacht'});
+    s.push({icon:'✨',label:'Ideen kochen & zusammenstellen',detail:c.days+' Tag'+(c.days>1?'e':'')+' · '+(c.days*3)+' Vorschläge'});
+    return s;}
+  function renderGenLoader(ctx){var pc=document.getElementById('planCards'),pe=document.getElementById('planEmpty');if(pe)pe.style.display='none';if(!pc)return;
+    var c=genCrit(ctx),steps=genSteps(c);
+    var rows=steps.map(function(s){return '<li class="glstep"><span class="glmark"></span><span class="gltxt"><span class="gllabel">'+s.icon+' '+s.label+'</span>'+(s.detail?'<span class="gldetail">'+s.detail+'</span>':'')+'</span></li>';}).join('');
+    var sk='<div class="glcards">'+[0,1,2].map(function(){return '<div class="glcard"><div class="glline w1"></div><div class="glline w2"></div><div class="glpills"><i></i><i></i><i></i></div></div>';}).join('')+'</div>';
+    pc.innerHTML='<div class="genloader"><div class="glhead"><span class="glchef">🧑‍🍳<b class="glsteam">♨</b></span><div><div class="gltitle">Der Koch stellt eure Woche zusammen …</div><div class="glsub">einen Moment – ich denke an <b>euch</b></div></div></div><ul class="glsteps">'+rows+'</ul>'+sk+'<div class="glbar"><i></i></div></div>';
+    var els=pc.querySelectorAll('.glstep'),n=els.length,k=0;
+    if(reduce){for(var j=0;j<n;j++)els[j].classList.add('act');return;}
+    var advance=function(){if(k<n){if(k>0){els[k-1].classList.remove('act');els[k-1].classList.add('done');}els[k].classList.add('act');k++;GENT=setTimeout(advance,760);}else{GENT=null;}};
+    advance();}
+  function stopGenLoader(){if(GENT){clearTimeout(GENT);GENT=null;}}
+  function finishGen(cb){stopGenLoader();var pc=document.getElementById('planCards');
+    if(pc){var els=pc.querySelectorAll('.glstep');for(var i=0;i<els.length;i++){els[i].classList.remove('act');els[i].classList.add('done');}}
+    var wait=reduce?0:Math.max(430,2100-(Date.now()-GENSTART));   // Mindestdauer, damit der Moment wertig wirkt
+    _genReveal=true;setTimeout(cb,wait);}
   function generatePlan(retry,onlyTag){var ctx=buildContext(),pe=document.getElementById('planEmpty'),pc=document.getElementById('planCards');
     if(onlyTag){var d=dayContext(onlyTag);if(!d)return;ctx={kw:ctx.kw,grundsaetze:ctx.grundsaetze,tage:[d]};}
     if(!ctx.tage.length){if(pe){pe.style.display='';pe.innerHTML='🍽️ Diese Woche ist niemand da zum Kochen.';}return;}
-    if(!onlyTag){if(pc)pc.innerHTML='';if(pe){pe.style.display='';pe.innerHTML='🍳 Ich koche Vorschläge aus … <span class="cnote">passend zu wer da ist, Diäten, Zeit &amp; Budget</span>';}}
+    if(!onlyTag&&!retry){GENSTART=Date.now();renderGenLoader(ctx);}   // wertiges „Der Koch sucht"-Erlebnis
+    var failFull=function(msg){if(onlyTag)return;stopGenLoader();if(pc)pc.innerHTML='';if(pe){pe.style.display='';pe.innerHTML='⚠️ '+msg+' <button class="btn-s" data-act="gen">Nochmal</button>';}};
     fetch(FN,{method:'POST',headers:H,body:JSON.stringify({generate:true,context:ctx,haushalt:HH})}).then(function(r){return r.json();}).then(function(res){
       if(res&&res.plan&&res.plan.tage&&res.plan.tage.length){assignIds(res.plan.tage);
         ensureWoche().then(function(wid){
           if(onlyTag){var nd=res.plan.tage[0];DATA.woche=DATA.woche||{vorschlaege:{tage:[]}};DATA.woche.vorschlaege=DATA.woche.vorschlaege||{tage:[]};var arr=DATA.woche.vorschlaege.tage,ix=-1;arr.forEach(function(x,k){if(x.tag===onlyTag)ix=k;});if(ix>=0)arr[ix]=nd;else arr.push(nd);
-            DATA.stimmen=DATA.stimmen.filter(function(s){return s.tag!==onlyTag;});if(wid){DATA.woche.id=wid;rest('DELETE','stimme?woche_id=eq.'+wid+'&tag=eq.'+encodeURIComponent(onlyTag));rest('PATCH','wochen?id=eq.'+wid,{vorschlaege:DATA.woche.vorschlaege});}}
-          else{DATA.woche=DATA.woche||{};DATA.woche.vorschlaege=res.plan;DATA.woche.status='voten';DATA.stimmen=[];if(wid){DATA.woche.id=wid;rest('PATCH','wochen?id=eq.'+wid,{vorschlaege:res.plan,status:'voten'});rest('DELETE','stimme?woche_id=eq.'+wid);}}
-          renderPlanen();});
+            DATA.stimmen=DATA.stimmen.filter(function(s){return s.tag!==onlyTag;});if(wid){DATA.woche.id=wid;rest('DELETE','stimme?woche_id=eq.'+wid+'&tag=eq.'+encodeURIComponent(onlyTag));rest('PATCH','wochen?id=eq.'+wid,{vorschlaege:DATA.woche.vorschlaege});}
+            renderPlanen();}
+          else{DATA.woche=DATA.woche||{};DATA.woche.vorschlaege=res.plan;DATA.woche.status='voten';DATA.stimmen=[];if(wid){DATA.woche.id=wid;rest('PATCH','wochen?id=eq.'+wid,{vorschlaege:res.plan,status:'voten'});rest('DELETE','stimme?woche_id=eq.'+wid);}
+            finishGen(renderPlanen);}
+        });
       } else if(!retry){generatePlan(true,onlyTag);}
-      else if(pe&&!onlyTag){pe.style.display='';pe.innerHTML='⚠️ Konnte gerade keine Vorschläge holen. <button class="btn-s" data-act="gen">Nochmal</button>';}
-    }).catch(function(){if(!retry)generatePlan(true,onlyTag);else if(pe&&!onlyTag){pe.style.display='';pe.innerHTML='⚠️ offline. <button class="btn-s" data-act="gen">Nochmal</button>';}});}
+      else failFull('Konnte gerade keine Vorschläge holen.');
+    }).catch(function(){if(!retry)generatePlan(true,onlyTag);else failFull('Gerade offline.');});}
   function doAct(act,day,oid,id){
     if(act==='gen')generatePlan();else if(act==='vote')setVote(day,oid);else if(act==='who')setVoter(id);else if(act==='teilen')teilen();else if(act==='own')addOwn(day);else if(act==='regenday')generatePlan(false,day);else if(act==='notda')notDa(day);else if(act==='none')setVote(day,'__none__');else if(act==='festlegen')festlegen();else if(act==='override')setPlanDay(day,oid);else if(act==='reopen')reopenVote();else if(act==='einkauf')einkauf();else if(act==='govote'){vView='vote';renderPlanen();}else if(act==='goplan'){vView='plan';renderPlanen();}else if(act==='godecided'){vView=null;renderPlanen();}else if(act==='goweek'){navTo('week');}else if(act==='addperson'){navTo('profil');alert('Neue Person: über „＋ hinzufügen" im Personen-Block.');}else if(act==='addrezept'){alert('Rezepte kommen im Rezept-Sprint.');}
   }
@@ -794,6 +865,7 @@
 
   // ── Assistent-Sheet (echte Function, beide Scopes) ──
   var sheet=document.getElementById('sheet'),sback=document.getElementById('sback'),slog=document.getElementById('slog'),stext=document.getElementById('stext'),shist=[],sseed=false,curScope='woche';
+  var pendingIntro=null;   // nach dem Onboarding: erste Chat-Blase = „Geschafft!"
   var SCFG={woche:{greet:'Da bin ich. 👋 Sag mir, was <b>diese Woche</b> anders ist – z.&nbsp;B. „Freitag kommt Besuch".',quick:[['👤 Gast','Am Donnerstag kommt Besuch'],['🚗 Abwesend','Freitag bin ich nicht da'],['🥕 Wunsch','Diese Woche extra viel Brokkoli']]},
     dauer:{greet:'Da bin ich. 👋 Sag mir, was sich <b>dauerhaft</b> ändert – z.&nbsp;B. „Anna ist ab jetzt vegetarisch".',quick:[['👤 Person','Neue Person: Max'],['⛔ Allergie','Anna hat eine Nussallergie'],['🎯 Grundsatz','Uns ist gesund wichtig']]}};
   function sbot(h){var d=document.createElement('div');d.className='msg bot';d.innerHTML=h;slog.appendChild(d);slog.scrollTop=slog.scrollHeight;}
@@ -816,7 +888,7 @@
     document.documentElement.style.setProperty('--drawerTop',top+'px');
     document.body.classList.add('chatopen');               // Cockpit schrumpft animiert, Stepper weicht
     sheet.classList.add('open');sback.classList.add('open');
-    if(!sseed){sseed=true;applyScope('woche');}
+    if(!sseed){sseed=true;applyScope('woche');if(pendingIntro){slog.innerHTML='';sbot(pendingIntro);pendingIntro=null;}}
   }
   function closeS(){sheet.classList.remove('open');sback.classList.remove('open');document.body.classList.remove('chatopen');}
   document.getElementById('openA').addEventListener('click',openS);
