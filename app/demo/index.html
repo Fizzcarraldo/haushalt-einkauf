@@ -528,12 +528,12 @@
   function fireConfetti(){ if(reduce)return; var cv=document.getElementById('confetti');if(!cv)return;_cv=cv;_ctx=_ctx||cv.getContext('2d');
     var W=cv.width=cv.offsetWidth||window.innerWidth,H=cv.height=cv.offsetHeight||window.innerHeight;
     var cols=['#3f9b2f','#2472c8','#f5c542','#ff6b6b','#8bd97a','#5aa2ea','#ffb23e'];
-    for(var i=0;i<90;i++)_parts.push({x:W*(0.28+Math.random()*0.44),y:H*0.26,vx:(Math.random()-0.5)*8,vy:-5-Math.random()*8,g:0.24+Math.random()*0.12,rot:Math.random()*6.28,vr:(Math.random()-0.5)*0.5,w:5+Math.random()*5,h:8+Math.random()*7,c:cols[i%cols.length],life:0,max:80+Math.random()*45});
+    for(var i=0;i<130;i++)_parts.push({x:Math.random()*W,y:-20-Math.random()*H*0.6,vx:(Math.random()-0.5)*3.2,vy:2.4+Math.random()*3.4,g:0.05+Math.random()*0.05,rot:Math.random()*6.28,vr:(Math.random()-0.5)*0.45,w:5+Math.random()*5,h:8+Math.random()*7,c:cols[i%cols.length]});
     if(!_raf)_raf=requestAnimationFrame(_ctick);
   }
   function _ctick(){var cv=_cv,ctx=_ctx;if(!cv||!ctx){_raf=null;return;}var W=cv.width,H=cv.height;ctx.clearRect(0,0,W,H);var alive=false;
-    for(var i=0;i<_parts.length;i++){var p=_parts[i];p.life++;if(p.life>p.max)continue;alive=true;p.vy+=p.g;p.vx*=0.99;p.x+=p.vx;p.y+=p.vy;p.rot+=p.vr;var a=p.life>p.max-22?(p.max-p.life)/22:1;ctx.save();ctx.globalAlpha=Math.max(0,a);ctx.translate(p.x,p.y);ctx.rotate(p.rot);ctx.fillStyle=p.c;ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);ctx.restore();}
-    _parts=_parts.filter(function(p){return p.life<=p.max;});
+    for(var i=0;i<_parts.length;i++){var p=_parts[i];if(p.y>H+40)continue;alive=true;p.vy+=p.g;p.vx*=0.995;p.x+=p.vx;p.y+=p.vy;p.rot+=p.vr;ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.rot);ctx.fillStyle=p.c;ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);ctx.restore();}
+    _parts=_parts.filter(function(p){return p.y<=H+40;});
     if(alive)_raf=requestAnimationFrame(_ctick);else{_raf=null;ctx.clearRect(0,0,W,H);}
   }
   function showParty(){var e=document.getElementById('party');if(e)e.hidden=false;}
@@ -548,7 +548,7 @@
       onb.classList.add('onbexit');                         // Onboarding fährt nach rechts (mit Party) raus
       document.body.classList.remove('onbrevealing');        // App zieht scharf in den Fokus
       fireConfetti();
-      setTimeout(function(){onb.classList.remove('on','onbexit');hideParty();document.body.classList.add('entered');showCoach();},660);
+      setTimeout(function(){onb.classList.remove('on','onbexit');hideParty();document.body.classList.add('entered');showCoach();fireConfetti();},660);
     },950);
   }
   var navMode='week';
