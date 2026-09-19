@@ -234,46 +234,62 @@
   @keyframes pbounce{0%{transform:scale(.4) rotate(-8deg);opacity:0}45%{transform:scale(1.18) rotate(4deg)}70%{transform:scale(.94)}100%{transform:scale(1) rotate(0);opacity:1}}
   #confetti{position:fixed;inset:0;width:100%;height:100%;z-index:60;pointer-events:none;}
   .go.golos{background:var(--ai);color:#fff;border-color:transparent;font-weight:800;font-size:1rem;padding:.7rem 1.15rem;box-shadow:0 4px 14px color-mix(in oklab,var(--blue) 26%,transparent);}
-  /* ── Vorschlags-Generierung: „Der Koch sucht" ── */
-  .genloader{padding:.2rem 0 .3rem;animation:glin .34s ease both;}
+  /* ── Generierungs-Screen: „Die Woche entsteht" (ein Gesicht, echte Daten, überbrückt die Wartezeit) ── */
+  .genwk{animation:glin .34s ease both;padding:.1rem 0 .2rem;}
   @keyframes glin{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
-  .glhead{display:flex;align-items:center;gap:.65rem;margin:.1rem .1rem .85rem;}
-  .glchef{position:relative;font-size:1.55rem;display:inline-grid;place-items:center;width:2.7rem;height:2.7rem;border-radius:50%;background:var(--green-bg);flex:0 0 auto;animation:glbob 1.7s ease-in-out infinite;}
-  @keyframes glbob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
-  .glsteam{position:absolute;top:-.15rem;right:-.05rem;font-size:.8rem;opacity:0;animation:glsteam 1.9s ease-in-out infinite;}
-  @keyframes glsteam{0%{opacity:0;transform:translateY(3px) scale(.7)}35%{opacity:.85}100%{opacity:0;transform:translateY(-9px) scale(1.15)}}
-  .gltitle{font-weight:800;font-size:1.02rem;letter-spacing:-.01em;}
-  .glsub{font-size:.83rem;color:var(--muted);}
-  .glsteps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.55rem;}
-  .glstep{display:flex;align-items:flex-start;gap:.6rem;opacity:.32;transform:translateX(-5px);transition:opacity .4s ease,transform .4s ease;}
-  .glstep.act,.glstep.done{opacity:1;transform:none;}
-  .glmark{flex:0 0 auto;width:1.2rem;height:1.2rem;border-radius:50%;border:2px solid var(--line);margin-top:.06rem;position:relative;box-sizing:border-box;transition:border-color .3s,background .3s;}
-  .glstep.act .glmark{border-color:var(--line);border-top-color:var(--green);animation:glspin .7s linear infinite;}
-  @keyframes glspin{to{transform:rotate(360deg)}}
-  .glstep.done .glmark{border-color:var(--green);background:var(--green);animation:none;}
-  .glstep.done .glmark::after{content:"✓";position:absolute;inset:-2px;display:grid;place-items:center;color:#fff;font-size:.74rem;font-weight:900;}
-  .gltxt{display:flex;flex-direction:column;gap:.16rem;min-width:0;}
-  .gllabel{font-weight:650;font-size:.92rem;}
-  .gldetail{font-size:.8rem;color:var(--muted);display:flex;flex-wrap:wrap;gap:.3rem;align-items:center;}
-  .glchip{background:var(--card2);border:1px solid var(--line2);border-radius:999px;padding:.06rem .52rem;font-size:.77rem;font-weight:650;color:var(--ink);}
-  .glchip.ok{border-color:color-mix(in oklab,var(--green) 55%,transparent);color:var(--green-ink);background:var(--green-bg);}
-  .glchip.no{border-color:color-mix(in oklab,var(--orange) 45%,transparent);color:var(--orange);}
-  .glcards{display:flex;gap:.5rem;margin-top:1rem;}
-  .glcard{flex:1;border:1px solid var(--line2);border-radius:.75rem;padding:.65rem;background:var(--card);position:relative;overflow:hidden;min-width:0;}
-  .glcard::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 25%,rgba(255,255,255,.5) 50%,transparent 75%);transform:translateX(-100%);animation:glsh 1.35s ease-in-out infinite;}
-  .glcard:nth-child(2)::after{animation-delay:.18s}.glcard:nth-child(3)::after{animation-delay:.36s}
-  @keyframes glsh{to{transform:translateX(100%)}}
-  .glline{height:.62rem;border-radius:.32rem;background:var(--card2);margin-bottom:.42rem;}
-  .glline.w1{width:82%}.glline.w2{width:56%}
-  .glpills{display:flex;gap:.28rem;margin-top:.6rem}.glpills i{width:1.15rem;height:1.15rem;border-radius:50%;background:var(--card2);display:block}
-  .glbar{height:3px;border-radius:3px;background:var(--line2);overflow:hidden;margin-top:1rem;position:relative;}
-  .glbar i{position:absolute;top:0;bottom:0;width:38%;border-radius:3px;background:var(--ai);animation:glbar 1.5s cubic-bezier(.5,.1,.5,.9) infinite;}
-  @keyframes glbar{0%{left:-40%}100%{left:102%}}
+  .gscope{display:flex;flex-wrap:wrap;gap:.32rem;margin:.05rem 0 .78rem;}
+  .gschip{display:inline-flex;align-items:center;gap:.3rem;font-size:.73rem;font-weight:650;color:var(--muted);background:var(--card2);border:1px solid var(--line2);border-radius:999px;padding:.18rem .55rem;}
+  .gschip b{color:var(--ink);font-weight:750;}
+  .gschip.diet{color:var(--green-ink);background:var(--green-bg);border-color:color-mix(in oklab,var(--green) 34%,transparent);}
+  .gschip.no{color:var(--orange);border-color:color-mix(in oklab,var(--orange) 38%,transparent);}
+  .gstack{display:inline-flex;align-items:center;}
+  .gstack .gav{width:1.4rem;height:1.4rem;border-radius:50%;display:grid;place-items:center;font:800 .62rem/1 var(--sans);color:#fff;border:2px solid var(--card);margin-left:-.42rem;box-shadow:0 1px 2px rgba(0,0,0,.18);}
+  .gstack .gav:first-child{margin-left:0;}
+  .gstack .gav.more{background:var(--card2);color:var(--muted);border-color:var(--card);}
+  .gstack .gav.guest{box-shadow:0 0 0 2px var(--orange),0 1px 2px rgba(0,0,0,.18);}
+  .gschip .gstack{margin-right:.15rem;}
+  .gthought{min-height:4.2em;margin:.1rem 0 .8rem;transition:opacity .28s ease,transform .28s ease;}
+  .gthought.swap{opacity:0;transform:translateY(5px);}
+  .gtx{display:block;font-weight:750;font-size:1.02rem;line-height:1.3;letter-spacing:-.01em;}
+  .gsrc{display:inline-flex;align-items:center;gap:.22rem;margin-top:.45rem;font:700 .64rem/1 var(--mono);letter-spacing:.04em;text-transform:uppercase;color:var(--muted);background:var(--card2);border:1px solid var(--line2);border-radius:999px;padding:.18rem .5rem;}
+  .gsrc::before{content:"↳";opacity:.75;font-weight:800;}
+  .gwk{display:flex;flex-direction:column;gap:.34rem;margin:.1rem 0 .7rem;}
+  .gwrow{display:flex;align-items:center;gap:.55rem;padding:.26rem .4rem;border-radius:.7rem;border:1px solid transparent;opacity:.4;transform:translateX(-4px);transition:opacity .42s cubic-bezier(.3,.8,.3,1),transform .42s cubic-bezier(.3,.8,.3,1),background .3s,border-color .3s,box-shadow .3s;box-sizing:border-box;}
+  .gwrow.on,.gwrow.done{opacity:1;transform:none;}
+  .gwrow.on{background:var(--green-bg);border-color:color-mix(in oklab,var(--green) 26%,transparent);box-shadow:0 8px 22px -12px color-mix(in oklab,var(--green) 65%,transparent);}
+  .gwrow.off{opacity:.5;min-height:2.4rem;}
+  .gwrow .gwd{flex:0 0 auto;width:2rem;font-weight:800;font-size:.9rem;line-height:1;}
+  .gwrow.off .gwd{color:var(--muted);}
+  .gwtiles{display:flex;gap:.45rem;flex:1;min-width:0;}
+  .gwoff{flex:1;display:inline-flex;align-items:center;gap:.35rem;color:var(--muted);font-size:.8rem;font-weight:600;}
+  .gtile{position:relative;flex:1 1 0;min-width:0;height:2.85rem;border-radius:.6rem;overflow:hidden;border:1px solid var(--line2);background:var(--card2);box-shadow:0 3px 8px -4px rgba(0,0,0,.14);}
+  .gtile .gph{position:absolute;inset:0;opacity:.32;transition:opacity .5s ease;}
+  .gtile.dev .gph{opacity:1;animation:gdev .6s cubic-bezier(.3,.8,.3,1) both;}
+  @keyframes gdev{0%{filter:blur(8px) saturate(.3);opacity:0;transform:scale(1.12)}60%{opacity:1}100%{filter:none;opacity:1;transform:none}}
+  .gtile::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 20%,rgba(255,255,255,.5) 50%,transparent 80%);transform:translateX(-120%);animation:gsh 1.2s ease-in-out infinite;}
+  .gtile.dev::after{opacity:0;animation:none;}
+  @keyframes gsh{to{transform:translateX(120%)}}
+  .gwtick{margin-left:auto;flex:0 0 auto;width:1.5rem;height:1.5rem;border-radius:50%;box-sizing:border-box;border:2px solid transparent;display:grid;place-items:center;color:transparent;font-weight:900;font-size:.82rem;opacity:0;transition:opacity .3s;}
+  .gwrow.on .gwtick{opacity:1;border-color:color-mix(in oklab,var(--green) 28%,transparent);border-top-color:var(--green);animation:gspin .7s linear infinite;}
+  .gwrow.done .gwtick{opacity:1;border-color:transparent;background:var(--green);color:#fff;animation:none;}
+  .gwrow.done .gwtick::after{content:"✓";}
+  @keyframes gspin{to{transform:rotate(360deg)}}
+  .gscan{display:flex;align-items:center;gap:.6rem;font-size:.83rem;margin:.15rem 0 .5rem;}
+  .gstat{flex:1;min-width:0;display:inline-flex;align-items:center;gap:.4rem;font-weight:700;color:var(--green-ink);transition:opacity .22s ease;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .gstat.swap{opacity:0;}
+  .gcount{flex:0 0 auto;font:800 .78rem/1 var(--mono);color:var(--muted);font-variant-numeric:tabular-nums;}
+  .gbar{height:5px;border-radius:5px;background:var(--line2);overflow:hidden;position:relative;}
+  .gbar i{position:absolute;top:0;bottom:0;left:0;width:0;border-radius:5px;background:var(--ai);transition:width .5s cubic-bezier(.3,.8,.3,1);}
+  .gbar.wait i{width:100%!important;animation:gpulse 1.4s ease-in-out infinite;}
+  @keyframes gpulse{0%,100%{opacity:.5}50%{opacity:1}}
+  .chef.mid.busy{animation:gbusy 1.6s ease-in-out infinite;}
+  .chef.mid.busy .ring{animation:cspin 2.4s linear infinite;opacity:1;}
+  .chef.mid.busy .steam{opacity:.9;animation:csteam 2.8s ease-in-out infinite;}
+  @keyframes gbusy{0%,100%{box-shadow:0 0 0 2px color-mix(in oklab,var(--green) 24%,transparent),0 0 10px color-mix(in oklab,var(--green) 22%,transparent)}50%{box-shadow:0 0 0 4px color-mix(in oklab,var(--blue) 30%,transparent),0 0 18px color-mix(in oklab,var(--green) 40%,transparent)}}
   .genreveal .vday{animation:glrise .5s cubic-bezier(.2,.8,.2,1) both;}
   .genreveal .vday:nth-child(2){animation-delay:.07s}.genreveal .vday:nth-child(3){animation-delay:.14s}.genreveal .vday:nth-child(4){animation-delay:.21s}.genreveal .vday:nth-child(5){animation-delay:.28s}.genreveal .vday:nth-child(6){animation-delay:.35s}.genreveal .vday:nth-child(n+7){animation-delay:.42s}
   @keyframes glrise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-  @media (prefers-color-scheme:dark){.glcard::after{background:linear-gradient(100deg,transparent 25%,rgba(255,255,255,.07) 50%,transparent 75%)}}
-  @media (prefers-reduced-motion:reduce){.glchef,.glsteam,.glcard::after,.glbar i{animation:none!important}.glstep{opacity:1!important;transform:none!important}.genreveal .vday{animation:none!important}}
+  @media (prefers-reduced-motion:reduce){.gtile.dev .gph,.gtile::after,.chef.mid.busy,.chef.mid.busy .ring,.chef.mid.busy .steam,.gbar.wait i,.genreveal .vday{animation:none!important}.gwrow{opacity:1!important;transform:none!important}}
 </style>
 </head>
 <body>
@@ -632,7 +648,7 @@
     return !(awR||awW);});}
   function guestsOn(day){return DATA.ereignisse.filter(function(e){return e.typ==='gast'&&e.wochentag===day;});}
   function overridesOn(day){return DATA.ereignisse.filter(function(e){return (e.typ==='abwesenheit'||e.typ==='anwesenheit')&&e.wochentag===day;});}
-  function renderPlanen(){var persons=DATA.persons;
+  function renderPlanen(){if(_generating)return;var persons=DATA.persons;
     document.getElementById('plsub').textContent=persons.length?persons.map(function(p){return p.name;}).join(' & '):'euer Haushalt';
     document.getElementById('legend').innerHTML=persons.map(function(p){return '<span><span class="av">'+esc(initials(p.name))+'</span> '+esc(p.name)+(p.rolle==='kind'?' 🧒':'')+'</span>';}).join('')+'<span>👉 antippen = diese Woche da/weg</span>';
     var changed=DOW.filter(function(d){return overridesOn(d).length;}).length;
@@ -749,49 +765,111 @@
     if(miss.length&&!confirm(miss.join(', ')+' ha'+(miss.length>1?'ben':'t')+' noch nicht abgestimmt. Trotzdem festlegen?'))return;
     var plan={};tage.forEach(function(t){if(!presentOn(t.tag).length&&!guestsOn(t.tag).length)return;var opts=t.vorschlaege||[];if(!opts.length)return;var best=null,bn=-1;opts.forEach(function(v,i){var oid=optId(t.tag,v,i),n=votesFor(t.tag,oid).length;if(n>bn){bn=n;best={id:oid,titel:v.titel};}});if(best)plan[t.tag]=best;});
     DATA.woche.plan=plan;DATA.woche.status='fest';var wid=DATA.woche.id;if(wid)rest('PATCH','wochen?id=eq.'+wid,{plan:plan,status:'fest'});renderPlanen();}
-  // ── „Der Koch sucht" — Generierungs-Erlebnis: spiegelt die echten Wünsche des Users, macht den Prozess wertig ──
-  var GENT=null,GENSTART=0,_genReveal=false;
-  function genCrit(ctx){var P={},G={},D={},A={};(ctx.tage||[]).forEach(function(t){(t.personen||[]).forEach(function(p){P[p.name]=1;});(t.gaeste||[]).forEach(function(g){G[g]=1;});(t.diaeten||[]).forEach(function(d){D[d]=1;});(t.vermeiden||[]).forEach(function(v){A[v]=1;});});
-    return {days:(ctx.tage||[]).length,persons:Object.keys(P),guests:Object.keys(G),diets:Object.keys(D),avoid:Object.keys(A),wishes:(ctx.grundsaetze||[])};}
-  function genSteps(c){var chip=function(a,cls){return a.map(function(x){return '<span class="glchip'+(cls?' '+cls:'')+'">'+esc(x)+'</span>';}).join('');};
-    var who=c.persons.concat(c.guests.map(function(g){return g+' (Gast)';}));
-    var s=[{icon:'👥',label:'Wer diese Woche mitisst',detail:who.length?chip(who):'euer Haushalt'}];
-    if(c.diets.length||c.avoid.length)s.push({icon:'🥗',label:'Eure Ernährung & No-Gos',detail:chip(c.diets,'ok')+chip(c.avoid.map(function(x){return '⛔ '+x;}),'no')});
-    s.push({icon:'⏱️',label:'Zeit & Budget im Alltag',detail:c.wishes.length?chip(c.wishes):'schnell · günstig · alltagstauglich'});
-    s.push({icon:'🔄',label:'Abwechslung über die Woche',detail:'nichts doppelt gedacht'});
-    s.push({icon:'✨',label:'Ideen kochen & zusammenstellen',detail:c.days+' Tag'+(c.days>1?'e':'')+' · '+(c.days*3)+' Vorschläge'});
-    return s;}
-  function renderGenLoader(ctx){var pc=document.getElementById('planCards'),pe=document.getElementById('planEmpty');if(pe)pe.style.display='none';if(!pc)return;
-    var c=genCrit(ctx),steps=genSteps(c);
-    var rows=steps.map(function(s){return '<li class="glstep"><span class="glmark"></span><span class="gltxt"><span class="gllabel">'+s.icon+' '+s.label+'</span>'+(s.detail?'<span class="gldetail">'+s.detail+'</span>':'')+'</span></li>';}).join('');
-    var sk='<div class="glcards">'+[0,1,2].map(function(){return '<div class="glcard"><div class="glline w1"></div><div class="glline w2"></div><div class="glpills"><i></i><i></i><i></i></div></div>';}).join('')+'</div>';
-    pc.innerHTML='<div class="genloader"><div class="glhead"><span class="glchef">🧑‍🍳<b class="glsteam">♨</b></span><div><div class="gltitle">Der Koch stellt eure Woche zusammen …</div><div class="glsub">einen Moment – ich denke an <b>euch</b></div></div></div><ul class="glsteps">'+rows+'</ul>'+sk+'<div class="glbar"><i></i></div></div>';
-    var els=pc.querySelectorAll('.glstep'),n=els.length,k=0;
-    if(reduce){for(var j=0;j<n;j++)els[j].classList.add('act');return;}
-    var advance=function(){if(k<n){if(k>0){els[k-1].classList.remove('act');els[k-1].classList.add('done');}els[k].classList.add('act');k++;GENT=setTimeout(advance,760);}else{GENT=null;}};
-    advance();}
-  function stopGenLoader(){if(GENT){clearTimeout(GENT);GENT=null;}}
-  function finishGen(cb){stopGenLoader();var pc=document.getElementById('planCards');
-    if(pc){var els=pc.querySelectorAll('.glstep');for(var i=0;i<els.length;i++){els[i].classList.remove('act');els[i].classList.add('done');}}
-    var wait=reduce?0:Math.max(430,2100-(Date.now()-GENSTART));   // Mindestdauer, damit der Moment wertig wirkt
-    _genReveal=true;setTimeout(cb,wait);}
-  function generatePlan(retry,onlyTag){var ctx=buildContext(),pe=document.getElementById('planEmpty'),pc=document.getElementById('planCards');
-    if(onlyTag){var d=dayContext(onlyTag);if(!d)return;ctx={kw:ctx.kw,grundsaetze:ctx.grundsaetze,tage:[d]};}
+  // ── „Die Woche entsteht" — Generierungs-Screen: ein Gesicht, echte Daten, überbrückt die Wartezeit ──
+  var LONGDAY={Mo:'Montag',Di:'Dienstag',Mi:'Mittwoch',Do:'Donnerstag',Fr:'Freitag',Sa:'Samstag',So:'Sonntag'};
+  var _genReveal=false,_generating=false,_gtimers=[],GEN=null,GENSTART=0;
+  function gt(ms,fn){var id=setTimeout(fn,reduce?0:ms);_gtimers.push(id);return id;}
+  function stopGenTimers(){_gtimers.forEach(clearTimeout);_gtimers=[];}
+  function gHue(i){return (i*53+18)%360;}
+  function gPhBg(h){return 'linear-gradient(140deg,hsl('+h+' 52% 84%),hsl('+((h+30)%360)+' 48% 70%))';}
+  function gUniq(a){var o=[],s={};(a||[]).forEach(function(x){if(!s[x]){s[x]=1;o.push(x);}});return o;}
+  function gCap(s){return s?String(s).charAt(0).toUpperCase()+String(s).slice(1):s;}
+  function gFlat(rows,key){var o=[];rows.forEach(function(t){(t[key]||[]).forEach(function(x){o.push(x);});});return o;}
+  function gAvStack(list,max){max=max||4;var shown=list.slice(0,max),extra=list.length-shown.length;
+    return '<span class="gstack">'+shown.map(function(p){return '<span class="gav'+(p.guest?' guest':'')+'" style="background:hsl('+p.h+' 52% 50%)">'+esc(p.ini)+'</span>';}).join('')+(extra>0?'<span class="gav more">+'+extra+'</span>':'')+'</span>';}
+  // Gedanken NUR aus echten Daten (Quelle sichtbar) — nie erfunden. Fehlt ein Fakt, fehlt der Satz.
+  function genThoughts(ctx){var T=[],persons=DATA.persons||[];
+    for(var i=0;i<ctx.tage.length;i++){var t=ctx.tage[i],pres={};t.personen.forEach(function(p){pres[p.name]=1;});
+      var away=persons.filter(function(p){return !pres[p.name];}).map(function(p){return p.name;});
+      if(away.length){T.push({t:esc(LONGDAY[t.tag]||t.tag)+' ist <b>'+esc(away.join(', '))+'</b> nicht dabei — plan ich schon mal ohne. 🗓️',src:'diese Woche'});break;}}
+    var gd=null;ctx.tage.forEach(function(t){if(!gd&&t.gaeste&&t.gaeste.length)gd=t;});
+    if(gd)T.push({t:esc(LONGDAY[gd.tag]||gd.tag)+' kommt <b>'+esc(gd.gaeste.join(', '))+'</b> dazu — ein Gedeck mehr. 👋',src:'diese Woche'});
+    gUniq(gFlat(ctx.tage,'diaeten')).forEach(function(d){T.push({t:'<b>'+esc(gCap(d))+'</b> — halt ich strikt ein. 🥦',src:'aus eurem Profil'});});
+    var tabus=gUniq(gFlat(ctx.tage,'vermeiden'));
+    if(tabus.length)T.push({t:'<b>'+esc(tabus.join(', '))+'</b>? Kommt mir nicht in die Pfanne. 🚫',src:'aus eurem Profil'});
+    (ctx.grundsaetze||[]).forEach(function(g){T.push({t:'<b>'+esc(g)+'</b> — dran gedacht. ✅',src:'euer Wunsch'});});
+    T.push({t:'Ich krame durch mein ganzes <b>Rezept-Repertoire</b> … 🤔',src:'ich koche'});
+    T.push({t:'Nichts doppelt — <b>Abwechslung</b> ist Ehrensache. 🔄',src:'ich koche'});
+    T.push({t:'Die <b>besten drei</b> pro Abend — gleich habt ihr sie. ✨',src:'ich koche'});
+    return T;}
+  function genScopeHtml(ctx){
+    var people=(DATA.persons||[]).map(function(p,i){return {n:p.name,ini:initials(p.name),h:gHue(i)};});
+    var lbl=people.length<=3?people.map(function(p){return esc(p.n);}).join(' & '):people.length+' essen mit';
+    var diets=gUniq(gFlat(ctx.tage,'diaeten')),tabus=gUniq(gFlat(ctx.tage,'vermeiden'));
+    var over=function(a){return a.slice(0,2).map(esc).join(', ')+(a.length>2?' +'+(a.length-2):'');};
+    var s='<div class="gscope"><span class="gschip">'+gAvStack(people)+'<b>'+lbl+'</b></span>';
+    s+='<span class="gschip">🗓️ <b>'+ctx.tage.length+' Abend'+(ctx.tage.length>1?'e':'')+'</b></span>';
+    if(diets.length)s+='<span class="gschip diet">🌱 <b>'+over(diets)+'</b></span>';
+    if(tabus.length)s+='<span class="gschip no">⛔ <b>'+over(tabus)+'</b></span>';
+    return s+'</div>';}
+  function gStat(txt){var s=document.getElementById('gstat');if(!s)return;s.classList.add('swap');gt(200,function(){var s2=document.getElementById('gstat');if(!s2)return;s2.innerHTML=txt;s2.classList.remove('swap');});}
+  function gProg(f){var b=document.querySelector('#gbar i');if(b)b.style.width=Math.round(f*100)+'%';}
+  function gCount(n,tot){var c=document.getElementById('gcount');if(c)c.textContent=n+' / '+tot;}
+  function renderGenLoader(ctx){
+    var pc=document.getElementById('planCards'),pe=document.getElementById('planEmpty'),po=document.getElementById('planOnly');
+    if(pe)pe.style.display='none';if(po)po.style.display='none';if(!pc)return;
+    var planned={};ctx.tage.forEach(function(t){planned[t.tag]=1;});
+    var TH=genThoughts(ctx);
+    var rows=DOW.map(function(d,di){
+      if(!planned[d])return '<div class="gwrow off" data-d="'+d+'"><span class="gwd">'+d+'</span><span class="gwoff">🚶 auswärts</span></div>';
+      var tiles='';for(var j=0;j<3;j++){tiles+='<div class="gtile"><span class="gph" style="background:'+gPhBg((di*40+j*90)%360)+'"></span></div>';}
+      return '<div class="gwrow" data-d="'+d+'"><span class="gwd">'+d+'</span><span class="gwtiles">'+tiles+'</span><span class="gwtick"></span></div>';
+    }).join('');
+    pc.innerHTML='<div class="genwk">'+genScopeHtml(ctx)+
+      '<div class="gthought" id="gthought"><span class="gtx">'+TH[0].t+'</span><span class="gsrc">'+esc(TH[0].src)+'</span></div>'+
+      '<div class="gwk">'+rows+'</div>'+
+      '<div class="gscan"><span class="gstat" id="gstat">🔎 durchsuche mein Rezept-Repertoire …</span><span class="gcount" id="gcount">0 / '+ctx.tage.length+'</span></div>'+
+      '<div class="gbar" id="gbar"><i></i></div></div>';
+    var ck=document.getElementById('ckav');if(ck)ck.classList.add('busy');
+    var cs=document.getElementById('ckstatus');if(cs)cs.innerHTML='Ich stelle <b>eure Woche</b> zusammen …';
+    if(!reduce){var ti=1;(function rotate(){gt(1500,function(){var el=document.getElementById('gthought');if(!el)return;el.classList.add('swap');gt(280,function(){var e2=document.getElementById('gthought');if(!e2)return;var th=TH[ti++];if(ti>=TH.length)ti=1;e2.querySelector('.gtx').innerHTML=th.t;e2.querySelector('.gsrc').textContent=th.src;el.classList.remove('swap');rotate();});});})();}
+  }
+  function runWeekWalk(ctx,token,done){
+    var pc=document.getElementById('planCards'),tot=ctx.tage.length,plan=ctx.tage.map(function(t){return t.tag;});
+    if(reduce){pc.querySelectorAll('.gtile').forEach(function(x){x.classList.add('dev');});pc.querySelectorAll('.gwrow:not(.off)').forEach(function(r){r.classList.add('done');});gProg(1);gCount(tot,tot);done();return;}
+    var idx=0,dn=0;
+    function stepDay(){if(GEN!==token)return;
+      if(idx>=plan.length){gStat('✨ eure Woche steht');done();return;}
+      var d=plan[idx],row=pc.querySelector('.gwrow[data-d="'+d+'"]');if(!row){idx++;stepDay();return;}
+      row.classList.add('on');gStat('🍳 stelle <b>'+esc(LONGDAY[d]||d)+'</b> zusammen …');
+      var tiles=row.querySelectorAll('.gtile'),j=0;
+      (function dev(){if(GEN!==token)return;if(j<tiles.length){tiles[j].classList.add('dev');j++;gt(150,dev);}else{row.classList.remove('on');row.classList.add('done');dn++;idx++;gProg(dn/tot);gCount(dn,tot);gt(320,stepDay);}})();}
+    gt(700,stepDay);
+  }
+  var _finSteps=['⚖️ prüfe gegen eure Regeln …','🎯 wähle die besten drei …','🍳 richte an …','✨ gleich fertig …'];
+  function startFinalizing(token){var b=document.getElementById('gbar');if(b)b.classList.add('wait');if(reduce)return;var i=0;(function loop(){if(GEN!==token)return;gStat(_finSteps[i%_finSteps.length]);i++;gt(1600,loop);})();}
+  function generatePlan(retry,onlyTag){
+    var ctx=buildContext(),pe=document.getElementById('planEmpty'),pc=document.getElementById('planCards'),po=document.getElementById('planOnly');
+    if(onlyTag){var d=dayContext(onlyTag);if(!d)return;
+      fetch(FN,{method:'POST',headers:H,body:JSON.stringify({generate:true,context:{kw:ctx.kw,grundsaetze:ctx.grundsaetze,tage:[d]},haushalt:HH})}).then(function(r){return r.json();}).then(function(res){
+        if(res&&res.plan&&res.plan.tage&&res.plan.tage.length){assignIds(res.plan.tage);ensureWoche().then(function(wid){var nd=res.plan.tage[0];DATA.woche=DATA.woche||{vorschlaege:{tage:[]}};DATA.woche.vorschlaege=DATA.woche.vorschlaege||{tage:[]};var arr=DATA.woche.vorschlaege.tage,ix=-1;arr.forEach(function(x,k){if(x.tag===onlyTag)ix=k;});if(ix>=0)arr[ix]=nd;else arr.push(nd);DATA.stimmen=DATA.stimmen.filter(function(s){return s.tag!==onlyTag;});if(wid){DATA.woche.id=wid;rest('DELETE','stimme?woche_id=eq.'+wid+'&tag=eq.'+encodeURIComponent(onlyTag));rest('PATCH','wochen?id=eq.'+wid,{vorschlaege:DATA.woche.vorschlaege});}renderPlanen();});}
+        else if(!retry)generatePlan(true,onlyTag);
+      }).catch(function(){if(!retry)generatePlan(true,onlyTag);});return;}
     if(!ctx.tage.length){if(pe){pe.style.display='';pe.innerHTML='🍽️ Diese Woche ist niemand da zum Kochen.';}return;}
-    if(!onlyTag&&!retry){GENSTART=Date.now();renderGenLoader(ctx);}   // wertiges „Der Koch sucht"-Erlebnis
-    var failFull=function(msg){if(onlyTag)return;stopGenLoader();if(pc)pc.innerHTML='';if(pe){pe.style.display='';pe.innerHTML='⚠️ '+msg+' <button class="btn-s" data-act="gen">Nochmal</button>';}};
-    fetch(FN,{method:'POST',headers:H,body:JSON.stringify({generate:true,context:ctx,haushalt:HH})}).then(function(r){return r.json();}).then(function(res){
-      if(res&&res.plan&&res.plan.tage&&res.plan.tage.length){assignIds(res.plan.tage);
-        ensureWoche().then(function(wid){
-          if(onlyTag){var nd=res.plan.tage[0];DATA.woche=DATA.woche||{vorschlaege:{tage:[]}};DATA.woche.vorschlaege=DATA.woche.vorschlaege||{tage:[]};var arr=DATA.woche.vorschlaege.tage,ix=-1;arr.forEach(function(x,k){if(x.tag===onlyTag)ix=k;});if(ix>=0)arr[ix]=nd;else arr.push(nd);
-            DATA.stimmen=DATA.stimmen.filter(function(s){return s.tag!==onlyTag;});if(wid){DATA.woche.id=wid;rest('DELETE','stimme?woche_id=eq.'+wid+'&tag=eq.'+encodeURIComponent(onlyTag));rest('PATCH','wochen?id=eq.'+wid,{vorschlaege:DATA.woche.vorschlaege});}
-            renderPlanen();}
-          else{DATA.woche=DATA.woche||{};DATA.woche.vorschlaege=res.plan;DATA.woche.status='voten';DATA.stimmen=[];if(wid){DATA.woche.id=wid;rest('PATCH','wochen?id=eq.'+wid,{vorschlaege:res.plan,status:'voten'});rest('DELETE','stimme?woche_id=eq.'+wid);}
-            finishGen(renderPlanen);}
-        });
-      } else if(!retry){generatePlan(true,onlyTag);}
-      else failFull('Konnte gerade keine Vorschläge holen.');
-    }).catch(function(){if(!retry)generatePlan(true,onlyTag);else failFull('Gerade offline.');});}
+
+    var token=GEN={};GENSTART=Date.now();stopGenTimers();_genReveal=false;_generating=true;
+    renderGenLoader(ctx);                                              // startet SOFORT beim Klick
+    var fa=document.getElementById('faction');if(fa){fa.textContent='⏳ Der Koch arbeitet …';fa.setAttribute('data-act','');}
+    var state={data:null,err:false,walkDone:false,done:false};
+    function bail(){_generating=false;stopGenTimers();var ck=document.getElementById('ckav');if(ck)ck.classList.remove('busy');if(po)po.style.display='';if(pc)pc.innerHTML='';if(pe){pe.style.display='';pe.innerHTML='⚠️ Konnte gerade keine Vorschläge holen. <button class="btn-s" data-act="gen">Nochmal</button>';}}
+    function conclude(){if(state.done||GEN!==token)return;if(!state.walkDone||(!state.data&&!state.err))return;state.done=true;
+      var wait=Math.max(reduce?0:450,(reduce?0:2200)-(Date.now()-GENSTART));
+      gt(wait,function(){if(GEN!==token)return;stopGenTimers();var ck=document.getElementById('ckav');if(ck)ck.classList.remove('busy');
+        var res=state.data;
+        if(state.err||!(res&&res.plan&&res.plan.tage&&res.plan.tage.length)){bail();return;}
+        assignIds(res.plan.tage);
+        ensureWoche().then(function(wid){DATA.woche=DATA.woche||{};DATA.woche.vorschlaege=res.plan;DATA.woche.status='voten';DATA.stimmen=[];if(wid){DATA.woche.id=wid;rest('PATCH','wochen?id=eq.'+wid,{vorschlaege:res.plan,status:'voten'});rest('DELETE','stimme?woche_id=eq.'+wid);}_genReveal=true;_generating=false;renderPlanen();});
+      });}
+    runWeekWalk(ctx,token,function(){state.walkDone=true;if(!state.data&&!state.err)startFinalizing(token);conclude();});
+    (function fetchTry(attempt){
+      fetch(FN,{method:'POST',headers:H,body:JSON.stringify({generate:true,context:ctx,haushalt:HH})}).then(function(r){return r.json();}).then(function(res){
+        if(GEN!==token)return;
+        if(res&&res.plan&&res.plan.tage&&res.plan.tage.length){state.data=res;conclude();}
+        else if(attempt<2)fetchTry(attempt+1);
+        else{state.data=res;conclude();}
+      }).catch(function(){if(GEN!==token)return;if(attempt<2)fetchTry(attempt+1);else{state.err=true;conclude();}});
+    })(1);
+  }
   function doAct(act,day,oid,id){
     if(act==='gen')generatePlan();else if(act==='vote')setVote(day,oid);else if(act==='who')setVoter(id);else if(act==='teilen')teilen();else if(act==='own')addOwn(day);else if(act==='regenday')generatePlan(false,day);else if(act==='notda')notDa(day);else if(act==='none')setVote(day,'__none__');else if(act==='festlegen')festlegen();else if(act==='override')setPlanDay(day,oid);else if(act==='reopen')reopenVote();else if(act==='einkauf')einkauf();else if(act==='govote'){vView='vote';renderPlanen();}else if(act==='goplan'){vView='plan';renderPlanen();}else if(act==='godecided'){vView=null;renderPlanen();}else if(act==='goweek'){navTo('week');}else if(act==='addperson'){navTo('profil');alert('Neue Person: über „＋ hinzufügen" im Personen-Block.');}else if(act==='addrezept'){alert('Rezepte kommen im Rezept-Sprint.');}
   }
