@@ -831,7 +831,14 @@
   document.getElementById('ssend').addEventListener('click',ssend);
   stext.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();ssend();}});
 
-  if(voteMode)startVoteMode();else stepIntro();
+  function startNormal(){                                                         // schon eingerichteter Haushalt -> direkt in die App, kein Onboarding
+    var onb=document.getElementById('vOnb');onb.classList.remove('on');           // erst prüfen (nicht flashen)
+    get('personen?select=id&haushalt=eq.'+HH).then(function(ppl){
+      if(ppl&&ppl.length){document.body.classList.add('entered');revealApp();}     // Personen vorhanden -> direkt starten
+      else{onb.classList.add('on');stepIntro();}                                   // neuer Haushalt -> Onboarding
+    }).catch(function(){onb.classList.add('on');stepIntro();});
+  }
+  if(voteMode)startVoteMode();else startNormal();
 })();
 </script>
 </body>
