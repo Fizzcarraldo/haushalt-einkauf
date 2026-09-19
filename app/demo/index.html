@@ -131,8 +131,8 @@
   .coach::after{content:"";position:absolute;left:2.1rem;bottom:-7px;width:12px;height:12px;background:var(--card);border-right:1px solid color-mix(in oklab,var(--green) 30%,var(--line));border-bottom:1px solid color-mix(in oklab,var(--green) 30%,var(--line));transform:rotate(45deg);}
   .coach b{color:var(--green-ink);} .coach .ok{margin-left:.35rem;font:800 .75rem/1 var(--sans);color:#fff;background:var(--ai);border:none;border-radius:999px;padding:.36rem .72rem;cursor:pointer;}
   @keyframes coachin{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-  .sback{position:fixed;inset:0;background:rgba(10,12,16,.28);opacity:0;visibility:hidden;transition:opacity .25s;z-index:30;} .sback.open{opacity:1;visibility:visible;}
-  .sheet{position:fixed;right:0;left:auto;top:0;bottom:var(--kb,0);z-index:31;width:min(93%,460px);margin:0;background:var(--paper);border-radius:18px 0 0 18px;transform:translateX(103%);transform-origin:100% 50%;visibility:hidden;transition:transform .34s cubic-bezier(.2,.82,.2,1),visibility 0s linear .34s;display:flex;flex-direction:column;box-shadow:-16px 0 40px rgba(0,0,0,.28);}
+  .sback{position:fixed;left:0;right:0;bottom:0;top:var(--drawerTop,0);background:rgba(10,12,16,.32);opacity:0;visibility:hidden;transition:opacity .25s;z-index:30;} .sback.open{opacity:1;visibility:visible;}
+  .sheet{position:fixed;right:0;left:auto;top:var(--drawerTop,0);bottom:var(--kb,0);z-index:31;width:min(93%,460px);margin:0;background:var(--paper);border-radius:18px 0 0 18px;transform:translateX(103%);transform-origin:100% 50%;visibility:hidden;transition:transform .34s cubic-bezier(.2,.82,.2,1),visibility 0s linear .34s;display:flex;flex-direction:column;box-shadow:-16px 0 40px rgba(0,0,0,.28);}
   .sheet::before{content:"";position:absolute;top:0;bottom:0;left:0;width:3px;border-radius:18px 0 0 18px;background:var(--ai);opacity:.9;}
   .sheet.open{transform:none;visibility:visible;transition:transform .32s cubic-bezier(.2,.8,.2,1),visibility 0s;}
   .grab{width:40px;height:4px;border-radius:3px;background:var(--line);margin:.55rem auto .3rem;}
@@ -289,7 +289,7 @@
   <div class="idov" id="shareov" hidden><div class="idcard"><h3>🔗 Voting teilen</h3><p class="cnote">Link kopieren und per WhatsApp schicken – jede/r kann ohne App abstimmen.</p><input class="shareurl" id="shareurl" readonly><div class="sharebtns"><button class="btn-s" id="shareCopy">📋 Link kopieren</button><a class="btn-s wa" id="shareWa" target="_blank" rel="noopener">🟢 WhatsApp</a><button class="lnk" id="shareNative" hidden>📲 Teilen…</button><button class="lnk" id="shareClose">Schließen</button></div><span class="cnote" id="sharemsg"></span></div></div>
   <div class="sback" id="sback"></div>
   <div class="sheet" id="sheet"><div class="grab"></div>
-    <div class="shd"><span class="chef mid" id="schef"><span class="cf">🧑‍🍳</span><i class="ring"></i><b class="steam">✨</b></span><b>Assistent</b> <span class="scoperow"><button data-sc="woche" class="on w">📅 Woche</button><button data-sc="dauer" class="d">∞ Dauerhaft</button></span><button class="x" id="closeA">✕</button></div>
+    <div class="shd"><b>💬 Chat mit dem Koch</b> <span class="scoperow"><button data-sc="woche" class="on w">📅 Woche</button><button data-sc="dauer" class="d">∞ Dauerhaft</button></span><button class="x" id="closeA">✕</button></div>
     <div class="qk" id="qk"></div>
     <div class="log" id="slog"></div>
     <div class="sin"><input id="stext" placeholder="Sag's einfach …"><button class="snd" id="ssend">→</button></div>
@@ -796,8 +796,12 @@
     qk.querySelectorAll('button').forEach(function(bn){bn.addEventListener('click',function(){stext.value=bn.getAttribute('data-q');stext.focus();});});
     slog.innerHTML='';sbot(SCFG[sc].greet);}
   document.querySelectorAll('.scoperow button').forEach(function(x){x.addEventListener('click',function(){applyScope(x.getAttribute('data-sc'));});});
-  function openS(){                                        // Chat = Drawer von rechts (Board bleibt dahinter)
+  function openS(){                                        // Chat = Drawer von rechts, UNTER dem Cockpit (Board dahinter, Cockpit bleibt sichtbar)
     hideCoach();
+    var stp=document.getElementById('stepper'),ck=document.getElementById('cockpit');
+    var ref=(stp&&!stp.hidden)?stp:ck;
+    var top=ref?Math.max(0,Math.round(ref.getBoundingClientRect().bottom)):0;
+    document.documentElement.style.setProperty('--drawerTop',top+'px');
     sheet.classList.add('open');sback.classList.add('open');
     if(!sseed){sseed=true;applyScope('woche');}
   }
