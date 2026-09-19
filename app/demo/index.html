@@ -343,7 +343,7 @@
   </div>
 
   <footer class="appfoot" id="appfoot" hidden>
-    <div class="coach" id="coach" hidden>👋 <b>Das bin ich</b> – euer Assistent. Sag mir jederzeit, was sich ändert; ich pflege <b>Plan &amp; Profil</b> für euch.<button class="ok" id="coachOk">Alles klar</button></div>
+    <div class="coach" id="coach" hidden>🎉 <b>Geschafft!</b> Eure Woche ist startklar — <b>hol dir unten die Vorschläge</b>. 👇<button class="ok" id="coachOk">Alles klar</button></div>
     <div class="foot-row"><button class="faction" id="faction" data-act=""></button><button class="fchat" id="openA" aria-label="Chat öffnen">💬</button></div>
   </footer>
 
@@ -601,7 +601,7 @@
   function hideParty(){var e=document.getElementById('party');if(e)e.hidden=true;}
   function dockAndEnter(){                                  // Onboarding-Reveal: App zieht hinter dem Chat hervor, mit Party 🎉
     var onb=document.getElementById('vOnb');
-    pendingIntro='🎉 <b>Geschafft!</b> Eure Woche ist startklar — <b>hol dir unten Vorschläge</b>. 👇';  // erste Chat-Blase
+    pendingIntro='👋 <b>Da bin ich</b> — euer Koch. Sag mir jederzeit, was sich ändert; ich pflege <b>Plan &amp; Profil</b> für euch.';  // erste Chat-Blase
     revealApp();                                            // App/Board hinter dem Onboarding aufbauen
     document.body.classList.add('onbrevealing');            // App gedimmt & unscharf
     showParty();fireConfetti();                             // 🎉 Geschafft!-Belohnung
