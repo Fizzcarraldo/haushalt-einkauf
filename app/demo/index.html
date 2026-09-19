@@ -235,6 +235,7 @@
   #confetti{position:fixed;inset:0;width:100%;height:100%;z-index:60;pointer-events:none;}
   .go.golos{background:var(--ai);color:#fff;border-color:transparent;font-weight:800;font-size:1rem;padding:.7rem 1.15rem;box-shadow:0 4px 14px color-mix(in oklab,var(--blue) 26%,transparent);}
   /* ── Generierungs-Screen: „Die Woche entsteht" (ein Gesicht, echte Daten, überbrückt die Wartezeit) ── */
+  body.generating #vPlan .pl{overflow:hidden;}   /* Loader füllt exakt -> kein weißer Leerraum aus dem 9rem-Bottom-Padding */
   .genwk{animation:glin .34s ease both;padding:.1rem 0 .2rem;display:flex;flex-direction:column;min-height:0;overflow:hidden;}
   .genwk>.gscope,.genwk>.gthought,.genwk>.gscan,.genwk>.gbar{flex:0 0 auto;}
   @keyframes glin{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
@@ -831,6 +832,7 @@
       '<div class="gscan"><span class="gstat" id="gstat">🔎 durchsuche mein Rezept-Repertoire …</span><span class="gcount" id="gcount">0 / '+ctx.tage.length+'</span></div>'+
       '<div class="gbar" id="gbar"><i></i></div></div>';
     var ck=document.getElementById('ckav');if(ck)ck.classList.add('busy');
+    document.body.classList.add('generating');   // .pl-Scroll aus -> kein weißer Leerraum
     var cs=document.getElementById('ckstatus');if(cs)cs.innerHTML='Ich stelle <b>eure Woche</b> zusammen …';
     var fa0=document.getElementById('faction');if(fa0){fa0.textContent='⏳ Der Koch arbeitet …';fa0.setAttribute('data-act','');}   // Footer gesperrt während Loader (auch im Debug)
     if(!reduce){var ti=1;(function rotate(){gt(2200,function(){var el=document.getElementById('gthought');if(!el)return;el.classList.add('swap');gt(280,function(){var e2=document.getElementById('gthought');if(!e2)return;var th=TH[ti++];if(ti>=TH.length)ti=1;e2.querySelector('.gtx').innerHTML=th.t;e2.querySelector('.gsrc').textContent=th.src;el.classList.remove('swap');rotate();});});})();}
@@ -864,14 +866,14 @@
     renderGenLoader(ctx);                                              // startet SOFORT beim Klick
     var fa=document.getElementById('faction');if(fa){fa.textContent='⏳ Der Koch arbeitet …';fa.setAttribute('data-act','');}
     var state={data:null,err:false,walkDone:false,done:false};
-    function bail(){_generating=false;stopGenTimers();var ck=document.getElementById('ckav');if(ck)ck.classList.remove('busy');if(po)po.style.display='';if(pc)pc.innerHTML='';if(pe){pe.style.display='';pe.innerHTML='⚠️ Konnte gerade keine Vorschläge holen. <button class="btn-s" data-act="gen">Nochmal</button>';}}
+    function bail(){_generating=false;document.body.classList.remove('generating');stopGenTimers();var ck=document.getElementById('ckav');if(ck)ck.classList.remove('busy');if(po)po.style.display='';if(pc)pc.innerHTML='';if(pe){pe.style.display='';pe.innerHTML='⚠️ Konnte gerade keine Vorschläge holen. <button class="btn-s" data-act="gen">Nochmal</button>';}}
     function conclude(){if(state.done||GEN!==token)return;if(!state.walkDone||(!state.data&&!state.err))return;state.done=true;
       var wait=Math.max(reduce?0:700,(reduce?0:4800)-(Date.now()-GENSTART));
       gt(wait,function(){if(GEN!==token)return;stopGenTimers();var ck=document.getElementById('ckav');if(ck)ck.classList.remove('busy');
         var res=state.data;
         if(state.err||!(res&&res.plan&&res.plan.tage&&res.plan.tage.length)){bail();return;}
         assignIds(res.plan.tage);
-        ensureWoche().then(function(wid){DATA.woche=DATA.woche||{};DATA.woche.vorschlaege=res.plan;DATA.woche.status='voten';DATA.stimmen=[];if(wid){DATA.woche.id=wid;rest('PATCH','wochen?id=eq.'+wid,{vorschlaege:res.plan,status:'voten'});rest('DELETE','stimme?woche_id=eq.'+wid);}_genReveal=true;_generating=false;renderPlanen();});
+        ensureWoche().then(function(wid){DATA.woche=DATA.woche||{};DATA.woche.vorschlaege=res.plan;DATA.woche.status='voten';DATA.stimmen=[];if(wid){DATA.woche.id=wid;rest('PATCH','wochen?id=eq.'+wid,{vorschlaege:res.plan,status:'voten'});rest('DELETE','stimme?woche_id=eq.'+wid);}_genReveal=true;_generating=false;document.body.classList.remove('generating');renderPlanen();});
       });}
     runWeekWalk(ctx,token,function(){state.walkDone=true;if(!state.data&&!state.err)startFinalizing(token);conclude();});
     (function fetchTry(attempt){
@@ -890,7 +892,7 @@
     var all=['Anna','Ben','Chris','Dana','Elif'];
     return {kw:isoWeek(new Date()).kw,grundsaetze:['viel Gemüse','günstig'],
       tage:[mk('Mo',['Ben','Chris','Dana','Elif']),mk('Di',all),mk('Mi',all),mk('Do',all),mk('Fr',all,['Lisa'])]};}  // Sa/So fehlen -> ausgegraut, Mo ohne Anna, Fr Gast
-  function debugStop(){_genDebug=false;GEN={};stopGenTimers();_generating=false;
+  function debugStop(){_genDebug=false;GEN={};stopGenTimers();_generating=false;document.body.classList.remove('generating');
     if(_dbgSaved){DATA.persons=_dbgSaved;_dbgSaved=null;}
     var ck=document.getElementById('ckav');if(ck)ck.classList.remove('busy');
     var bt=document.getElementById('dbgAnim');if(bt)bt.textContent='🎬 Loader';
