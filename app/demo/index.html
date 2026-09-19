@@ -205,11 +205,11 @@
   .appbar .ab-ico button.active{background:var(--green-bg);}
   .cockpit{flex:0 0 auto;position:relative;display:flex;align-items:center;gap:.55rem;padding:.6rem .9rem;background:var(--card);border-bottom:1px solid var(--line2);max-width:560px;width:100%;margin:0 auto;}
   .cockpit[hidden]{display:none;} .cockpit::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:var(--ai);}
-  .cockpit .ck-body{flex:1;min-width:0;} .cockpit .ck-name{font:700 .55rem/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--green-ink);display:block;}
-  .cockpit .ck-status{font-size:.9rem;font-weight:600;line-height:1.25;display:block;margin-top:.12rem;max-height:3rem;overflow:hidden;transition:max-height .22s ease,opacity .16s ease,margin .22s ease;} .cockpit .ck-status .warn{color:var(--orange);font-weight:700;}
+  .cockpit .ck-body{flex:1;min-width:0;max-height:2.6rem;overflow:hidden;} .cockpit .ck-name{display:none;}
+  .cockpit .ck-status{font-size:.9rem;font-weight:600;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;} .cockpit .ck-status .warn{color:var(--orange);font-weight:700;}
   .cockpit{transition:filter .55s ease,transform .55s cubic-bezier(.2,.8,.2,1),padding .22s ease;}
   .ck-chat{display:none;font-weight:750;font-size:.98rem;} .ck-x{display:none;margin-left:auto;width:1.9rem;height:1.9rem;border:none;background:var(--card2);border-radius:50%;color:var(--muted);font-size:.95rem;cursor:pointer;flex:0 0 auto;place-items:center;}
-  body.chatopen .cockpit{padding-top:.4rem;padding-bottom:.4rem;} body.chatopen .cockpit .ck-name,body.chatopen .cockpit .ck-status{display:none;} body.chatopen .ck-chat{display:block;} body.chatopen .ck-x{display:grid;} body.chatopen #stepper{display:none;}
+  body.chatopen .cockpit .ck-status{display:none;} body.chatopen .ck-chat{display:block;} body.chatopen .ck-x{display:grid;} body.chatopen #stepper{display:none;}
   body.kbopen .appbar{display:none;} body.kbopen .tbar{display:none;}
   .qk[hidden]{display:none;} body.chatopen #slog{padding:.5rem .65rem;}
   #stepper{flex:0 0 auto;max-width:560px;width:100%;margin:0 auto;padding:.4rem .9rem;} #stepper[hidden]{display:none;}
