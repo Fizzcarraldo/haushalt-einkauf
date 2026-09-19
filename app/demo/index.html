@@ -141,7 +141,7 @@
   .shd .scope{margin-left:.2rem;font:700 .66rem/1 var(--mono);background:var(--orange-bg);color:var(--orange);border-radius:999px;padding:.2rem .5rem;} .shd .x{margin-left:auto;background:none;border:none;font-size:1.15rem;color:var(--muted);cursor:pointer;}
   .qk{display:flex;gap:.4rem;flex-wrap:wrap;padding:.35rem .9rem .15rem;} .qk button{font:600 .82rem/1 var(--sans);padding:.42rem .72rem;border-radius:999px;border:1px dashed var(--line);background:none;color:var(--muted);cursor:pointer;}
   .ccard{align-self:flex-start;max-width:96%;border:1px solid var(--line);border-left:4px solid var(--orange);border-radius:11px;padding:.5rem .65rem;background:var(--card2);font-size:.85rem;}
-  .sin{display:flex;gap:.4rem;padding:.5rem .9rem calc(.6rem + env(safe-area-inset-bottom));border-top:1px solid var(--line2);}
+  .sin{display:flex;gap:.4rem;padding:.45rem .6rem calc(.5rem + env(safe-area-inset-bottom));border-top:1px solid var(--line2);}
   .sin input{flex:1;font:inherit;font-size:.9rem;padding:.62rem .72rem;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--ink);} .sin .snd{background:var(--green);color:#fff;border:none;border-radius:12px;padding:0 1rem;font-weight:800;font-size:1.1rem;cursor:pointer;}
   @media (prefers-reduced-motion:reduce){*{animation:none!important}}
   /* Nav + Profil-Editor + Scope */
@@ -208,7 +208,10 @@
   .cockpit .ck-body{flex:1;min-width:0;} .cockpit .ck-name{font:700 .55rem/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--green-ink);display:block;}
   .cockpit .ck-status{font-size:.9rem;font-weight:600;line-height:1.25;display:block;margin-top:.12rem;max-height:3rem;overflow:hidden;transition:max-height .22s ease,opacity .16s ease,margin .22s ease;} .cockpit .ck-status .warn{color:var(--orange);font-weight:700;}
   .cockpit{transition:filter .55s ease,transform .55s cubic-bezier(.2,.8,.2,1),padding .22s ease;}
-  body.chatopen .cockpit{padding-top:.42rem;padding-bottom:.42rem;} body.chatopen .cockpit .ck-name{display:none;} body.chatopen .cockpit .ck-status{max-height:0;opacity:0;margin:0;} body.chatopen #stepper{display:none;}
+  .ck-chat{display:none;font-weight:750;font-size:.98rem;} .ck-x{display:none;margin-left:auto;width:1.9rem;height:1.9rem;border:none;background:var(--card2);border-radius:50%;color:var(--muted);font-size:.95rem;cursor:pointer;flex:0 0 auto;place-items:center;}
+  body.chatopen .cockpit{padding-top:.4rem;padding-bottom:.4rem;} body.chatopen .cockpit .ck-name,body.chatopen .cockpit .ck-status{display:none;} body.chatopen .ck-chat{display:block;} body.chatopen .ck-x{display:grid;} body.chatopen #stepper{display:none;}
+  body.kbopen .appbar{display:none;} body.kbopen .tbar{display:none;}
+  .qk[hidden]{display:none;} body.chatopen #slog{padding:.5rem .65rem;}
   #stepper{flex:0 0 auto;max-width:560px;width:100%;margin:0 auto;padding:.4rem .9rem;} #stepper[hidden]{display:none;}
   .backbar{width:100%;text-align:left;border:none;background:var(--card2);color:var(--green-ink);font:700 .82rem/1 var(--sans);border-radius:10px;padding:.5rem .7rem;cursor:pointer;}
   #vPlan.on,#vProfil.on,#vKochbuch.on{overflow-y:auto;}
@@ -240,7 +243,7 @@
     <button class="ab-brand" data-nav="week">🗓️ Diese Woche</button>
     <span class="ab-ico"><button data-nav="kochbuch" title="Kochbuch">📖</button><button data-nav="profil" title="Profil">⚙️</button></span>
   </header>
-  <div class="cockpit" id="cockpit" hidden><span class="chef mid" id="ckav"><span class="cf">🧑‍🍳</span><i class="ring"></i><b class="steam">✨</b></span><div class="ck-body"><span class="ck-name" id="ckname">Koch</span><span class="ck-status" id="ckstatus">…</span></div><p class="sub" id="plsub" hidden></p></div>
+  <div class="cockpit" id="cockpit" hidden><span class="chef mid" id="ckav"><span class="cf">🧑‍🍳</span><i class="ring"></i><b class="steam">✨</b></span><div class="ck-body"><span class="ck-name" id="ckname">Koch</span><span class="ck-status" id="ckstatus">…</span><span class="ck-chat">Chat mit dem Koch</span></div><button class="ck-x" id="closeA" aria-label="Chat schließen">✕</button><p class="sub" id="plsub" hidden></p></div>
   <div class="stepper" id="stepper" hidden></div>
 
   <div class="view on" id="vOnb">
@@ -291,9 +294,8 @@
   <div class="idov" id="idov" hidden><div class="idcard"><h3>🧑‍🍳 Wer bist du?</h3><p class="cnote">Stimm mit ab, was diese Woche gekocht wird – ohne App, ohne Account.</p><div class="idchips" id="idchips"></div></div></div>
   <div class="idov" id="shareov" hidden><div class="idcard"><h3>🔗 Voting teilen</h3><p class="cnote">Link kopieren und per WhatsApp schicken – jede/r kann ohne App abstimmen.</p><input class="shareurl" id="shareurl" readonly><div class="sharebtns"><button class="btn-s" id="shareCopy">📋 Link kopieren</button><a class="btn-s wa" id="shareWa" target="_blank" rel="noopener">🟢 WhatsApp</a><button class="lnk" id="shareNative" hidden>📲 Teilen…</button><button class="lnk" id="shareClose">Schließen</button></div><span class="cnote" id="sharemsg"></span></div></div>
   <div class="sback" id="sback"></div>
-  <div class="sheet" id="sheet"><div class="grab"></div>
-    <div class="shd"><b>💬 Chat mit dem Koch</b> <span class="scoperow"><button data-sc="woche" class="on w">📅 Woche</button><button data-sc="dauer" class="d">∞ Dauerhaft</button></span><button class="x" id="closeA">✕</button></div>
-    <div class="qk" id="qk"></div>
+  <div class="sheet" id="sheet">
+    <div class="qk" id="qk" hidden></div>
     <div class="log" id="slog"></div>
     <div class="sin"><input id="stext" placeholder="Sag's einfach …"><button class="snd" id="ssend">→</button></div>
   </div>
@@ -312,7 +314,10 @@
   // Mobile: Layout an die SICHTBARE Viewport-Höhe koppeln – sonst schiebt die Tastatur Header+Chat aus dem Bild
   function vvFit(){var vv=window.visualViewport;if(!vv)return;
     document.body.style.height=vv.height+'px';
-    document.documentElement.style.setProperty('--kb',Math.max(0,window.innerHeight-vv.height-vv.offsetTop)+'px');
+    var kb=Math.max(0,window.innerHeight-vv.height-vv.offsetTop);
+    document.documentElement.style.setProperty('--kb',kb+'px');
+    document.body.classList.toggle('kbopen',kb>80);                 // Tastatur offen -> obere Leisten ausblenden
+    if(document.body.classList.contains('chatopen')){var ck=document.getElementById('cockpit');if(ck)document.documentElement.style.setProperty('--drawerTop',Math.max(0,Math.round(ck.getBoundingClientRect().bottom))+'px');}
     ['log','slog'].forEach(function(id){var el=document.getElementById(id);if(el)el.scrollTop=el.scrollHeight;});}
   if(window.visualViewport){window.visualViewport.addEventListener('resize',vvFit);window.visualViewport.addEventListener('scroll',vvFit);}
   window.addEventListener('orientationchange',function(){setTimeout(vvFit,200);});vvFit();
