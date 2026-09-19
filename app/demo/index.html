@@ -206,7 +206,9 @@
   .cockpit{flex:0 0 auto;position:relative;display:flex;align-items:center;gap:.55rem;padding:.6rem .9rem;background:var(--card);border-bottom:1px solid var(--line2);max-width:560px;width:100%;margin:0 auto;}
   .cockpit[hidden]{display:none;} .cockpit::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:var(--ai);}
   .cockpit .ck-body{flex:1;min-width:0;} .cockpit .ck-name{font:700 .55rem/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--green-ink);display:block;}
-  .cockpit .ck-status{font-size:.9rem;font-weight:600;line-height:1.25;display:block;margin-top:.12rem;} .cockpit .ck-status .warn{color:var(--orange);font-weight:700;}
+  .cockpit .ck-status{font-size:.9rem;font-weight:600;line-height:1.25;display:block;margin-top:.12rem;max-height:3rem;overflow:hidden;transition:max-height .22s ease,opacity .16s ease,margin .22s ease;} .cockpit .ck-status .warn{color:var(--orange);font-weight:700;}
+  .cockpit{transition:filter .55s ease,transform .55s cubic-bezier(.2,.8,.2,1),padding .22s ease;}
+  body.chatopen .cockpit{padding-top:.42rem;padding-bottom:.42rem;} body.chatopen .cockpit .ck-name{display:none;} body.chatopen .cockpit .ck-status{max-height:0;opacity:0;margin:0;} body.chatopen #stepper{display:none;}
   #stepper{flex:0 0 auto;max-width:560px;width:100%;margin:0 auto;padding:.4rem .9rem;} #stepper[hidden]{display:none;}
   .backbar{width:100%;text-align:left;border:none;background:var(--card2);color:var(--green-ink);font:700 .82rem/1 var(--sans);border-radius:10px;padding:.5rem .7rem;cursor:pointer;}
   #vPlan.on,#vProfil.on,#vKochbuch.on{overflow-y:auto;}
@@ -797,16 +799,21 @@
     qk.querySelectorAll('button').forEach(function(bn){bn.addEventListener('click',function(){stext.value=bn.getAttribute('data-q');stext.focus();});});
     slog.innerHTML='';sbot(SCFG[sc].greet);}
   document.querySelectorAll('.scoperow button').forEach(function(x){x.addEventListener('click',function(){applyScope(x.getAttribute('data-sc'));});});
-  function openS(){                                        // Chat = Drawer von rechts, UNTER dem Cockpit (Board dahinter, Cockpit bleibt sichtbar)
+  function openS(){                                        // Chat-Drawer unter dem GESCHRUMPFTEN Cockpit (mehr Platz für den Chat)
     hideCoach();
-    var stp=document.getElementById('stepper'),ck=document.getElementById('cockpit');
-    var ref=(stp&&!stp.hidden)?stp:ck;
-    var top=ref?Math.max(0,Math.round(ref.getBoundingClientRect().bottom)):0;
+    var ck=document.getElementById('cockpit'),st=ck&&ck.querySelector('.ck-status'),top=0;
+    if(ck){var a=ck.style.transition,b=st?st.style.transition:'';     // Endhöhe des geschrumpften Cockpits ohne Transition messen
+      ck.style.transition='none';if(st)st.style.transition='none';
+      document.body.classList.add('chatopen');
+      top=Math.max(0,Math.round(ck.getBoundingClientRect().bottom));
+      document.body.classList.remove('chatopen');void ck.offsetHeight;
+      ck.style.transition=a;if(st)st.style.transition=b;}
     document.documentElement.style.setProperty('--drawerTop',top+'px');
+    document.body.classList.add('chatopen');               // Cockpit schrumpft animiert, Stepper weicht
     sheet.classList.add('open');sback.classList.add('open');
     if(!sseed){sseed=true;applyScope('woche');}
   }
-  function closeS(){sheet.classList.remove('open');sback.classList.remove('open');}
+  function closeS(){sheet.classList.remove('open');sback.classList.remove('open');document.body.classList.remove('chatopen');}
   document.getElementById('openA').addEventListener('click',openS);
   document.getElementById('closeA').addEventListener('click',closeS);
   sback.addEventListener('click',closeS);
