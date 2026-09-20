@@ -79,21 +79,53 @@
   /* Voting-Board als eigene Seite: Emoji-Karten im Raster (angelehnt an die alte Wochenseite) */
   .voteback{background:none;border:none;color:var(--blue);font-weight:700;font-size:.82rem;cursor:pointer;padding:.1rem 0;margin:.1rem 0 .4rem;}
   .voteintro{font-size:.86rem;color:var(--muted);margin:.1rem 0 .6rem;}
-  .vday{margin:.2rem 0 1.05rem;} .vday .vd-h{display:flex;align-items:baseline;gap:.5rem;font-weight:800;font-size:1.02rem;margin:.55rem 0 .05rem;} .vday .vd-h .vd-who{font:400 .8rem/1.2 var(--sans);color:var(--muted);}
-  .opts{display:grid;grid-template-columns:repeat(auto-fill,minmax(9rem,1fr));gap:.5rem;margin:.35rem 0 .3rem;}
-  .vopt{display:flex;flex-direction:column;text-align:left;border:1px solid var(--line);border-radius:14px;overflow:hidden;cursor:pointer;background:var(--card);position:relative;padding:0 0 .5rem;transition:transform .08s ease,box-shadow .15s ease;}
-  .vopt:active{transform:translateY(1px);}
-  .vopt .vtop{position:relative;height:74px;display:grid;place-items:center;background:linear-gradient(135deg,color-mix(in oklab,var(--green) 14%,var(--card)),color-mix(in oklab,var(--blue) 14%,var(--card)));}
-  .vopt .vemoji{font-size:2.2rem;line-height:1;}
-  .vopt .vchips{position:absolute;top:.28rem;right:.28rem;display:flex;gap:.15rem;align-items:center;}
-  .vopt .vchips .av.tv{box-shadow:0 0 0 2px var(--card);}
-  .vopt .vname{padding:.4rem .55rem 0;font-size:.84rem;font-weight:750;line-height:1.16;}
-  .vopt .vmeta{padding:.1rem .55rem 0;font-size:.7rem;color:var(--muted);}
-  .vopt.mine{border-color:var(--green);} .vopt.mine .vtop{background:linear-gradient(135deg,color-mix(in oklab,var(--green) 30%,var(--card)),color-mix(in oklab,var(--green) 12%,var(--card)));}
-  .vopt.lead{box-shadow:0 0 0 2px color-mix(in oklab,var(--green) 48%,transparent);}
-  .vopt .vo-toggle{display:inline-grid;place-items:center;width:1.5rem;height:1.5rem;border-radius:50%;background:color-mix(in oklab,var(--card) 82%,transparent);font-size:.82rem;box-shadow:0 1px 3px rgba(0,0,0,.2);}
-  .vopt.mine .vo-toggle{background:var(--green);color:#fff;}
-  .vcrown{font-size:.9rem;filter:drop-shadow(0 1px 1px rgba(0,0,0,.35));}
+  /* Voting-Karten – Direkt-Variante (portiert aus voting-konzept.html) */
+  .vlegend{font-size:.78rem;color:var(--muted);background:var(--card2);border:1px solid var(--line2);border-radius:.7rem;padding:.5rem .65rem;margin:.1rem 0 .6rem;line-height:1.4;} .vlegend b{color:var(--ink);}
+  .vday{background:var(--card);border:1px solid var(--line);border-radius:1.1rem;padding:.75rem .7rem .6rem;margin:.2rem 0 .8rem;box-shadow:0 8px 22px -18px rgba(0,0,0,.5);}
+  .vdh{display:flex;align-items:center;gap:.5rem;margin-bottom:.55rem;}
+  .vdh .dd{font-weight:850;font-size:1.15rem;letter-spacing:-.02em;} .vdh .dw{font:400 .78rem/1.2 var(--sans);color:var(--muted);}
+  .vdh .comp{margin-left:auto;font:700 .64rem/1 var(--mono);letter-spacing:.02em;color:var(--green-ink);background:var(--green-bg);border:1px solid color-mix(in oklab,var(--green) 34%,transparent);border-radius:999px;padding:.22rem .48rem;white-space:nowrap;}
+  .stack{display:inline-flex;} .stack .av{width:1.5rem;height:1.5rem;border:2px solid var(--card);margin-left:-.42rem;box-shadow:0 1px 2px rgba(0,0,0,.15);} .stack .av:first-child{margin-left:0;}
+  .avme{cursor:pointer;box-shadow:0 0 0 2px color-mix(in oklab,var(--green) 60%,transparent);} .avme.avoff{filter:grayscale(1) opacity(.55);}
+  .vopts{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin:.15rem 0 0;}
+  .vcard{position:relative;display:flex;flex-direction:column;border:1.5px solid var(--line);border-radius:.9rem;background:var(--card2);overflow:hidden;cursor:pointer;text-align:left;padding:0;font:inherit;color:inherit;transition:border-color .15s,transform .12s,box-shadow .2s;}
+  .vcard:active{transform:translateY(1px);}
+  .vph{position:relative;min-height:4.4rem;display:grid;place-items:center;font-size:2.1rem;}
+  .vph::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.18),transparent 55%);}
+  .vote{position:absolute;right:.34rem;bottom:.34rem;z-index:2;width:1.7rem;height:1.7rem;border-radius:50%;background:rgba(255,255,255,.96);color:var(--muted);display:grid;place-items:center;font-size:.9rem;box-shadow:0 2px 7px rgba(0,0,0,.28);transition:transform .18s cubic-bezier(.2,.9,.2,1.5),background .18s,color .18s;}
+  .vcard.mine .vote{background:var(--green);color:#fff;transform:scale(1.08);}
+  .vbody{padding:.4rem .5rem .5rem;display:flex;flex-direction:column;gap:.28rem;}
+  .vcard .vname{font-weight:750;font-size:.78rem;line-height:1.2;min-height:2.4em;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+  .vmt{font-size:.68rem;color:var(--muted);line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .vtally{display:flex;align-items:center;min-height:1.2rem;} .vtally .av{width:1.15rem;height:1.15rem;font-size:.56rem;border:2px solid var(--card2);margin-left:-.32rem;} .vtally .av:first-child{margin-left:0;}
+  .vtally .none{width:.6rem;height:.6rem;border-radius:50%;border:1.5px dashed var(--line);display:inline-block;}
+  .vcard.mine{border-color:var(--green);box-shadow:0 0 0 1px var(--green) inset,0 10px 20px -14px color-mix(in oklab,var(--green) 60%,transparent);}
+  .vcard.lead{border-color:color-mix(in oklab,var(--green) 55%,var(--line));}
+  .ribbon{position:absolute;top:.36rem;left:.36rem;z-index:2;font:800 .6rem/1 var(--mono);color:#fff;background:color-mix(in oklab,var(--green) 92%,#000);border-radius:999px;padding:.2rem .42rem;display:inline-flex;align-items:center;gap:.2rem;box-shadow:0 2px 6px rgba(0,0,0,.25);}
+  .addtile{grid-column:1/-1;display:flex;align-items:center;justify-content:center;gap:.35rem;border:1.5px dashed var(--line);border-radius:.8rem;background:transparent;color:var(--muted);font:inherit;font-weight:700;font-size:.8rem;padding:.5rem;cursor:pointer;transition:border-color .15s,color .15s;}
+  .addtile:hover{border-color:var(--green);color:var(--green-ink);} .addtile .plus{font-size:1rem;font-weight:800;}
+  .dayfb{display:inline-flex;align-items:center;gap:.35rem;margin-top:.5rem;border:none;background:transparent;color:var(--muted);font:inherit;font-size:.8rem;cursor:pointer;} .dayfb b{color:var(--green-ink);} .dayfb:hover{color:var(--ink);}
+  .dayout .vopts,.dayout .dayfb{opacity:.4;pointer-events:none;filter:grayscale(.4);}
+  .outstrip{display:flex;align-items:center;gap:.4rem;font-size:.82rem;font-weight:650;color:var(--orange);background:var(--orange-bg);border:1px solid var(--orange-line);border-radius:.7rem;padding:.4rem .55rem;margin:.1rem 0 .5rem;}
+  .outstrip .undo{margin-left:auto;border:none;background:transparent;color:var(--green-ink);font:inherit;font-weight:750;font-size:.8rem;cursor:pointer;}
+  /* Mitesser-Chat (geteilter Voting-Link ?vote=1) */
+  .mchead{flex:0 0 auto;position:relative;display:flex;align-items:center;gap:.6rem;padding:.7rem .9rem;background:var(--card);border-bottom:1px solid var(--line2);}
+  .mchead::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:var(--ai);}
+  .mchead .mcav{width:2.4rem;height:2.4rem;border-radius:50%;background:var(--green-bg);display:grid;place-items:center;font-size:1.35rem;box-shadow:0 0 0 2px color-mix(in oklab,var(--green) 30%,transparent);flex:0 0 auto;}
+  .mchead b{font-size:.98rem;display:block;line-height:1.2;} .mchead .mcsub{font-size:.76rem;color:var(--muted);}
+  .mclog{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:.5rem;padding:.85rem .9rem calc(1.1rem + env(safe-area-inset-bottom));}
+  .mchips{margin-top:.15rem;}
+  .mchip{font:700 .9rem/1 var(--sans);padding:.55rem .85rem;border-radius:999px;border:1px solid var(--blue-line);background:var(--blue-bg);color:var(--blue);cursor:pointer;}
+  .mchip.ghost{background:var(--card2);border-color:var(--line);color:var(--muted);} .mchip.go{background:var(--green);border-color:transparent;color:#fff;}
+  .mcday{align-self:stretch;max-width:100%;}
+  .foodrow{display:flex;align-items:center;gap:.6rem;width:100%;text-align:left;border:1.5px solid var(--line);border-radius:.8rem;background:var(--card);padding:.4rem .5rem;cursor:pointer;font:inherit;color:inherit;transition:border-color .15s,background .15s;}
+  .foodrow.liked{border-color:var(--green);background:var(--green-bg);}
+  .foodrow .fph{width:2.7rem;height:2.7rem;border-radius:.6rem;display:grid;place-items:center;font-size:1.55rem;flex:0 0 auto;}
+  .foodrow .fx{display:flex;flex-direction:column;min-width:0;flex:1;} .foodrow .fnm{font-weight:700;font-size:.9rem;line-height:1.2;} .foodrow .fmt{font-size:.72rem;color:var(--muted);}
+  .foodrow .heart{margin-left:auto;font-size:1.35rem;color:var(--muted);flex:0 0 auto;} .foodrow.liked .heart{color:var(--green);}
+  .recap{width:100%;} .recaphd{font:800 .68rem/1 var(--mono);text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin-bottom:.45rem;}
+  .recaprow{display:flex;gap:.6rem;padding:.28rem 0;border-top:1px solid var(--line2);} .recaprow:first-of-type{border-top:none;}
+  .recaprow .rd{font-weight:800;width:2rem;flex:0 0 auto;} .recaprow .rp{font-size:.88rem;font-weight:600;} .recaprow .rp.none{color:var(--muted);font-weight:500;}
   .govote{display:block;width:100%;margin:.4rem 0 0;background:var(--green);color:#fff;border:none;border-radius:14px;padding:.85rem;font:800 1rem/1 var(--sans);cursor:pointer;box-shadow:0 4px 16px color-mix(in oklab,var(--green) 34%,transparent);}
   .shareurl{width:100%;font:inherit;font-size:.8rem;padding:.55rem .6rem;border:1px solid var(--line);border-radius:10px;background:var(--card2);color:var(--ink);margin:.55rem 0;}
   .sharebtns{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;} .sharebtns .wa{text-decoration:none;background:#25d366;color:#fff;display:inline-flex;align-items:center;} .sharebtns .lnk{background:none;border:none;color:var(--muted);font-weight:700;cursor:pointer;font-size:.82rem;}
@@ -345,6 +377,11 @@
       <div class="card"><div class="chd">📖 Kochbuch</div><p class="cnote">Eure Rezept-Bibliothek – wächst mit jeder gekochten Woche. <b>Kommt im Rezept-Sprint.</b></p></div>
       <div class="kbgrid" id="kbgrid"></div>
     </div>
+  </div>
+
+  <div class="view" id="vChat">
+    <div class="mchead"><span class="mcav">🧑‍🍳</span><span class="mchtx"><b>Koch-Assistent</b><span class="mcsub" id="mcsub">plant eure Woche</span></span></div>
+    <div class="mclog" id="mclog"></div>
   </div>
 
   <footer class="appfoot" id="appfoot" hidden>
@@ -683,7 +720,7 @@
       else _pe.innerHTML='🍽️ <b>Noch kein Essensplan.</b><br><span style="font-size:.85rem">Unten <b>„✨ Vorschläge holen"</b> – passend zu wer da ist, Diäten, Zeit &amp; Budget.</span>';}}
     if(navMode==='week'){var cs=document.getElementById('ckstatus'),fa=document.getElementById('faction');if(fa){fa.hidden=false;fa.className='faction';}
       if(page==='decided'){if(cs)cs.innerHTML='Die Woche steht 🎉 — Zeit einzukaufen.';setF('🛒 Einkaufsliste','einkauf');}
-      else if(page==='vote'){var miss=voterMissing();if(cs)cs.innerHTML='Stimmt ab.'+(miss?' <span class="warn">'+esc(miss)+' fehlt noch.</span>':' <b>Alle durch.</b>');setF('✓ Woche festlegen','festlegen');}
+      else if(page==='vote'){var miss=voterMissing();if(cs)cs.innerHTML='Stimmt ab — '+(miss?'<span class="warn">'+esc(miss)+' fehlt noch</span>.':'<b>alle durch, leg die Woche fest</b> 🎉');setF('✓ Woche festlegen','festlegen');}
       else{if(wv){if(cs)cs.innerHTML='Vorschläge stehen bereit — <b>weiter zum Voten.</b>';setF('🗳️ Weiter zum Voten','govote');}else{if(cs)cs.innerHTML='Lass uns die Woche planen — <b>wer isst mit?</b>';setF('✨ Vorschläge holen','gen');}}
       renderStepper(page);}
   }
@@ -711,30 +748,39 @@
   function tagCoveredBy(cons,list){return vnorm(cons)&&(list||[]).some(function(o){var a=vnorm(o),b=vnorm(cons);return a&&b&&(a===b||a.indexOf(b)>=0||b.indexOf(a)>=0);});}
   function loadStimmen(){var wid=DATA.woche&&DATA.woche.id;if(!wid)return Promise.resolve();return get('stimme?select=tag,option_id,voter_id&haushalt=eq.'+HH+'&woche_id=eq.'+wid).then(function(s){DATA.stimmen=s||[];});}
   function dishEmoji(t){t=(t||'').toLowerCase();var m=[['pasta|spaghetti|nudel|amatriciana|bolognese|carbonara|lasagne|penne','🍝'],['pizza|flammkuchen','🍕'],['salat|salad|tabouleh|couscous','🥗'],['ramen|nudelsuppe|pho','🍜'],['suppe|eintopf|gulasch','🍲'],['curry|dal|linsen','🍛'],['bowl|poke','🥣'],['risotto|pilz','🍄'],['reis|nasi|jambalaya','🍚'],['burger','🍔'],['taco|burrito|fajita|quesadilla|wrap','🌯'],['sushi|maki','🍣'],['fisch|lachs|kabeljau|seelachs|thunfisch|garnele|scampi|shrimp','🐟'],['ei|shakshuka|omelett|frittata|quiche|rührei','🍳'],['chili|bohnen','🌶️'],['falafel|kichererbsen|hummus','🧆'],['kartoffel|gratin|pommes','🥔'],['steak|rind|schnitzel|hähnchen|huhn|pute|hack|wurst|fleisch|gyros','🍖'],['tofu|teriyaki|wok|asiatisch|pad thai|gochujang','🥢'],['pancake|waffel|toast','🥞'],['gemüse|veggie|ratatouille|auflauf|ofen','🥦']];for(var i=0;i<m.length;i++){if(new RegExp(m[i][0]).test(t))return m[i][1];}return '🍽️';}
+  function hueOf(s){s=(s||'');var h=0;for(var i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))%360;return h;}
+  function phBg(h){return 'linear-gradient(140deg,hsl('+h+' 52% 82%),hsl('+((h+30)%360)+' 48% 68%))';}
+  function avAt(p,extra,tapDay){var h=hueOf(p.id||p.name);return '<span class="av'+(extra?' '+extra:'')+'" style="background:hsl('+h+' 52% 50%)"'+(tapDay?' data-act="mealtoggle" data-day="'+esc(tapDay)+'"':'')+' title="'+esc(p.name||'Gast')+'">'+esc(initials(p.name||'?'))+'</span>';}
   function renderVoting(tage){var pe=document.getElementById('planEmpty');if(pe)pe.style.display='none';
     var vn=VOTER.name||(VOTER.id?nameOf(VOTER.id):'—');
     var back='<button class="voteback" data-act="goplan">← Wer ist da? / Plan</button>';
     var bar='<div class="votebar"><span class="vb-who">Du: <b>'+esc(vn)+'</b></span><span class="vb-switch">'+DATA.persons.map(function(p){return '<button class="vsw'+(p.id===VOTER.id?' on':'')+'" data-act="who" data-id="'+p.id+'" title="'+esc(p.name)+'">'+esc(initials(p.name))+'</button>';}).join('')+'</span><button class="btn-s vb-share" data-act="teilen">🔗 Link teilen</button></div>';
-    var intro='<p class="voteintro">Pro Tag 3 Vorschläge – tipp deine Favoriten an (mehrere ok). 🏆 = die meisten Stimmen.</p>';
+    var intro='<div class="vlegend">🖐️ Tipp an, was schmeckt — <b>mehrere ok</b>. 🏆 <b>führt</b> → wird gewählt, wenn du festlegst. Tipp auf deinen Avatar = <b>nicht dabei</b>.</div>';
+    var meInHH=VOTER.id&&DATA.persons.some(function(p){return p.id===VOTER.id;});
     var cards=(tage||[]).map(function(t){var here=presentOn(t.tag),g=guestsOn(t.tag);
-      var names=here.map(function(p){return esc(p.name)+(p.rolle==='kind'?' 🧒':'');}).join(' & ');if(g.length)names+=(names?' · ':'')+g.map(function(e){return esc(e.gast_name||'Gast');}).join(', ')+' (Gast)';
-      if(!here.length&&!g.length)return '<div class="card vday"><div class="vd-h">'+esc(t.tag)+' <span class="vd-who">niemand da</span></div><div class="awaycard cnote">🍽️ auswärts – kein Kochen</div></div>';
+      var meAway=meInHH&&!here.some(function(p){return p.id===VOTER.id;});
+      if(!here.length&&!g.length)return '<div class="vday"><div class="vdh"><span class="dd">'+esc(t.tag)+'</span><span class="dw">niemand da</span></div><div class="cnote" style="text-align:center;padding:.5rem 0">🍽️ auswärts – kein Kochen</div>'+(meInHH?'<button class="dayfb" data-act="mealtoggle" data-day="'+esc(t.tag)+'">🙋 <b>Doch dabei?</b></button>':'')+'</div>';
       var dc=dayContext(t.tag),cons=dc?[].concat(dc.diaeten,dc.vermeiden):[];
-      var comp=cons.length?'<div class="cnote" style="color:var(--green-ink);font-weight:600;margin:.1rem 0">✓ passt für alle: '+cons.map(esc).join(' · ')+'</div>':'';
+      var comp=cons.length?'<span class="comp">✓ '+cons.map(esc).join(' · ')+'</span>':'';
+      var stackAv=here.map(function(p){var me=(p.id===VOTER.id);return avAt(p,me?'avme':'',me?t.tag:null);});
+      if(g.length)g.forEach(function(e){stackAv.push(avAt({name:e.gast_name||'Gast'},'',null));});
+      if(meAway){var vp=DATA.persons.filter(function(p){return p.id===VOTER.id;})[0];if(vp)stackAv.push(avAt(vp,'avme avoff',t.tag));}
+      var head='<div class="vdh"><span class="dd">'+esc(t.tag)+'</span><span class="stack">'+stackAv.join('')+'</span>'+comp+'</div>';
+      var strip=meAway?'<div class="outstrip">🙅 Du isst <b>'+esc(t.tag)+'</b> nicht mit <button class="undo" data-act="mealtoggle" data-day="'+esc(t.tag)+'">wieder dabei →</button></div>':'';
       var opts=(t.vorschlaege||[]);var maxv=0;opts.forEach(function(v,i){var n=votesFor(t.tag,optId(t.tag,v,i)).length;if(n>maxv)maxv=n;});
-      var cells=opts.map(function(v,i){var oid=optId(t.tag,v,i),vs=votesFor(t.tag,oid),lead=maxv>0&&vs.length===maxv&&vs.length>0,mine=myVote(t.tag,oid);
+      var cells=opts.map(function(v,i){var oid=optId(t.tag,v,i),vs=votesFor(t.tag,oid),lead=maxv>0&&vs.length===maxv,mine=myVote(t.tag,oid);
         var confl=v.eigen?[]:cons.filter(function(c){return !tagCoveredBy(c,[].concat(v.diaeten_ok||[],v.allergene_frei||[]));});
         var warn=confl.length?' <span class="vwarn" title="prüfen: '+esc(confl.join(', '))+'">⚠️</span>':'';
-        var tally=vs.map(function(s){return '<span class="av tv" title="'+esc(nameOf(s.voter_id))+'">'+esc(initials(nameOf(s.voter_id)))+'</span>';}).join('');
-        var crown=lead?'<span class="vcrown">🏆</span>':'';var meta=[v.aufwand,v.kurz].filter(Boolean).map(esc).join(' · ');
-        return '<button class="vopt'+(mine?' mine':'')+(lead?' lead':'')+'" data-act="vote" data-day="'+esc(t.tag)+'" data-oid="'+esc(oid)+'">'
-          +'<span class="vtop"><span class="vemoji">'+dishEmoji(v.titel)+'</span><span class="vchips">'+crown+tally+'<span class="vo-toggle">'+(mine?'✓':'👍')+'</span></span></span>'
-          +'<b class="vname">'+esc(v.titel||'')+warn+'</b>'
-          +(v.eigen?'<span class="vmeta"><span class="vtag">✍️ '+esc(v.eigen)+'</span></span>':(meta?'<span class="vmeta">'+meta+'</span>':''))
+        var tally=vs.length?vs.map(function(s){var p=DATA.persons.filter(function(x){return x.id===s.voter_id;})[0]||{name:nameOf(s.voter_id),id:s.voter_id};return avAt(p,'',null);}).join(''):'<span class="none"></span>';
+        var ribbon=lead?'<span class="ribbon">🏆 führt</span>':'';var meta=v.eigen?('✍️ '+v.eigen):(v.aufwand||v.kurz||'');
+        return '<button class="vcard'+(mine?' mine':'')+(lead?' lead':'')+'" data-act="vote" data-day="'+esc(t.tag)+'" data-oid="'+esc(oid)+'" title="'+esc(v.titel||'')+'">'
+          +ribbon
+          +'<span class="vph" style="background:'+phBg(hueOf(v.titel))+'">'+dishEmoji(v.titel)+'<span class="vote">'+(mine?'✓':'👍')+'</span></span>'
+          +'<span class="vbody"><span class="vname">'+esc(v.titel||'')+warn+'</span><span class="vmt">'+esc(meta)+'</span><span class="vtally">'+tally+'</span></span>'
           +'</button>';}).join('');
-      var none=votesFor(t.tag,'__none__');var noneline=none.length?'<div class="cnote" style="color:var(--warn,#a86400)">👎 '+none.map(function(s){return esc(nameOf(s.voter_id));}).join(', ')+' finden nichts dabei</div>':'';
-      var actions='<div class="vactions"><button class="lnk" data-act="own" data-day="'+esc(t.tag)+'">➕ eigener Vorschlag</button><button class="lnk" data-act="regenday" data-day="'+esc(t.tag)+'">↻ 3 neue</button><button class="lnk" data-act="none" data-day="'+esc(t.tag)+'">👎 nichts davon</button><button class="lnk" data-act="notda" data-day="'+esc(t.tag)+'">🙅 ich nicht dabei</button></div>';
-      return '<div class="card vday"><div class="vd-h">'+esc(t.tag)+' <span class="vd-who">'+names+'</span></div>'+comp+'<div class="opts">'+cells+'</div>'+noneline+actions+'</div>';}).join('');
+      var addtile='<button class="addtile" data-act="own" data-day="'+esc(t.tag)+'"><span class="plus">＋</span> Eigener Vorschlag</button>';
+      var fb='<button class="dayfb" data-act="regenday" data-day="'+esc(t.tag)+'">🤷 Nichts dabei? <b>↻ andere Ideen</b></button>';
+      return '<div class="vday'+(meAway?' dayout':'')+'">'+head+strip+'<div class="vopts">'+cells+addtile+'</div>'+fb+'</div>';}).join('');
     var voted={};DATA.stimmen.forEach(function(s){voted[s.voter_id]=1;});var miss=DATA.persons.filter(function(p){return !voted[p.id];}).map(function(p){return p.name;});
     var done='<span class="cnote">'+(DATA.persons.length-miss.length)+'/'+DATA.persons.length+' haben abgestimmt'+(miss.length?' · offen: '+esc(miss.join(', ')):'')+'</span>';
     var _pcv=document.getElementById('planCards');_pcv.innerHTML=back+bar+intro+cards+'<div class="votefoot">'+done+'</div>';
@@ -910,7 +956,7 @@
   }
   (function(){var bt=document.getElementById('dbgAnim');if(bt)bt.addEventListener('click',debugGenToggle);window.genDemo=debugGenToggle;})();
   function doAct(act,day,oid,id){
-    if(act==='gen')generatePlan();else if(act==='vote')setVote(day,oid);else if(act==='who')setVoter(id);else if(act==='teilen')teilen();else if(act==='own')addOwn(day);else if(act==='regenday')generatePlan(false,day);else if(act==='notda')notDa(day);else if(act==='none')setVote(day,'__none__');else if(act==='festlegen')festlegen();else if(act==='override')setPlanDay(day,oid);else if(act==='reopen')reopenVote();else if(act==='einkauf')einkauf();else if(act==='govote'){vView='vote';renderPlanen();}else if(act==='goplan'){vView='plan';renderPlanen();}else if(act==='godecided'){vView=null;renderPlanen();}else if(act==='goweek'){navTo('week');}else if(act==='addperson'){navTo('profil');alert('Neue Person: über „＋ hinzufügen" im Personen-Block.');}else if(act==='addrezept'){alert('Rezepte kommen im Rezept-Sprint.');}
+    if(act==='gen')generatePlan();else if(act==='vote')setVote(day,oid);else if(act==='who')setVoter(id);else if(act==='teilen')teilen();else if(act==='own')addOwn(day);else if(act==='regenday'){var hasV=DATA.stimmen.some(function(s){return s.tag===day;});if(hasV&&!confirm('Neue Ideen für '+(LONGDAY[day]||day)+' holen? Die bisherigen Stimmen für diesen Tag gehen dabei verloren.'))return;generatePlan(false,day);}else if(act==='mealtoggle'){if(!VOTER.id){askWhoAreYou();return;}togglePresence(VOTER.id,day);}else if(act==='notda')notDa(day);else if(act==='none')setVote(day,'__none__');else if(act==='festlegen')festlegen();else if(act==='override')setPlanDay(day,oid);else if(act==='reopen')reopenVote();else if(act==='einkauf')einkauf();else if(act==='govote'){vView='vote';renderPlanen();}else if(act==='goplan'){vView='plan';renderPlanen();}else if(act==='godecided'){vView=null;renderPlanen();}else if(act==='goweek'){navTo('week');}else if(act==='addperson'){navTo('profil');alert('Neue Person: über „＋ hinzufügen" im Personen-Block.');}else if(act==='addrezept'){alert('Rezepte kommen im Rezept-Sprint.');}
   }
   document.getElementById('planwrap').addEventListener('click',function(e){var b=e.target.closest('[data-act]');if(!b)return;doAct(b.getAttribute('data-act'),b.getAttribute('data-day'),b.getAttribute('data-oid'),b.getAttribute('data-id'));});
   document.getElementById('stepper').addEventListener('click',function(e){var b=e.target.closest('[data-act]');if(!b||b.classList.contains('off'))return;doAct(b.getAttribute('data-act'));});
@@ -932,10 +978,95 @@
         else refresh();});
       return;}
     var vid=b.getAttribute('data-vid'),p=DATA.persons.filter(function(x){return x.id===vid;})[0];if(p){VOTER={id:p.id,name:p.name};try{localStorage.setItem('kv_'+HH,JSON.stringify(VOTER));}catch(_){}document.getElementById('idov').hidden=true;renderPlanen();}});
+  // ── Mitesser-Chat: der geteilte Link ?vote=1 wird zum scripted Chat, der echte `stimme` schreibt ──
+  var MC={days:[],di:0};
+  function mcLog(){return document.getElementById('mclog');}
+  function mcScroll(){var l=mcLog();if(l)l.scrollTop=l.scrollHeight;}
+  function mcBubble(cls,html){var l=mcLog();if(!l)return null;var d=document.createElement('div');d.className='msg '+cls;d.innerHTML=html;l.appendChild(d);mcScroll();return d;}
+  function mcBot(html,cb,delay){var l=mcLog();if(!l)return;var t=document.createElement('div');t.className='msg typing';t.innerHTML='<span></span><span></span><span></span>';l.appendChild(t);mcScroll();
+    setTimeout(function(){t.remove();mcBubble('bot',html);if(cb)setTimeout(cb,340);},delay||650);}
+  function mcChips(items,onPick){var l=mcLog();if(!l)return;var w=document.createElement('div');w.className='chips mchips';
+    w.innerHTML=items.map(function(it){return '<button class="mchip'+(it.ghost?' ghost':'')+'" data-v="'+esc(it.v)+'">'+esc(it.t)+'</button>';}).join('');
+    l.appendChild(w);mcScroll();
+    w.addEventListener('click',function(e){var b=e.target.closest('[data-v]');if(!b)return;var v=b.getAttribute('data-v');w.remove();onPick(v);});}
+  function startMitesserChat(){
+    var vc=document.getElementById('vChat');document.querySelectorAll('.view').forEach(function(v){v.classList.remove('on');});vc.classList.add('on');
+    mcLog().innerHTML='';MC={days:[],di:0};
+    var tage=(DATA.woche&&DATA.woche.vorschlaege&&DATA.woche.vorschlaege.tage)||[];
+    MC.days=tage.filter(function(t){return (t.vorschlaege||[]).length && (presentOn(t.tag).length||guestsOn(t.tag).length);});
+    var planer=(DATA.persons[0]&&DATA.persons[0].name)||'Der Haushalt';
+    document.getElementById('mcsub').textContent=planer+' plant eure Woche';
+    if(!MC.days.length){mcBot('👋 Die Woche wird gerade noch geplant — schau gleich nochmal rein!');return;}
+    mcBot('👋 Hi! Ich bin euer <b>Koch-Assistent</b> — <b>'+esc(planer)+'</b> plant gerade die Woche.',function(){
+      mcBot('Deine Stimme zählt: tipp einfach an, was dir schmeckt. Kein Account, kein Stress. 🍽️',function(){
+        var sv=null;try{sv=JSON.parse(localStorage.getItem('kv_'+HH)||'null');}catch(_){}
+        if(sv&&sv.id&&DATA.persons.some(function(p){return p.id===sv.id;})){VOTER=sv;mcBot('Willkommen zurück, <b>'+esc(sv.name)+'</b>! 👋',function(){mcAskDay(0);});return;}
+        mcBot('Erstmal — <b>wer bist du?</b>',function(){
+          var chips=DATA.persons.filter(function(p){return !p.gast;}).map(function(p){return {v:'p:'+p.id,t:'🙋 '+p.name};});
+          chips.push({v:'gast',t:'👋 Ich bin Gast',ghost:true});
+          mcChips(chips,function(v){
+            if(v==='gast'){mcBubble('me','👋 Gast');mcAskName();return;}
+            var id=v.slice(2),p=DATA.persons.filter(function(x){return x.id===id;})[0];if(!p)return;
+            VOTER={id:p.id,name:p.name};try{localStorage.setItem('kv_'+HH,JSON.stringify(VOTER));}catch(_){}
+            mcBubble('me',p.name);mcAskDay(0);
+          });
+        });
+      });
+    });
+  }
+  function mcAskName(){
+    mcBot('Schön, dass du dabei bist! Und <b>wie heißen wir dich?</b> ✍️',function(){
+      var l=mcLog();var row=document.createElement('div');row.className='nameadd';
+      row.innerHTML='<input id="mcname" placeholder="Dein Name …" maxlength="24"><button class="add" id="mcnameGo">→</button>';
+      l.appendChild(row);mcScroll();var inp=row.querySelector('#mcname');try{inp.focus();}catch(_){}
+      function go(){var n=(inp.value||'').trim().replace(/[<>&]/g,'')||'Gast';row.remove();mcBubble('me',n);
+        post('personen',{name:n,haushalt:HH,gast:true,sort:99}).then(function(r){var p=r&&r[0];if(!p){mcBot('⚠️ Hoppla, das klappt gerade nicht — probier’s gleich nochmal.');return;}
+          VOTER={id:p.id,name:p.name};DATA.persons.push({id:p.id,name:p.name,gast:true,praeferenzen:[]});try{localStorage.setItem('kv_'+HH,JSON.stringify(VOTER));}catch(_){}
+          mcBot('Hi <b>'+esc(n)+'</b>! 👋',function(){mcAskDay(0);});});}
+      row.querySelector('#mcnameGo').addEventListener('click',go);
+      inp.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();go();}});
+    });
+  }
+  function mcFoodRow(t,v,i){var oid=optId(t.tag,v,i),on=myVote(t.tag,oid);
+    return '<button class="foodrow'+(on?' liked':'')+'" data-fr="'+esc(t.tag)+'|'+esc(oid)+'"><span class="fph" style="background:'+phBg(hueOf(v.titel))+'">'+dishEmoji(v.titel)+'</span><span class="fx"><span class="fnm">'+esc(v.titel||'')+'</span><span class="fmt">'+esc(v.aufwand||v.kurz||'')+'</span></span><span class="heart">'+(on?'♥':'♡')+'</span></button>';}
+  function mcAskDay(di){
+    MC.di=di;if(di>=MC.days.length){mcFinish();return;}
+    var t=MC.days[di];
+    mcBot('🗓️ <b>'+esc(LONGDAY[t.tag]||t.tag)+'</b> — was schmeckt dir? <span class="cnote">(mehrere ok)</span>',function(){
+      var l=mcLog();var wrap=document.createElement('div');wrap.className='ctrl mcday';
+      wrap.innerHTML=(t.vorschlaege||[]).map(function(v,i){return mcFoodRow(t,v,i);}).join('')
+        +'<div class="chips mcnav"><button class="mchip go" data-next="1">Weiter →</button><button class="mchip ghost" data-skip="1">🤷 nichts dabei</button></div>';
+      l.appendChild(wrap);mcScroll();
+      wrap.addEventListener('click',function(e){
+        var fr=e.target.closest('[data-fr]');
+        if(fr){var pp=fr.getAttribute('data-fr').split('|');mcToggle(pp[0],pp[1],fr);return;}
+        var sk=e.target.closest('[data-skip]');if(sk){var nv=wrap.querySelector('.mcnav');if(nv)nv.remove();mcBubble('me','nichts dabei');mcAskDay(di+1);return;}
+        var nx=e.target.closest('[data-next]');if(nx){var nv2=wrap.querySelector('.mcnav');if(nv2)nv2.remove();mcAskDay(di+1);return;}
+      });
+    });
+  }
+  function mcToggle(tag,oid,btn){
+    if(!VOTER.id)return;var wid=DATA.woche&&DATA.woche.id;if(!wid)return;var mine=myVote(tag,oid),h=btn.querySelector('.heart');
+    if(mine){DATA.stimmen=DATA.stimmen.filter(function(s){return !(s.tag===tag&&s.option_id===oid&&s.voter_id===VOTER.id);});btn.classList.remove('liked');if(h)h.textContent='♡';
+      rest('DELETE','stimme?woche_id=eq.'+wid+'&tag=eq.'+encodeURIComponent(tag)+'&option_id=eq.'+encodeURIComponent(oid)+'&voter_id=eq.'+VOTER.id);}
+    else{DATA.stimmen.push({tag:tag,option_id:oid,voter_id:VOTER.id});btn.classList.add('liked');if(h)h.textContent='♥';
+      post('stimme',{woche_id:wid,tag:tag,option_id:oid,voter_id:VOTER.id,wert:'up',haushalt:HH});}
+  }
+  function mcFinish(){
+    var planer=(DATA.persons[0]&&DATA.persons[0].name)||'Der Haushalt';
+    mcBot('🎉 Danke, <b>'+esc(VOTER.name||'')+'</b>! Deine Stimmen sind gespeichert.',function(){
+      var l=mcLog();var card=document.createElement('div');card.className='msg bot recap';
+      var rows=MC.days.map(function(t){var mine=(t.vorschlaege||[]).filter(function(v,i){return myVote(t.tag,optId(t.tag,v,i));}).map(function(v){return esc(v.titel);});
+        return '<div class="recaprow"><span class="rd">'+esc(t.tag)+'</span><span class="rp'+(mine.length?'':' none')+'">'+(mine.length?mine.join(', '):'—')+'</span></div>';}).join('');
+      card.innerHTML='<div class="recaphd">Deine Favoriten</div>'+rows;l.appendChild(card);mcScroll();
+      mcBot('<b>'+esc(planer)+'</b> legt die Woche jetzt fest — du bekommst Bescheid, was gekocht wird. 👋',function(){
+        mcChips([{v:'again',t:'↺ Nochmal ansehen',ghost:true}],function(){startMitesserChat();});
+      });
+    });
+  }
   function startVoteMode(){document.getElementById('vOnb').classList.remove('on');document.getElementById('inbar').style.display='none';
     get('personen?select=id&haushalt=eq.'+HH).then(function(ppl){if(!ppl||!ppl.length){document.getElementById('vOnb').classList.add('on');document.getElementById('inbar').style.display='';stepIntro();return;}
-      revealApp();setTimeout(function(){var sv=null;try{sv=JSON.parse(localStorage.getItem('kv_'+HH)||'null');}catch(_){}
-        if(sv&&sv.id&&DATA.persons.some(function(p){return p.id===sv.id;})){VOTER=sv;renderPlanen();}else askWhoAreYou();},600);});}
+      refresh().then(function(){startMitesserChat();});});}
   setInterval(function(){var vp=document.getElementById('vPlan');if(!(DATA.woche&&DATA.woche.status==='voten'&&vp&&vp.classList.contains('on')))return;var wid=DATA.woche.id;if(!wid)return;
     get('stimme?select=tag,option_id,voter_id&haushalt=eq.'+HH+'&woche_id=eq.'+wid).then(function(s){s=s||[];if(s.length!==DATA.stimmen.length){DATA.stimmen=s;renderPlanen();}});},6000);
   function renderProfil(){
