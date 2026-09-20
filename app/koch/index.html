@@ -1,0 +1,1330 @@
+<!doctype html>
+<html lang="de-DE">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
+<title>Kochassistent · Testmodus (neuer User)</title>
+<style>
+  :root{--paper:#f4f4f2;--card:#fff;--card2:#f6f6f4;--ink:#1b1d21;--muted:#6c717a;--line:#e4e4df;--line2:#eeeeea;
+    --green:#3f9b2e;--green-bg:#e7f4e3;--green-ink:#2f7422;--blue:#3663c9;--blue-bg:#e9eefb;--blue-line:#c3d2f4;
+    --orange:#c96f1b;--orange-bg:#fbefe0;--orange-line:#f0d3ac;--red:#cf463c;--red-bg:#fbe9e7;--red-line:#f2c4bf;--grey-bg:#f0f0ec;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;--mono:ui-monospace,SFMono-Regular,Menlo,monospace;
+    --ai:linear-gradient(105deg,var(--green),var(--blue));}
+  @media (prefers-color-scheme:dark){:root{--paper:#0d0f13;--card:#191c21;--card2:#14171c;--ink:#e8eaed;--muted:#969ca5;--line:#2a2e35;--line2:#23262c;
+    --green:#6cc258;--green-bg:#182a13;--green-ink:#8ed67c;--blue:#7099f2;--blue-bg:#182137;--blue-line:#33487f;
+    --orange:#eda152;--orange-bg:#33260f;--orange-line:#5c421f;--red:#ef6a60;--red-bg:#361a18;--red-line:#5e2b27;--grey-bg:#22262d;}}
+  *{box-sizing:border-box} html,body{height:100%}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);line-height:1.5;-webkit-font-smoothing:antialiased;display:flex;flex-direction:column;height:100dvh;overflow:hidden;}
+  .tbar{flex:0 0 auto;display:flex;align-items:center;gap:.5rem;padding:.5rem .8rem;background:color-mix(in oklab,var(--blue) 12%,var(--card));border-bottom:1px solid var(--line2);font:700 .72rem/1.2 var(--mono);color:var(--blue);}
+  .tbar .reset{margin-left:auto;font:700 .74rem/1 var(--sans);border:1px solid var(--blue-line);background:var(--card);color:var(--blue);border-radius:999px;padding:.35rem .7rem;cursor:pointer;text-decoration:none;white-space:nowrap;}
+  .view{flex:1;min-height:0;max-width:560px;width:100%;margin:0 auto;display:none;flex-direction:column;}
+  .view.on{display:flex;}
+  /* Onboarding */
+  .head{display:flex;gap:.4rem;padding:.5rem .9rem;flex-wrap:wrap;}
+  .oc{font:700 .63rem/1 var(--mono);padding:.26rem .48rem;border-radius:999px;background:var(--card2);color:var(--muted);border:1px solid var(--line2);}
+  .oc.active{border-color:var(--blue);color:var(--blue);} .oc.done{background:var(--green-bg);color:var(--green-ink);border-color:transparent;} .oc.done::before{content:"✓ ";}
+  .log{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:.5rem;padding:.7rem .9rem;}
+  #vOnb .log>*:first-child{margin-top:auto;} /* Onboarding: Nachrichten am unteren Rand (Chat-Feeling), kein leerer Block oben */
+  .msg{max-width:92%;padding:.6rem .72rem;border-radius:15px;font-size:.92rem;line-height:1.42;animation:in .28s cubic-bezier(.2,.75,.25,1) both;}
+  @keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .msg.bot{align-self:flex-start;background:var(--card2);border:1px solid var(--line2);border-bottom-left-radius:5px;}
+  .msg.me{align-self:flex-end;background:var(--green);color:#fff;border-bottom-right-radius:5px;font-weight:600;}
+  .msg.bot p{margin:.2rem 0;} .msg.bot p:first-child{margin-top:0;} .msg.bot p:last-child{margin-bottom:0;}
+  .msg.bot ul,.msg.bot ol{margin:.32rem 0;padding-left:1.15rem;} .msg.bot li{margin:.12rem 0;} .msg.bot li::marker{color:var(--green);}
+  .msg.bot b{font-weight:750;} .msg.bot code{background:var(--card);border:1px solid var(--line2);border-radius:4px;padding:0 .28rem;font:.86em/1.4 var(--mono);}
+  .chatconf{align-self:flex-start;max-width:96%;border:1px solid var(--line);border-radius:12px;background:var(--card2);padding:.6rem .7rem;display:flex;flex-direction:column;gap:.5rem;animation:in .28s cubic-bezier(.2,.75,.25,1) both;}
+  .chatconf .cq{font-size:.9rem;font-weight:600;} .chatconf .cq b{color:var(--green-ink);} .chatconf .cg{color:var(--muted);font-weight:500;font-size:.82rem;}
+  .chatconf .cw{font-size:.82rem;color:var(--orange);background:var(--orange-bg);border:1px solid var(--orange-line);border-radius:.55rem;padding:.35rem .5rem;} .chatconf .cw b{color:var(--orange);}
+  .chatconf .cb{display:flex;gap:.5rem;align-items:center;} .chatconf .cb button{font:inherit;font-weight:750;font-size:.84rem;border-radius:.6rem;padding:.5rem .8rem;cursor:pointer;border:1px solid var(--line);background:var(--card);color:var(--ink);}
+  .chatconf .cb .yes{margin-left:auto;border:none;color:#fff;background:var(--ai);} .chatconf .ccn{color:var(--muted);font-size:.84rem;font-weight:600;}
+  .msg.typing{display:inline-flex;align-self:flex-start;gap:.28rem;} .msg.typing span{width:.46rem;height:.46rem;border-radius:50%;background:var(--muted);animation:bl 1.2s infinite}
+  .msg.typing span:nth-child(2){animation-delay:.15s}.msg.typing span:nth-child(3){animation-delay:.3s}@keyframes bl{0%,70%,100%{opacity:.3}35%{opacity:.9}}
+  .ctrl{margin-top:.55rem;display:flex;flex-direction:column;gap:.5rem;}
+  .chips{display:flex;flex-wrap:wrap;gap:.4rem;}
+  .chip{display:inline-flex;align-items:center;gap:.35rem;font-size:.86rem;font-weight:600;padding:.34rem .6rem;border-radius:999px;border:1px solid var(--line);background:var(--card);}
+  .chip .x{opacity:.5;font-weight:800;cursor:pointer;} .chip.d{border-color:var(--blue-line);background:var(--blue-bg);color:var(--blue);}
+  .chip.sug{border-style:dashed;color:var(--muted);background:none;cursor:pointer;} .chip.sug.sel{border-style:solid;font-weight:700;}
+  .chip.sug.h.sel{border-color:var(--red-line);background:var(--red-bg);color:var(--red);} .chip.sug.g.sel{border-color:var(--blue-line);background:var(--blue-bg);color:var(--blue);}
+  .chip.sug.diet.sel{border-color:var(--green);background:var(--green-bg);color:var(--green-ink);}
+  .chip.sug.eff.sel{border-color:var(--orange-line);background:var(--orange-bg);color:var(--orange);} .chip.d .rl{cursor:pointer;}
+  .chip.sug.sel::after{content:"✓";margin-left:.28rem;font-weight:800;}
+  .nameadd{display:flex;gap:.45rem;} .nameadd input{flex:1;font:600 .95rem/1 var(--sans);padding:.6rem .7rem;border-radius:11px;border:1.5px solid var(--blue-line);background:var(--card);color:var(--ink);}
+  .nameadd .add{background:var(--blue);color:#fff;border:none;border-radius:11px;padding:0 1rem;font-weight:800;font-size:1.15rem;cursor:pointer;}
+  .go{align-self:flex-start;font:700 .84rem/1 var(--sans);padding:.5rem .85rem;border-radius:10px;border:1px solid var(--blue-line);background:var(--blue-bg);color:var(--blue);cursor:pointer;} .go[disabled]{opacity:.45;cursor:default;}
+  table.mx{border-collapse:collapse;font-size:.82rem;} table.mx th{font:700 .64rem/1 var(--mono);color:var(--muted);padding:.2rem;} table.mx td{padding:.22rem;text-align:center;} table.mx td:first-child{text-align:left;font-weight:700;white-space:nowrap;}
+  .c{width:1.7rem;height:1.7rem;border-radius:8px;display:inline-block;background:var(--green);cursor:pointer;} .c.off{background:var(--card2);border:1px solid var(--line);}
+  .inbar{flex:0 0 auto;display:flex;gap:.4rem;padding:.55rem .9rem calc(.55rem + env(safe-area-inset-bottom));border-top:1px solid var(--line2);max-width:560px;width:100%;margin:0 auto;}
+  .inbar input{flex:1;font:inherit;font-size:.92rem;padding:.62rem .72rem;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--ink);}
+  .inbar input:disabled{opacity:.5} .inbar .snd{background:var(--green);color:#fff;border:none;border-radius:12px;padding:0 1rem;font-weight:800;font-size:1.15rem;cursor:pointer;}
+  /* Planen */
+  .pl{flex:1;overflow-y:auto;padding:.9rem .9rem 9rem;}
+  .pl h1{font-size:1.3rem;margin:.2rem 0 .1rem;} .pl .sub{color:var(--muted);font-size:.88rem;margin:0 0 .3rem;}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:.85rem .9rem;margin:.7rem 0;box-shadow:0 1px 2px rgba(20,22,28,.06),0 8px 24px rgba(20,22,28,.08);}
+  .chd{font-weight:750;margin:0 0 .2rem;}
+  .legend2{display:flex;gap:.7rem;flex-wrap:wrap;font-size:.74rem;color:var(--muted);margin:.1rem 0 .4rem;align-items:center;}
+  .agenda{display:flex;flex-direction:column;gap:.4rem;}
+  .dayrow{display:flex;align-items:center;gap:.6rem;padding:.5rem .6rem;border-radius:12px;background:var(--card2);border:1px solid var(--line2);}
+  .dayrow .dd{width:2.1rem;text-align:center;font:600 .66rem/1.1 var(--mono);color:var(--muted);flex-shrink:0;} .dayrow .dd b{font:800 .98rem/1.15 var(--sans);color:var(--ink);display:block;}
+  .eaters{display:flex;gap:.28rem;flex:1;flex-wrap:wrap;}
+  .av{width:1.55rem;height:1.55rem;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font:800 .72rem/1 var(--sans);background:var(--green);color:#fff;}
+  .agenda .av{cursor:pointer;transition:transform .1s ease;} .agenda .av:active{transform:scale(.9);}
+  .av.off{background:var(--card);color:var(--muted);border:1px solid var(--line);text-decoration:line-through;}
+  .spill{font:700 .72rem/1 var(--sans);padding:.3rem .55rem;border-radius:999px;white-space:nowrap;flex-shrink:0;} .spill.cook{background:var(--green-bg);color:var(--green-ink);} .spill.out{background:var(--grey-bg);color:var(--muted);}
+  .wegrow{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin:.4rem 0;} .wegrow .wegname{font-weight:700;font-size:.86rem;min-width:4.5rem;} .wegdays{display:flex;gap:.25rem;flex-wrap:wrap;}
+  .dchip{font:700 .72rem/1 var(--mono);min-width:2rem;padding:.34rem .1rem;text-align:center;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--muted);cursor:pointer;} .dchip.on{background:var(--red-bg);border-color:var(--red-line);color:var(--red);}
+  .dayblock{display:flex;flex-direction:column;} .daynote{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;font-size:.74rem;color:var(--orange);padding:.28rem .3rem .1rem 2.7rem;} .daynote .lnk{background:none;border:none;color:var(--blue);font-weight:700;font-size:.74rem;cursor:pointer;padding:0;}
+  .empty{background:color-mix(in oklab,var(--blue) 7%,var(--card));border:1px dashed var(--blue-line);border-radius:12px;padding:.8rem;text-align:center;color:var(--muted);font-size:.88rem;}
+  .vs{padding:.45rem 0;border-top:1px dashed var(--line2);} .vs:first-of-type{border-top:none;}
+  .vt{display:flex;align-items:center;gap:.5rem;justify-content:space-between;font-size:.92rem;}
+  .auf{flex:0 0 auto;font:700 .58rem/1 var(--mono);text-transform:uppercase;letter-spacing:.03em;color:var(--green-ink);background:var(--green-bg);border-radius:999px;padding:.16rem .45rem;white-space:nowrap;}
+  .stepper{display:flex;align-items:center;gap:.3rem;flex-wrap:wrap;margin:.1rem 0 .6rem;font-size:.8rem;}
+  .pstep{display:inline-flex;align-items:center;gap:.35rem;color:var(--muted);background:var(--card2);border:1px solid var(--line2);border-radius:999px;padding:.26rem .6rem;font-weight:600;}
+  .pstep .pn{display:inline-grid;place-items:center;width:1.15rem;height:1.15rem;border-radius:50%;background:var(--line);color:var(--card);font:800 .66rem/1 var(--mono);}
+  .pstep.now{color:var(--blue);border-color:var(--blue-line);background:var(--blue-bg);} .pstep.now .pn{background:var(--blue);color:#fff;}
+  .pstep.done{color:var(--green-ink);} .pstep.done .pn{background:var(--green);color:#fff;} .psep{color:var(--muted);}
+  .votebar{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin:.2rem 0 .5rem;font-size:.86rem;} .votebar .vb-who{color:var(--muted);} .votebar .vb-switch{display:inline-flex;gap:.25rem;}
+  .vsw{width:1.7rem;height:1.7rem;border-radius:50%;border:1px solid var(--line);background:var(--card2);color:var(--muted);font:800 .72rem/1 var(--sans);cursor:pointer;} .vsw.on{background:var(--green);color:#fff;border-color:transparent;} .votebar .vb-share{margin-left:auto;}
+  /* Voting-Board als eigene Seite: Emoji-Karten im Raster (angelehnt an die alte Wochenseite) */
+  .voteback{background:none;border:none;color:var(--blue);font-weight:700;font-size:.82rem;cursor:pointer;padding:.1rem 0;margin:.1rem 0 .4rem;}
+  .voteintro{font-size:.86rem;color:var(--muted);margin:.1rem 0 .6rem;}
+  /* Voting-Karten – Direkt-Variante (portiert aus voting-konzept.html) */
+  .vlegend{font-size:.78rem;color:var(--muted);background:var(--card2);border:1px solid var(--line2);border-radius:.7rem;padding:.5rem .65rem;margin:.1rem 0 .6rem;line-height:1.4;} .vlegend b{color:var(--ink);}
+  .vday{background:var(--card);border:1px solid var(--line);border-radius:1.1rem;padding:.75rem .7rem .6rem;margin:.2rem 0 .8rem;box-shadow:0 8px 22px -18px rgba(0,0,0,.5);}
+  .vdh{display:flex;align-items:center;gap:.5rem;margin-bottom:.55rem;}
+  .vdh .dd{font-weight:850;font-size:1.15rem;letter-spacing:-.02em;} .vdh .dw{font:400 .78rem/1.2 var(--sans);color:var(--muted);}
+  .vdh .comp{margin-left:auto;font:700 .64rem/1 var(--mono);letter-spacing:.02em;color:var(--green-ink);background:var(--green-bg);border:1px solid color-mix(in oklab,var(--green) 34%,transparent);border-radius:999px;padding:.22rem .48rem;white-space:nowrap;}
+  .stack{display:inline-flex;} .stack .av{width:1.5rem;height:1.5rem;border:2px solid var(--card);margin-left:-.42rem;box-shadow:0 1px 2px rgba(0,0,0,.15);} .stack .av:first-child{margin-left:0;}
+  .avme{cursor:pointer;box-shadow:0 0 0 2px color-mix(in oklab,var(--green) 60%,transparent);} .avme.avoff{filter:grayscale(1) opacity(.55);}
+  .vopts{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin:.15rem 0 0;}
+  .vcard{position:relative;display:flex;flex-direction:column;border:1.5px solid var(--line);border-radius:.9rem;background:var(--card2);overflow:hidden;cursor:pointer;text-align:left;padding:0;font:inherit;color:inherit;transition:border-color .15s,transform .12s,box-shadow .2s;}
+  .vcard:active{transform:translateY(1px);}
+  .vph{position:relative;min-height:4.4rem;display:grid;place-items:center;font-size:2.1rem;}
+  .vph::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.18),transparent 55%);}
+  .vote{position:absolute;right:.34rem;bottom:.34rem;z-index:2;width:1.7rem;height:1.7rem;border-radius:50%;background:rgba(255,255,255,.96);color:var(--muted);display:grid;place-items:center;font-size:.9rem;box-shadow:0 2px 7px rgba(0,0,0,.28);transition:transform .18s cubic-bezier(.2,.9,.2,1.5),background .18s,color .18s;}
+  .vcard.mine .vote{background:var(--green);color:#fff;transform:scale(1.08);}
+  .vbody{padding:.4rem .5rem .5rem;display:flex;flex-direction:column;gap:.28rem;}
+  .vcard .vname{font-weight:750;font-size:.78rem;line-height:1.2;min-height:2.4em;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+  .vmt{font-size:.68rem;color:var(--muted);line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .vtally{display:flex;align-items:center;min-height:1.2rem;} .vtally .av{width:1.15rem;height:1.15rem;font-size:.56rem;border:2px solid var(--card2);margin-left:-.32rem;} .vtally .av:first-child{margin-left:0;}
+  .vtally .none{width:.6rem;height:.6rem;border-radius:50%;border:1.5px dashed var(--line);display:inline-block;}
+  .vcard.mine{border-color:var(--green);box-shadow:0 0 0 1px var(--green) inset,0 10px 20px -14px color-mix(in oklab,var(--green) 60%,transparent);}
+  .vcard.lead{border-color:color-mix(in oklab,var(--green) 55%,var(--line));}
+  .ribbon{position:absolute;top:.36rem;left:.36rem;z-index:2;font:800 .6rem/1 var(--mono);color:#fff;background:color-mix(in oklab,var(--green) 92%,#000);border-radius:999px;padding:.2rem .42rem;display:inline-flex;align-items:center;gap:.2rem;box-shadow:0 2px 6px rgba(0,0,0,.25);}
+  .addtile{grid-column:1/-1;display:flex;align-items:center;justify-content:center;gap:.35rem;border:1.5px dashed var(--line);border-radius:.8rem;background:transparent;color:var(--muted);font:inherit;font-weight:700;font-size:.8rem;padding:.5rem;cursor:pointer;transition:border-color .15s,color .15s;}
+  .addtile:hover{border-color:var(--green);color:var(--green-ink);} .addtile .plus{font-size:1rem;font-weight:800;}
+  .dayfb{display:inline-flex;align-items:center;gap:.35rem;margin-top:.5rem;border:none;background:transparent;color:var(--muted);font:inherit;font-size:.8rem;cursor:pointer;} .dayfb b{color:var(--green-ink);} .dayfb:hover{color:var(--ink);}
+  .dayout .vopts,.dayout .dayfb{opacity:.4;pointer-events:none;filter:grayscale(.4);}
+  .outstrip{display:flex;align-items:center;gap:.4rem;font-size:.82rem;font-weight:650;color:var(--orange);background:var(--orange-bg);border:1px solid var(--orange-line);border-radius:.7rem;padding:.4rem .55rem;margin:.1rem 0 .5rem;}
+  .outstrip .undo{margin-left:auto;border:none;background:transparent;color:var(--green-ink);font:inherit;font-weight:750;font-size:.8rem;cursor:pointer;}
+  /* Mitesser-Chat (geteilter Voting-Link ?vote=1) */
+  .mchead{flex:0 0 auto;position:relative;display:flex;align-items:center;gap:.6rem;padding:.7rem .9rem;background:var(--card);border-bottom:1px solid var(--line2);}
+  .mchead::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:var(--ai);}
+  .mchead .mcav{width:2.4rem;height:2.4rem;border-radius:50%;background:var(--green-bg);display:grid;place-items:center;font-size:1.35rem;box-shadow:0 0 0 2px color-mix(in oklab,var(--green) 30%,transparent);flex:0 0 auto;}
+  .mchead b{font-size:.98rem;display:block;line-height:1.2;} .mchead .mcsub{font-size:.76rem;color:var(--muted);}
+  .mclog{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:.5rem;padding:.85rem .9rem calc(1.1rem + env(safe-area-inset-bottom));}
+  .mchips{margin-top:.15rem;}
+  .mchip{font:700 .9rem/1 var(--sans);padding:.55rem .85rem;border-radius:999px;border:1px solid var(--blue-line);background:var(--blue-bg);color:var(--blue);cursor:pointer;}
+  .mchip.ghost{background:var(--card2);border-color:var(--line);color:var(--muted);} .mchip.go{background:var(--green);border-color:transparent;color:#fff;}
+  .mcday{align-self:stretch;max-width:100%;}
+  .foodrow{display:flex;align-items:center;gap:.6rem;width:100%;text-align:left;border:1.5px solid var(--line);border-radius:.8rem;background:var(--card);padding:.4rem .5rem;cursor:pointer;font:inherit;color:inherit;transition:border-color .15s,background .15s;}
+  .foodrow.liked{border-color:var(--green);background:var(--green-bg);}
+  .foodrow .fph{width:2.7rem;height:2.7rem;border-radius:.6rem;display:grid;place-items:center;font-size:1.55rem;flex:0 0 auto;}
+  .foodrow .fx{display:flex;flex-direction:column;min-width:0;flex:1;} .foodrow .fnm{font-weight:700;font-size:.9rem;line-height:1.2;} .foodrow .fmt{font-size:.72rem;color:var(--muted);}
+  .foodrow .heart{margin-left:auto;font-size:1.35rem;color:var(--muted);flex:0 0 auto;} .foodrow.liked .heart{color:var(--green);}
+  .recap{width:100%;} .recaphd{font:800 .68rem/1 var(--mono);text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin-bottom:.45rem;}
+  .recaprow{display:flex;gap:.6rem;padding:.28rem 0;border-top:1px solid var(--line2);} .recaprow:first-of-type{border-top:none;}
+  .recaprow .rd{font-weight:800;width:2rem;flex:0 0 auto;} .recaprow .rp{font-size:.88rem;font-weight:600;} .recaprow .rp.none{color:var(--muted);font-weight:500;}
+  /* Per-Tag „andere Ideen" – In-Card-Generierung (Loader-Sprache, ein Tag) */
+  .vday.busy{border-color:color-mix(in oklab,var(--green) 30%,var(--line));box-shadow:0 12px 30px -16px color-mix(in oklab,var(--green) 55%,transparent);}
+  .daygen{display:flex;flex-direction:column;gap:.5rem;animation:glin .3s ease both;}
+  .dgstatus{font-weight:650;font-size:.84rem;min-height:1.2em;transition:opacity .2s;} .dgstatus.swap{opacity:0;}
+  .dgtiles{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;}
+  .dgtile{position:relative;border-radius:.9rem;overflow:hidden;border:1.5px solid var(--line);min-height:4.4rem;background:var(--card2);box-shadow:0 3px 8px -4px rgba(0,0,0,.14);}
+  .dgph{position:absolute;inset:0;display:grid;place-items:center;font-size:2rem;opacity:.32;transition:opacity .5s ease;}
+  .dgtile::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 20%,rgba(255,255,255,.5) 50%,transparent 80%);transform:translateX(-120%);animation:gsh 1.15s ease-in-out infinite;}
+  .dgtile.dev .dgph{opacity:1;animation:gdev .55s cubic-bezier(.3,.8,.3,1) both;} .dgtile.dev::after{opacity:0;animation:none;}
+  .dgthought{min-height:2.9em;transition:opacity .26s,transform .26s;} .dgthought.swap{opacity:0;transform:translateY(5px);}
+  .dgconfirm{display:flex;flex-direction:column;gap:.55rem;border:1px solid var(--orange-line);background:var(--orange-bg);border-radius:.8rem;padding:.6rem .7rem;margin:.15rem 0 .1rem;animation:glin .25s ease both;}
+  .dgconfirm .dgq{font-size:.85rem;line-height:1.35;} .dgconfirm .dgq b{color:var(--orange);}
+  .dgconfirm .dgb{display:flex;gap:.5rem;} .dgconfirm button{font:inherit;font-weight:750;font-size:.82rem;border-radius:.6rem;padding:.45rem .8rem;cursor:pointer;border:1px solid var(--line);background:var(--card);color:var(--ink);}
+  .dgconfirm .dgyes{margin-left:auto;border:none;color:#fff;background:var(--ai);}
+  .dgreveal .vcard{animation:dgpop .4s cubic-bezier(.2,.8,.25,1.3) both;} .dgreveal .vcard:nth-child(2){animation-delay:.08s;} .dgreveal .vcard:nth-child(3){animation-delay:.16s;}
+  @keyframes dgpop{from{opacity:0;transform:translateY(8px) scale(.97)}to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){.dgtile::after,.dgtile.dev .dgph,.dgreveal .vcard{animation:none!important;}}
+  /* Echte Gericht-Fotos (kuratiert) über der Emoji-Kachel; Emoji bleibt Fallback (onerror entfernt img) */
+  .phimg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;z-index:1;}
+  .vph .phimg{border-radius:inherit;} .foodrow .fph{position:relative;overflow:hidden;}
+  .noneline{font-size:.8rem;color:var(--orange);margin-top:.5rem;line-height:1.3;} .noneline b{color:var(--orange);font-weight:750;}
+  .govote{display:block;width:100%;margin:.4rem 0 0;background:var(--green);color:#fff;border:none;border-radius:14px;padding:.85rem;font:800 1rem/1 var(--sans);cursor:pointer;box-shadow:0 4px 16px color-mix(in oklab,var(--green) 34%,transparent);}
+  .shareurl{width:100%;font:inherit;font-size:.8rem;padding:.55rem .6rem;border:1px solid var(--line);border-radius:10px;background:var(--card2);color:var(--ink);margin:.55rem 0;}
+  .sharebtns{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;} .sharebtns .wa{text-decoration:none;background:#25d366;color:#fff;display:inline-flex;align-items:center;} .sharebtns .lnk{background:none;border:none;color:var(--muted);font-weight:700;cursor:pointer;font-size:.82rem;}
+  .pstep{cursor:pointer;} .pstep.off{opacity:.45;cursor:default;}
+  .av.tv{width:1.4rem;height:1.4rem;font-size:.66rem;background:var(--green);} .vo-toggle{margin-left:.15rem;font-size:1rem;}
+  .vtag{font:700 .6rem/1 var(--mono);color:var(--blue);background:var(--blue-bg);border-radius:999px;padding:.12rem .35rem;} .vwarn{color:var(--warn,#a86400);}
+  .vactions{display:flex;gap:.7rem;flex-wrap:wrap;margin:.3rem 0 .1rem;} .vactions .lnk{background:none;border:none;color:var(--blue);font-weight:700;font-size:.78rem;cursor:pointer;padding:0;}
+  .votefoot{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin:.6rem 0 1rem;} .votebtn2{margin-left:auto;background:var(--green);color:#fff;border:none;border-radius:12px;padding:.7rem 1rem;font:800 .95rem/1 var(--sans);cursor:pointer;}
+  .dcard{border:1px solid var(--line);border-radius:12px;padding:.55rem .7rem;margin:.35rem 0;background:var(--card);} .dcard.out{opacity:.65;}
+  .dcard .dc-h{display:flex;gap:.5rem;align-items:baseline;} .dcard .dc-dish{font-weight:750;} .dcard .dc-alt{margin-top:.25rem;font-size:.78rem;color:var(--muted);display:flex;gap:.5rem;flex-wrap:wrap;}
+  .dc-alt .lnk{background:none;border:none;color:var(--blue);cursor:pointer;font-size:.78rem;padding:0;} .dc-alt .lnk.on{color:var(--green-ink);font-weight:800;}
+  .idov{position:fixed;inset:0;z-index:50;background:rgba(10,12,16,.5);display:grid;place-items:center;padding:1rem;} .idov[hidden]{display:none;}
+  .idcard{background:var(--card);border-radius:18px;padding:1.1rem 1.15rem;max-width:24rem;width:100%;box-shadow:0 20px 50px rgba(0,0,0,.3);} .idcard h3{margin:.1rem 0 .15rem;}
+  .idchips{display:flex;flex-wrap:wrap;gap:.4rem;margin:.7rem 0 .1rem;} .idchips button{font:700 .92rem/1 var(--sans);padding:.55rem .85rem;border-radius:999px;border:1px solid var(--blue-line);background:var(--blue-bg);color:var(--blue);cursor:pointer;} .idchips .new{background:var(--card2);border-color:var(--line);color:var(--ink);}
+  .dock{position:fixed;left:0;right:0;bottom:0;z-index:20;background:linear-gradient(to top,var(--paper) 78%,transparent);padding:.6rem .9rem calc(.6rem + env(safe-area-inset-bottom));}
+  .dock .in{max-width:560px;margin:0 auto;}
+  .votebtn{display:block;width:100%;background:var(--green);color:#fff;border:none;border-radius:14px;padding:.9rem;font:800 1.02rem/1 var(--sans);text-align:center;text-decoration:none;box-shadow:0 4px 16px color-mix(in oklab,var(--green) 40%,transparent);}
+  .askbar{position:relative;overflow:hidden;display:flex;align-items:center;gap:.6rem;width:100%;text-align:left;cursor:pointer;margin-top:.5rem;border:1px solid color-mix(in oklab,var(--green) 22%,var(--line));border-radius:13px;padding:.55rem .7rem;background:color-mix(in oklab,CanvasText 4%,var(--card));box-shadow:0 1px 2px rgba(0,0,0,.05),0 10px 26px color-mix(in oklab,var(--green) 13%,transparent);transition:transform .18s ease,box-shadow .18s ease;}
+  .askbar:active{transform:scale(.985);}
+  .askbar .av2{position:relative;width:2rem;height:2rem;flex:0 0 auto;border-radius:50%;display:grid;place-items:center;font-size:1.05rem;background:var(--card);box-shadow:0 0 0 1.5px color-mix(in oklab,var(--green) 55%,transparent);}
+  .askbar .spark{display:inline-block;} .askbar .spark{animation:twinkle 2.6s ease-in-out infinite;}
+  @keyframes twinkle{0%,100%{opacity:.5;transform:scale(1)}50%{opacity:1;transform:scale(1.22)}}
+  .askbar .sheen{position:absolute;inset:0;pointer-events:none;background:linear-gradient(105deg,transparent 32%,color-mix(in oklab,var(--green) 34%,transparent) 50%,transparent 68%);transform:translateX(-130%);}
+  .askbar.arrive{animation:pillpop .5s cubic-bezier(.2,.9,.2,1);} .askbar.arrive .sheen{animation:sheen .75s ease .08s;}
+  @keyframes pillpop{0%{transform:scale(.92);opacity:.5}55%{transform:scale(1.035)}100%{transform:scale(1);opacity:1}}
+  @keyframes sheen{to{transform:translateX(130%)}}
+  .askbar .lbl{flex:1;min-width:0;display:flex;flex-direction:column;gap:.14rem;}
+  .askbar .who{display:flex;align-items:center;gap:.4rem;font:750 .9rem/1.1 var(--sans);color:var(--ink);}
+  .askbar .reach{font:700 .55rem/1 var(--mono);letter-spacing:.03em;text-transform:uppercase;color:var(--blue);background:var(--blue-bg);border:1px solid var(--blue-line);border-radius:999px;padding:.15rem .4rem;}
+  .askbar .hint{font-size:.82rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:opacity .3s ease;}
+  .askbar .hint i{font-style:normal;color:var(--ink);opacity:.72;}
+  .askbar .cta{flex:0 0 auto;display:inline-flex;align-items:center;gap:.22rem;font:800 .78rem/1 var(--sans);color:#fff;border-radius:999px;padding:.46rem .66rem;background:var(--ai);box-shadow:0 3px 10px color-mix(in oklab,var(--blue) 26%,transparent);}
+  .coach{position:relative;margin:.5rem 0 0;background:var(--card);border:1px solid color-mix(in oklab,var(--green) 30%,var(--line));border-radius:14px;padding:.7rem .8rem;font-size:.86rem;color:var(--ink);box-shadow:0 8px 22px color-mix(in oklab,var(--green) 14%,transparent);animation:coachin .3s cubic-bezier(.2,.8,.2,1);}
+  .coach[hidden]{display:none;}
+  .coach::after{content:"";position:absolute;left:2.1rem;bottom:-7px;width:12px;height:12px;background:var(--card);border-right:1px solid color-mix(in oklab,var(--green) 30%,var(--line));border-bottom:1px solid color-mix(in oklab,var(--green) 30%,var(--line));transform:rotate(45deg);}
+  .coach b{color:var(--green-ink);} .coach .ok{margin-left:.35rem;font:800 .75rem/1 var(--sans);color:#fff;background:var(--ai);border:none;border-radius:999px;padding:.36rem .72rem;cursor:pointer;}
+  @keyframes coachin{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .sback{position:fixed;left:0;right:0;bottom:0;top:var(--drawerTop,0);background:rgba(10,12,16,.32);opacity:0;visibility:hidden;transition:opacity .25s;z-index:30;} .sback.open{opacity:1;visibility:visible;}
+  .sheet{position:fixed;right:0;left:auto;top:var(--drawerTop,0);bottom:var(--kb,0);z-index:31;width:min(93%,460px);margin:0;background:var(--paper);border-radius:18px 0 0 18px;transform:translateX(103%);transform-origin:100% 50%;visibility:hidden;transition:transform .34s cubic-bezier(.2,.82,.2,1),visibility 0s linear .34s;display:flex;flex-direction:column;box-shadow:-16px 0 40px rgba(0,0,0,.28);}
+  .sheet::before{content:"";position:absolute;top:0;bottom:0;left:0;width:3px;border-radius:18px 0 0 18px;background:var(--ai);opacity:.9;}
+  .sheet.open{transform:none;visibility:visible;transition:transform .32s cubic-bezier(.2,.8,.2,1),visibility 0s;}
+  .grab{width:40px;height:4px;border-radius:3px;background:var(--line);margin:.55rem auto .3rem;}
+  .shd{display:flex;align-items:center;gap:.5rem;padding:.15rem .9rem .45rem;font-weight:750;}
+  .shd .chefav{width:2rem;height:2rem;flex:0 0 auto;border-radius:50%;display:grid;place-items:center;font-size:1.05rem;background:color-mix(in oklab,CanvasText 8%,var(--card));}
+  .shd .scope{margin-left:.2rem;font:700 .66rem/1 var(--mono);background:var(--orange-bg);color:var(--orange);border-radius:999px;padding:.2rem .5rem;} .shd .x{margin-left:auto;background:none;border:none;font-size:1.15rem;color:var(--muted);cursor:pointer;}
+  .qk{display:flex;gap:.4rem;flex-wrap:wrap;padding:.35rem .9rem .15rem;} .qk button{font:600 .82rem/1 var(--sans);padding:.42rem .72rem;border-radius:999px;border:1px dashed var(--line);background:none;color:var(--muted);cursor:pointer;}
+  .ccard{align-self:flex-start;max-width:96%;border:1px solid var(--line);border-left:4px solid var(--orange);border-radius:11px;padding:.5rem .65rem;background:var(--card2);font-size:.85rem;}
+  .sin{display:flex;gap:.4rem;padding:.45rem .6rem calc(.5rem + env(safe-area-inset-bottom));border-top:1px solid var(--line2);}
+  .sin input{flex:1;font:inherit;font-size:.9rem;padding:.62rem .72rem;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--ink);} .sin .snd{background:var(--green);color:#fff;border:none;border-radius:12px;padding:0 1rem;font-weight:800;font-size:1.1rem;cursor:pointer;}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important}}
+  /* Nav + Profil-Editor + Scope */
+  .nav{display:none;gap:.4rem;padding:.4rem .9rem;max-width:560px;margin:0 auto;width:100%;} .nav.on{display:flex;}
+  .nav button{flex:1;font:700 .85rem/1 var(--sans);padding:.5rem;border-radius:10px;border:1px solid var(--line);background:var(--card2);color:var(--muted);cursor:pointer;}
+  .nav button.on{background:var(--card);color:var(--ink);border-color:var(--blue-line);}
+  .cnote{color:var(--muted);font-size:.8rem;} .kw{font:700 .72rem/1 var(--mono);color:var(--muted);}
+  .scope-d{font:700 .66rem/1 var(--mono);background:var(--blue-bg);color:var(--blue);border-radius:999px;padding:.2rem .5rem;}
+  .acc{background:var(--card);border:1px solid var(--line);border-radius:14px;margin:.6rem 0;overflow:hidden;box-shadow:0 1px 2px rgba(20,22,28,.05);}
+  .acc>summary{list-style:none;cursor:pointer;padding:.7rem .9rem;font-weight:700;font-size:.9rem;} .acc>summary::-webkit-details-marker{display:none}
+  .acc .tb{padding:0 .9rem .8rem;font-size:.85rem;} .acc .tb li{margin:.2rem 0;color:var(--ink);} .acc .tb .hx{color:var(--red);font-weight:700;} .acc .tb .sx{color:var(--muted);}
+  .chip.add{border-style:dashed;color:var(--muted);background:none;cursor:pointer;}
+  .person{border:1px solid var(--line2);border-radius:13px;padding:.6rem .7rem;margin:.4rem 0;background:var(--card2);}
+  .person .pn{display:flex;align-items:center;gap:.4rem;font-weight:750;} .person .del{margin-left:auto;background:none;border:none;color:var(--red);font-weight:700;cursor:pointer;font-size:.78rem;}
+  .person .pn .rolbtn{margin-left:auto;font:700 .66rem/1 var(--mono);border:1px solid var(--line);background:var(--card);color:var(--muted);border-radius:999px;padding:.24rem .55rem;cursor:pointer;} .person .pn .del{margin-left:.5rem;}
+  .prefs{display:flex;flex-wrap:wrap;gap:.35rem;margin:.35rem 0;}
+  .pref{display:inline-flex;align-items:center;gap:.3rem;font-size:.8rem;padding:.2rem .5rem;border-radius:999px;border:1px solid var(--line);background:var(--card);}
+  .pref.hart{border-color:var(--red-line);background:var(--red-bg);color:var(--red);font-weight:700;}
+  .pref .x{cursor:pointer;opacity:.5;font-weight:800;} .pref .art{font-size:.6rem;text-transform:uppercase;letter-spacing:.03em;opacity:.6;}
+  .addrow{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.4rem;align-items:center;}
+  .addrow select,.addrow input{font:inherit;font-size:.82rem;padding:.35rem .5rem;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);} .addrow input{flex:1;min-width:6rem;}
+  .btn-s{font:inherit;font-size:.82rem;font-weight:700;padding:.36rem .7rem;border-radius:8px;border:none;background:var(--green);color:#fff;cursor:pointer;}
+  .rule{display:flex;align-items:center;gap:.5rem;padding:.4rem .1rem;border-bottom:1px dashed var(--line2);font-size:.86rem;} .rule .rtag{font:700 .62rem/1 var(--mono);padding:.14rem .4rem;border-radius:6px;background:var(--grey-bg);} .rule .del{margin-left:auto;background:none;border:none;color:var(--red);cursor:pointer;font-weight:800;}
+  .scoperow{display:inline-flex;gap:.3rem;margin-left:.2rem;} .scoperow button{font:700 .62rem/1 var(--mono);padding:.26rem .5rem;border-radius:999px;border:1px solid var(--line);background:var(--card2);color:var(--muted);cursor:pointer;}
+  .scoperow button.on.w{background:var(--orange-bg);color:var(--orange);border-color:transparent;} .scoperow button.on.d{background:var(--blue-bg);color:var(--blue);border-color:transparent;}
+  .ccard.dh{border-left-color:var(--blue);}
+  /* Andock-Sequenz: Onboarding-Chat faltet sich in die Pill */
+  #vOnb.docking{position:fixed;inset:0;z-index:40;transform-origin:50% 100%;transition:transform .66s cubic-bezier(.55,0,.2,1),opacity .5s ease .16s;will-change:transform,opacity;}
+  #vOnb.docking.go{transform:translateY(10px) scale(.82);opacity:0;}
+  #inbar.fold{transition:opacity .28s ease,transform .28s ease;opacity:0;transform:translateY(34px);pointer-events:none;}
+  .flyav{position:fixed;left:0;top:0;z-index:60;width:2rem;height:2rem;border-radius:50%;display:grid;place-items:center;font-size:1.05rem;background:var(--card);box-shadow:0 6px 22px rgba(0,0,0,.28),0 0 0 1.5px color-mix(in oklab,var(--green) 55%,transparent);transition:transform .62s cubic-bezier(.55,0,.2,1),opacity .3s ease;will-change:transform;}
+  /* ── Der Koch als lebende Figur: ein Coin, der zwischen Start · Chat · Leiste wandert ── */
+  .chef{position:relative;display:inline-grid;place-items:center;--sz:2rem;width:var(--sz);height:var(--sz);border-radius:50%;background:var(--card);flex:0 0 auto;}
+  .chef .cf{position:relative;z-index:2;font-size:calc(var(--sz)*.56);line-height:1;will-change:transform;}
+  .chef .ring{position:absolute;inset:-2px;border-radius:50%;background:conic-gradient(from 0deg,var(--green),var(--blue),var(--green));-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 2.5px),#000 calc(100% - 2px));mask:radial-gradient(farthest-side,transparent calc(100% - 2.5px),#000 calc(100% - 2px));opacity:.85;animation:cspin 9s linear infinite;}
+  .chef .steam{position:absolute;top:-.05em;left:50%;font-size:calc(var(--sz)*.28);opacity:0;pointer-events:none;transform:translate(-50%,0);}
+  .chef.hero{--sz:5rem;box-shadow:0 12px 32px color-mix(in oklab,var(--green) 22%,transparent),0 2px 8px rgba(0,0,0,.1);animation:cpop .6s cubic-bezier(.2,.9,.2,1.25) both;}
+  .chef.hero .cf{animation:cbob 3.6s ease-in-out infinite;}
+  .chef.hero .steam{animation:csteam 5.2s ease-in-out 1s infinite;}
+  .chef.mid{--sz:2.6rem;}
+  .chef.mid .cf{animation:cbob 4.2s ease-in-out infinite;}
+  .chef.mid .steam{animation:csteam 6s ease-in-out 1.6s infinite;}
+  .chef.flychef{position:fixed;left:0;top:0;z-index:70;pointer-events:none;transform-origin:top left;box-shadow:0 8px 24px rgba(0,0,0,.2),0 0 0 1.5px color-mix(in oklab,var(--green) 40%,transparent),0 0 24px color-mix(in oklab,var(--blue) 30%,transparent);}
+  .chef.flychef .ring{animation:none;opacity:.7;}
+  .cheroWrap{display:flex;justify-content:center;padding:.7rem 0 .1rem;flex:0 0 auto;}
+  .cspark{position:fixed;z-index:69;pointer-events:none;transform:translate(-50%,-50%);opacity:.85;filter:drop-shadow(0 0 3px color-mix(in oklab,var(--green) 55%,transparent));animation:csparkf .56s ease-out forwards;}
+  @keyframes csparkf{0%{opacity:.9;transform:translate(-50%,-50%) scale(.45)}100%{opacity:0;transform:translate(-50%,-62%) scale(1)}}
+  .cland{position:fixed;z-index:59;pointer-events:none;border-radius:50%;border:2px solid color-mix(in oklab,var(--green) 55%,transparent);animation:clandf .5s ease-out forwards;}
+  @keyframes clandf{0%{opacity:.7;transform:translate(-50%,-50%) scale(.55)}100%{opacity:0;transform:translate(-50%,-50%) scale(2.1)}}
+  @keyframes cbob{0%,100%{transform:translateY(0)}50%{transform:translateY(-9%)}}
+  @keyframes cspin{to{transform:rotate(360deg)}}
+  @keyframes csteam{0%{opacity:0;transform:translate(-50%,0) scale(.7)}18%{opacity:.85}55%{opacity:0;transform:translate(-50%,-95%) scale(1.15)}100%{opacity:0}}
+  @keyframes cpop{0%{opacity:0;transform:scale(.5) translateY(12px)}100%{opacity:1;transform:none}}
+  /* ── Prototyp-Rahmen: App-Bar · Cockpit · Stepper · Footer-Aktionsleiste ── */
+  .appbar{flex:0 0 auto;display:flex;align-items:center;gap:.5rem;padding:.45rem .8rem;background:var(--card);border-bottom:1px solid var(--line2);max-width:560px;width:100%;margin:0 auto;}
+  .appbar[hidden]{display:none;}
+  .appbar .kw{font:700 .66rem/1 var(--mono);color:var(--muted);background:var(--card2);border-radius:999px;padding:.24rem .5rem;}
+  .appbar .ab-brand{border:none;background:none;color:var(--ink);font:750 .9rem/1 var(--sans);cursor:pointer;padding:.2rem .1rem;}
+  .appbar .ab-ico{margin-left:auto;display:flex;gap:.15rem;}
+  .appbar .ab-ico button{width:2rem;height:2rem;border:none;background:none;border-radius:9px;font-size:1.05rem;cursor:pointer;color:var(--ink);}
+  .appbar .ab-ico button.active{background:var(--green-bg);}
+  .cockpit{flex:0 0 auto;position:relative;display:flex;align-items:center;gap:.55rem;padding:.6rem .9rem;background:var(--card);border-bottom:1px solid var(--line2);max-width:560px;width:100%;margin:0 auto;}
+  .cockpit[hidden]{display:none;} .cockpit::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:var(--ai);}
+  .cockpit .ck-body{flex:1;min-width:0;max-height:2.6rem;overflow:hidden;} .cockpit .ck-name{display:none;}
+  .cockpit .ck-status{font-size:.9rem;font-weight:600;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;} .cockpit .ck-status .warn{color:var(--orange);font-weight:700;}
+  .cockpit{transition:filter .55s ease,transform .55s cubic-bezier(.2,.8,.2,1),padding .22s ease;}
+  .ck-chat{display:none;font-weight:750;font-size:.98rem;} .ck-x{display:none;margin-left:auto;width:1.9rem;height:1.9rem;border:none;background:var(--card2);border-radius:50%;color:var(--muted);font-size:.95rem;cursor:pointer;flex:0 0 auto;place-items:center;}
+  body.chatopen .cockpit .ck-status{display:none;} body.chatopen .ck-chat{display:block;} body.chatopen .ck-x{display:grid;} body.chatopen #stepper{display:none;}
+  body.kbopen .appbar{display:none;} body.kbopen .tbar{display:none;}
+  .qk[hidden]{display:none;} body.chatopen #slog{padding:.5rem .65rem;}
+  #stepper{flex:0 0 auto;max-width:560px;width:100%;margin:0 auto;padding:.4rem .9rem;} #stepper[hidden]{display:none;}
+  .backbar{width:100%;text-align:left;border:none;background:var(--card2);color:var(--green-ink);font:700 .82rem/1 var(--sans);border-radius:10px;padding:.5rem .7rem;cursor:pointer;}
+  #vPlan.on,#vProfil.on,#vKochbuch.on{overflow-y:auto;}
+  .appfoot{flex:0 0 auto;position:relative;background:var(--paper);border-top:1px solid var(--line2);padding:.55rem .9rem calc(.55rem + env(safe-area-inset-bottom));max-width:560px;width:100%;margin:0 auto;}
+  .appfoot[hidden]{display:none;}
+  .foot-row{display:flex;gap:.5rem;align-items:stretch;}
+  .faction{flex:1;border:none;border-radius:13px;background:var(--ai);color:#fff;font:800 .95rem/1 var(--sans);display:flex;align-items:center;justify-content:center;gap:.4rem;padding:.85rem;cursor:pointer;box-shadow:0 4px 14px color-mix(in oklab,var(--blue) 24%,transparent);}
+  .faction.ghost{background:var(--green-bg);color:var(--green-ink);box-shadow:none;} .faction[hidden]{display:none;}
+  .fchat{width:3.1rem;flex:0 0 auto;border:1px solid color-mix(in oklab,var(--green) 32%,var(--line));background:var(--card2);border-radius:13px;display:grid;place-items:center;font-size:1.25rem;cursor:pointer;position:relative;}
+  .fchat::after{content:"";position:absolute;top:.35rem;right:.35rem;width:.42rem;height:.42rem;border-radius:50%;background:var(--ai);}
+  .appfoot .coach{margin:0 0 .5rem;}
+  .kbgrid{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-top:.6rem;}
+  .kbcard{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--card);} .kbcard .kbh{height:64px;display:grid;place-items:center;font-size:1.8rem;background:linear-gradient(135deg,color-mix(in oklab,var(--green) 15%,var(--card)),color-mix(in oklab,var(--blue) 15%,var(--card)));} .kbcard .kbn{padding:.4rem .5rem;font-size:.8rem;font-weight:700;}
+  /* ── Onboarding-Reveal + Party ── */
+  #vOnb{position:fixed;inset:0;z-index:35;background:var(--paper);} #vOnb.onbexit{transform:translateX(103%);transition:transform .62s cubic-bezier(.3,.85,.2,1);}
+  .appbar,.cockpit,#stepper,.appfoot,#vPlan,#vProfil,#vKochbuch{transition:filter .55s ease,transform .55s cubic-bezier(.2,.8,.2,1);}
+  body.onbrevealing .appbar,body.onbrevealing .cockpit,body.onbrevealing #stepper,body.onbrevealing .appfoot,body.onbrevealing #vPlan,body.onbrevealing #vProfil,body.onbrevealing #vKochbuch{filter:blur(3.5px) brightness(.84) saturate(.92);transform:scale(.965);}
+  #party{position:absolute;inset:0;z-index:6;display:grid;place-content:center;justify-items:center;gap:.35rem;text-align:center;padding:1rem;background:var(--paper);}
+  #party[hidden]{display:none;} #party .pchef{font-size:3.6rem;animation:pbounce .7s cubic-bezier(.2,.9,.2,1.2) both;} #party .pt{font:800 1.7rem/1.05 var(--sans);letter-spacing:-.01em;} #party .ps{color:var(--muted);font-size:1rem;}
+  @keyframes pbounce{0%{transform:scale(.4) rotate(-8deg);opacity:0}45%{transform:scale(1.18) rotate(4deg)}70%{transform:scale(.94)}100%{transform:scale(1) rotate(0);opacity:1}}
+  #confetti{position:fixed;inset:0;width:100%;height:100%;z-index:60;pointer-events:none;}
+  .go.golos{background:var(--ai);color:#fff;border-color:transparent;font-weight:800;font-size:1rem;padding:.7rem 1.15rem;box-shadow:0 4px 14px color-mix(in oklab,var(--blue) 26%,transparent);}
+  /* ── Generierungs-Screen: „Die Woche entsteht" (ein Gesicht, echte Daten, überbrückt die Wartezeit) ── */
+  body.generating #vPlan .pl{overflow:hidden;}   /* Loader füllt exakt -> kein weißer Leerraum aus dem 9rem-Bottom-Padding */
+  .genwk{animation:glin .34s ease both;padding:.1rem 0 .2rem;display:flex;flex-direction:column;min-height:0;overflow:hidden;}
+  .genwk>.gscope,.genwk>.gthought,.genwk>.gfoot{flex:0 0 auto;}
+  .gfoot{display:flex;align-items:center;gap:.6rem;margin-top:.15rem;} .gfoot .gbar{flex:1;}
+  @keyframes glin{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+  .gscope{display:flex;flex-wrap:wrap;gap:.32rem;margin:.05rem 0 .78rem;}
+  .gschip{display:inline-flex;align-items:center;gap:.3rem;font-size:.73rem;font-weight:650;color:var(--muted);background:var(--card2);border:1px solid var(--line2);border-radius:999px;padding:.18rem .55rem;}
+  .gschip b{color:var(--ink);font-weight:750;}
+  .gschip.diet{color:var(--green-ink);background:var(--green-bg);border-color:color-mix(in oklab,var(--green) 34%,transparent);}
+  .gschip.no{color:var(--orange);border-color:color-mix(in oklab,var(--orange) 38%,transparent);}
+  .gstack{display:inline-flex;align-items:center;}
+  .gstack .gav{width:1.4rem;height:1.4rem;border-radius:50%;display:grid;place-items:center;font:800 .62rem/1 var(--sans);color:#fff;border:2px solid var(--card);margin-left:-.42rem;box-shadow:0 1px 2px rgba(0,0,0,.18);}
+  .gstack .gav:first-child{margin-left:0;}
+  .gstack .gav.more{background:var(--card2);color:var(--muted);border-color:var(--card);}
+  .gstack .gav.guest{box-shadow:0 0 0 2px var(--orange),0 1px 2px rgba(0,0,0,.18);}
+  .gschip .gstack{margin-right:.15rem;}
+  .gthought{height:3.6em;margin:.3rem 0 .25rem;transition:opacity .28s ease,transform .28s ease;overflow:hidden;}
+  .gthought.swap{opacity:0;transform:translateY(5px);}
+  .gtx{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-weight:650;font-size:.88rem;line-height:1.3;letter-spacing:-.01em;}
+  .gsrc{display:inline-flex;align-items:center;gap:.22rem;margin-top:.25rem;font:700 .62rem/1 var(--mono);letter-spacing:.04em;text-transform:uppercase;color:var(--muted);background:var(--card2);border:1px solid var(--line2);border-radius:999px;padding:.18rem .5rem;}
+  .gsrc::before{content:"↳";opacity:.75;font-weight:800;}
+  .gwk{display:flex;flex-direction:column;gap:.3rem;margin:.1rem 0 .55rem;flex:1 1 auto;min-height:0;justify-content:center;}
+  .gwrow{display:flex;align-items:stretch;gap:.55rem;padding:.22rem .4rem;border-radius:.7rem;border:1px solid transparent;opacity:.4;transform:translateX(-4px);flex:1 1 0;min-height:1.5rem;max-height:3.2rem;transition:opacity .42s cubic-bezier(.3,.8,.3,1),transform .42s cubic-bezier(.3,.8,.3,1),background .3s,border-color .3s,box-shadow .3s;box-sizing:border-box;}
+  .gwrow .gwd,.gwrow .gwtick{align-self:center;}
+  .gwrow.on,.gwrow.done{opacity:1;transform:none;}
+  .gwrow.on{background:var(--green-bg);border-color:color-mix(in oklab,var(--green) 26%,transparent);box-shadow:0 8px 22px -12px color-mix(in oklab,var(--green) 65%,transparent);}
+  .gwrow.off{opacity:.5;flex:0 0 auto;min-height:1.7rem;max-height:none;align-items:center;}
+  .gwrow .gwd{flex:0 0 auto;width:2rem;font-weight:800;font-size:.9rem;line-height:1;}
+  .gwrow.off .gwd{color:var(--muted);}
+  .gwtiles{display:flex;gap:.45rem;flex:1;min-width:0;align-self:stretch;}
+  .gwoff{flex:1;display:inline-flex;align-items:center;gap:.35rem;color:var(--muted);font-size:.8rem;font-weight:600;}
+  .gtile{position:relative;flex:1 1 0;min-width:0;height:auto;min-height:0;border-radius:.6rem;overflow:hidden;border:1px solid var(--line2);background:var(--card2);box-shadow:0 3px 8px -4px rgba(0,0,0,.14);container-type:size;}
+  .gtile .gph{position:absolute;inset:0;display:grid;place-items:center;line-height:1;font-size:1.2rem;font-size:52cqh;opacity:.34;transition:opacity .5s ease;}
+  .gtile.dev .gph{opacity:1;animation:gdev .6s cubic-bezier(.3,.8,.3,1) both;}
+  @keyframes gdev{0%{filter:blur(8px) saturate(.3);opacity:0;transform:scale(1.12)}60%{opacity:1}100%{filter:none;opacity:1;transform:none}}
+  .gtile::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 20%,rgba(255,255,255,.5) 50%,transparent 80%);transform:translateX(-120%);animation:gsh 1.2s ease-in-out infinite;}
+  .gtile.dev::after{opacity:0;animation:none;}
+  @keyframes gsh{to{transform:translateX(120%)}}
+  .gwtick{margin-left:auto;flex:0 0 auto;width:1.5rem;height:1.5rem;border-radius:50%;box-sizing:border-box;border:2px solid transparent;display:grid;place-items:center;color:transparent;font-weight:900;font-size:.82rem;opacity:0;transition:opacity .3s;}
+  .gwrow.on .gwtick{opacity:1;border-color:color-mix(in oklab,var(--green) 28%,transparent);border-top-color:var(--green);animation:gspin .7s linear infinite;}
+  .gwrow.done .gwtick{opacity:1;border-color:transparent;background:var(--green);color:#fff;animation:none;}
+  .gwrow.done .gwtick::after{content:"✓";}
+  @keyframes gspin{to{transform:rotate(360deg)}}
+  .gscan{display:flex;align-items:center;gap:.6rem;font-size:.83rem;margin:.15rem 0 .5rem;}
+  .gstat{flex:1;min-width:0;display:inline-flex;align-items:center;gap:.4rem;font-weight:700;color:var(--green-ink);transition:opacity .22s ease;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .gstat.swap{opacity:0;}
+  .gcount{flex:0 0 auto;font:800 .78rem/1 var(--mono);color:var(--muted);font-variant-numeric:tabular-nums;}
+  .gbar{height:5px;border-radius:5px;background:var(--line2);overflow:hidden;position:relative;}
+  .gbar i{position:absolute;top:0;bottom:0;left:0;width:0;border-radius:5px;background:var(--ai);transition:width .5s cubic-bezier(.3,.8,.3,1);}
+  .gbar.wait i{width:100%!important;animation:gpulse 1.4s ease-in-out infinite;}
+  @keyframes gpulse{0%,100%{opacity:.5}50%{opacity:1}}
+  .chef.mid.busy{animation:gbusy 1.6s ease-in-out infinite;}
+  .chef.mid.busy .ring{animation:cspin 2.4s linear infinite;opacity:1;}
+  .chef.mid.busy .steam{opacity:.9;animation:csteam 2.8s ease-in-out infinite;}
+  @keyframes gbusy{0%,100%{box-shadow:0 0 0 2px color-mix(in oklab,var(--green) 24%,transparent),0 0 10px color-mix(in oklab,var(--green) 22%,transparent)}50%{box-shadow:0 0 0 4px color-mix(in oklab,var(--blue) 30%,transparent),0 0 18px color-mix(in oklab,var(--green) 40%,transparent)}}
+  .genreveal .vday{animation:glrise .5s cubic-bezier(.2,.8,.2,1) both;}
+  .genreveal .vday:nth-child(2){animation-delay:.07s}.genreveal .vday:nth-child(3){animation-delay:.14s}.genreveal .vday:nth-child(4){animation-delay:.21s}.genreveal .vday:nth-child(5){animation-delay:.28s}.genreveal .vday:nth-child(6){animation-delay:.35s}.genreveal .vday:nth-child(n+7){animation-delay:.42s}
+  @keyframes glrise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){.gtile.dev .gph,.gtile::after,.chef.mid.busy,.chef.mid.busy .ring,.chef.mid.busy .steam,.gbar.wait i,.genreveal .vday{animation:none!important}.gwrow{opacity:1!important;transform:none!important}}
+  @media (max-height:700px){.gthought{display:none;}}   /* kleine Screens (iPhone SE): Gedanke ausblenden, View nicht überladen */
+</style>
+</head>
+<body>
+  <header class="appbar" id="appbar" hidden>
+    <span class="kw" id="kw">KW –</span>
+    <button class="ab-brand" data-nav="week">🗓️ Diese Woche</button>
+    <span class="ab-ico"><button data-nav="kochbuch" title="Kochbuch">📖</button><button data-nav="profil" title="Profil">⚙️</button></span>
+  </header>
+  <div class="cockpit" id="cockpit" hidden><span class="chef mid" id="ckav"><span class="cf">🧑‍🍳</span><i class="ring"></i><b class="steam">✨</b></span><div class="ck-body"><span class="ck-name" id="ckname">Koch</span><span class="ck-status" id="ckstatus">…</span><span class="ck-chat">Chat mit dem Koch</span></div><button class="ck-x" id="closeA" aria-label="Chat schließen">✕</button><p class="sub" id="plsub" hidden></p></div>
+  <div class="stepper" id="stepper" hidden></div>
+
+  <div class="view on" id="vOnb">
+    <div class="cheroWrap"><span class="chef hero" id="chero"><span class="cf">🧑‍🍳</span><i class="ring"></i><b class="steam">✨</b></span></div>
+    <div class="head"><span class="oc" data-oc="1">👤 Wer</span><span class="oc" data-oc="2">🥗 Ernährung</span><span class="oc" data-oc="3">🎯 Wichtig</span><span class="oc" data-oc="4">🗓️ Rhythmus</span></div>
+    <div class="log" id="log"></div>
+    <div class="inbar" id="inbar"><input id="text" placeholder="Antworten oder erzählen …" aria-label="Nachricht"><button class="snd" id="send">→</button></div>
+    <div class="party" id="party" hidden><div class="pchef">🧑‍🍳</div><div class="pt">🎉 Geschafft!</div><div class="ps">Eure Woche ist startklar.</div></div>
+  </div>
+
+  <div class="view" id="vPlan">
+    <div class="pl">
+      <div id="planOnly">
+      <div class="card"><div class="chd">Wer isst wann?</div><p class="cnote" id="wwsub" style="margin:.1rem 0 .4rem"></p>
+        <div class="legend2" id="legend"></div>
+        <div class="agenda" id="agenda"></div>
+        <div class="chips" style="margin-top:.5rem"><button class="chip add" id="addGast">＋ Gast / Besonderheit</button></div>
+      </div>
+      <details class="acc"><summary>🔍 Was fließt in die Planung ein?</summary><ul class="tb" id="transp"></ul></details>
+      </div>
+      <div id="planwrap">
+        <div id="planEmpty" class="empty">🍽️ Noch kein Essensplan. <button class="btn-s" data-act="gen">✨ Vorschläge holen</button><br><span style="font-size:.8rem">…passend zu wer da ist, Diäten, Zeit &amp; Budget.</span></div>
+        <div id="planCards"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="view" id="vProfil">
+    <div class="pl">
+      <div class="card"><div class="chd">👤 Personen &amp; Präferenzen</div><p class="cnote">Allergie/Ernährung = <b style="color:var(--red)">hart</b> · Vorliebe/Abneigung = weich.</p><div id="pfPersons"></div></div>
+      <div class="card"><div class="chd">🎯 Grundsätze</div><div id="pfGrund"></div></div>
+      <div class="card"><div class="chd">🗓️ Rhythmus &amp; feste Regeln</div><p class="cnote">Euer Standard – wird auf „Diese Woche" automatisch übernommen.</p><div id="pfRegeln"></div></div>
+    </div>
+  </div>
+
+  <div class="view" id="vKochbuch">
+    <div class="pl">
+      <div class="card"><div class="chd">📖 Kochbuch</div><p class="cnote">Eure Rezept-Bibliothek – wächst mit jeder gekochten Woche. <b>Kommt im Rezept-Sprint.</b></p></div>
+      <div class="kbgrid" id="kbgrid"></div>
+    </div>
+  </div>
+
+  <div class="view" id="vChat">
+    <div class="mchead"><span class="mcav">🧑‍🍳</span><span class="mchtx"><b>Koch-Assistent</b><span class="mcsub" id="mcsub">plant eure Woche</span></span></div>
+    <div class="mclog" id="mclog"></div>
+  </div>
+
+  <footer class="appfoot" id="appfoot" hidden>
+    <div class="coach" id="coach" hidden>🎉 <b>Geschafft!</b> Eure Woche ist startklar — <b>hol dir unten die Vorschläge</b>. 👇<button class="ok" id="coachOk">Alles klar</button></div>
+    <div class="foot-row"><button class="faction" id="faction" data-act=""></button><button class="fchat" id="openA" aria-label="Chat öffnen">💬</button></div>
+  </footer>
+
+  <div class="idov" id="idov" hidden><div class="idcard"><h3>🧑‍🍳 Wer bist du?</h3><p class="cnote">Stimm mit ab, was diese Woche gekocht wird – ohne App, ohne Account.</p><div class="idchips" id="idchips"></div></div></div>
+  <div class="idov" id="shareov" hidden><div class="idcard"><h3>🔗 Voting teilen</h3><p class="cnote">Link kopieren und per WhatsApp schicken – jede/r kann ohne App abstimmen.</p><input class="shareurl" id="shareurl" readonly><div class="sharebtns"><button class="btn-s" id="shareCopy">📋 Link kopieren</button><a class="btn-s wa" id="shareWa" target="_blank" rel="noopener">🟢 WhatsApp</a><button class="lnk" id="shareNative" hidden>📲 Teilen…</button><button class="lnk" id="shareClose">Schließen</button></div><span class="cnote" id="sharemsg"></span></div></div>
+  <div class="sback" id="sback"></div>
+  <div class="sheet" id="sheet">
+    <div class="qk" id="qk" hidden></div>
+    <div class="log" id="slog"></div>
+    <div class="sin"><input id="stext" placeholder="Sag's einfach …"><button class="snd" id="ssend">→</button></div>
+  </div>
+  <canvas id="confetti"></canvas>
+
+<script>
+(function(){
+  var SB={url:"https://qwuoynhmbisodcqasevs.supabase.co",key:"sb_publishable_bWwScjbczB4KfSc9faBUjA_wDf-4EE3"};
+  var H={apikey:SB.key,Authorization:"Bearer "+SB.key,"Content-Type":"application/json"};
+  var REST=SB.url.replace(/\/$/,"")+"/rest/v1/", FN=SB.url.replace(/\/$/,"")+"/functions/v1/assistent";
+  var q=new URLSearchParams(location.search);
+  var HH="flo-esra-prod";   // PROD: fester Haushalt, isoliert vom Demo-Rumspielen; ?h wird bewusst ignoriert
+  var _hhEl=document.getElementById("hh");if(_hhEl)_hhEl.textContent=HH;
+  var reduce=!!(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  var DOW=['Mo','Di','Mi','Do','Fr','Sa','So'];
+  // Mobile: Layout an die SICHTBARE Viewport-Höhe koppeln – sonst schiebt die Tastatur Header+Chat aus dem Bild
+  function vvFit(){var vv=window.visualViewport;if(!vv)return;
+    document.body.style.height=vv.height+'px';
+    var kb=Math.max(0,window.innerHeight-vv.height-vv.offsetTop);
+    document.documentElement.style.setProperty('--kb',kb+'px');
+    document.body.classList.toggle('kbopen',kb>80);                 // Tastatur offen -> obere Leisten ausblenden
+    if(document.body.classList.contains('chatopen')){var ck=document.getElementById('cockpit');if(ck)document.documentElement.style.setProperty('--drawerTop',Math.max(0,Math.round(ck.getBoundingClientRect().bottom))+'px');}
+    ['log','slog'].forEach(function(id){var el=document.getElementById(id);if(el)el.scrollTop=el.scrollHeight;});}
+  if(window.visualViewport){window.visualViewport.addEventListener('resize',vvFit);window.visualViewport.addEventListener('scroll',vvFit);}
+  window.addEventListener('orientationchange',function(){setTimeout(vvFit,200);});vvFit();
+  function rest(m,t,b){return fetch(REST+t,{method:m,headers:Object.assign(m==='POST'?{Prefer:'return=representation'}:{},H),body:b?JSON.stringify(b):undefined}).then(function(r){return r.text().then(function(x){return x?JSON.parse(x):null;});});}
+  function post(t,b){return rest('POST',t,b);} function get(t){return rest('GET',t);}
+  function esc(s){var d=document.createElement('div');d.textContent=s==null?'':String(s);return d.innerHTML;}
+  function initials(n){return (n||'?').trim().charAt(0).toUpperCase();}
+
+  // ── Onboarding-Chat ──
+  var log=document.getElementById('log'),input=document.getElementById('text'),sendBtn=document.getElementById('send');
+  var state={persons:[],ids:{},nogos:[],grund:[],rhythm:{}},curHandler=null,advanceFn=null,busy=false;
+  function scr(){log.scrollTo?log.scrollTo({top:log.scrollHeight,behavior:reduce?'auto':'smooth'}):log.scrollTop=log.scrollHeight;}
+  function wait(ms,fn){setTimeout(fn,reduce?0:ms);}
+  function me(t){var d=document.createElement('div');d.className='msg me';d.textContent=t;log.appendChild(d);scr();}
+  function typing(){var d=document.createElement('div');d.className='msg bot typing';d.innerHTML='<span></span><span></span><span></span>';log.appendChild(d);scr();return d;}
+  function head(n,st){var el=document.querySelector('.oc[data-oc="'+n+'"]');if(el){el.classList.remove('active','done');if(st)el.classList.add(st);}}
+  function ask(htmlStr,build,opts){busy=true;curHandler=null;advanceFn=null;var t=typing();
+    wait(560+Math.floor(Math.random()*260),function(){t.remove();var b=document.createElement('div');b.className='msg bot';b.innerHTML=htmlStr;log.appendChild(b);scr();
+      if(build){wait(reduce?0:240,function(){var c=document.createElement('div');c.className='ctrl';b.appendChild(c);build(b,c);scr();busy=false;if(opts&&opts.focus)input.focus();});}
+      else{busy=false;if(opts&&opts.then)wait(reduce?0:750,opts.then);}});}
+  function wireSug(c){c.querySelectorAll('.chip.sug').forEach(function(x){x.addEventListener('click',function(){x.classList.toggle('sel');});});}
+  function sel(c){return [].slice.call(c.querySelectorAll('.chip.sug.sel')).map(function(x){return x.textContent.replace(/[^\p{L} ]/gu,'').trim();});}
+  // Hybrid-Parsing: schnelle Heuristik + AI-Fallback (nicht-schreibender parse-Modus der Edge Function)
+  function aiParse(kind,text){return fetch(FN,{method:'POST',headers:H,body:JSON.stringify({parse:kind,text:text,haushalt:HH})}).then(function(r){return r.json();}).then(function(x){return x&&x.parsed;}).catch(function(){return null;});}
+  function parseNames(v){return (v||'').split(/,|;|\bund\b|&|\/|\+/i).map(function(s){return s
+    .replace(/^\s*(ich bin|ich heiße|ich heisse|wir sind|das ist|das sind|hier ist|hier sind|und|auch|noch|dann|genau|also)\s+/i,'')
+    .replace(/\s+(ist|sind|isst|essen|esse|kocht|kochen|koche|kommt|komme|macht|mache|mag|will)\b.*$/i,'')
+    .replace(/\s+(mit|dabei|dazu|auch)\b.*$/i,'')
+    .replace(/[^\p{L}\p{M}\s'’-]/gu,'').replace(/\s{2,}/g,' ').trim()
+    .replace(/(^|\s)(\p{L})/gu,function(m,p,ch){return p+ch.toUpperCase();});
+  }).filter(Boolean);}
+  function pushName(n,rolle){if(!n)return;state.persons.push(n);state.roles.push(rolle==='kind'?'kind':'erwachsen');}
+  function nameNeedsAI(raw,parsed){
+    if(/\b(ich|mich|mir|mein|meine|meinem|unser|unsere|unserem|frau|mann|freund|freundin|partner|partnerin|tochter|sohn|kind|kinder|eltern|oma|opa|baby)\b/i.test(raw))return true;
+    return parsed.some(function(n){return n.split(/\s+/).length>2;});
+  }
+
+  function stepIntro(){stepPersons();}
+  function stepPersons(){head(1,'active');state.roles=state.roles||[];
+    ask('Hi! 🧑‍🍳 Ich richte mit dir die App ein.<br><b>Wer kocht &amp; isst mit?</b>',function(b,c){
+      input.placeholder='Name eintippen – z. B. du …';
+      c.innerHTML='<div class="chips" data-list></div><button class="go" data-go disabled>Passt ›</button><div class="cnote" style="margin-top:.4rem">↓ Namen unten eintippen (Enter). Tippe 👤 an, um jemanden als <b>Kind</b> 🧒 zu markieren.</div>';
+      var list=c.querySelector('[data-list]'),go=c.querySelector('[data-go]');
+      function rp(){list.innerHTML=state.persons.map(function(n,i){return '<span class="chip d"><span class="rl" data-role="'+i+'" title="Erwachsen/Kind umschalten">'+(state.roles[i]==='kind'?'🧒':'👤')+'</span> '+esc(n)+' <span class="x" data-rm="'+i+'">✕</span></span>';}).join('');
+        list.querySelectorAll('[data-rm]').forEach(function(x){x.addEventListener('click',function(){var i=+x.getAttribute('data-rm');state.persons.splice(i,1);state.roles.splice(i,1);rp();});});
+        list.querySelectorAll('[data-role]').forEach(function(x){x.addEventListener('click',function(){var i=+x.getAttribute('data-role');state.roles[i]=state.roles[i]==='kind'?'erwachsen':'kind';rp();});});
+        go.disabled=!state.persons.length;go.textContent=state.persons.length?('Weiter mit '+state.persons.join(' & ')+' ›'):'Passt ›';}
+      function addN(v){var p=parseNames(v);if(nameNeedsAI(v,p)){aiAddN(v);}else{p.forEach(function(n){pushName(n);});rp();}}
+      function aiAddN(v){var ty=typing();busy=true;
+        aiParse('namen',v).then(function(r){ty.remove();busy=false;
+          if(r&&r.namen&&r.namen.length){r.namen.forEach(function(x){pushName(String(x.name||'').trim(),x.rolle);});}
+          else{parseNames(v).forEach(function(n){pushName(n);});}   // Fallback: Heuristik
+          rp();});}
+      go.addEventListener('click',function(){if(!state.persons.length||busy)return;
+        Promise.all(state.persons.map(function(n,i){return post('personen',{name:n,haushalt:HH,sort:i+1,rolle:state.roles[i]||'erwachsen'}).then(function(r){if(r&&r[0])state.ids[n]=r[0].id;});}))
+          .then(function(){me(state.persons.join(' & '));head(1,'done');stepNogos();});});
+      curHandler=function(t){addN(t);};advanceFn=function(){go.click();};rp();
+    },{focus:true});}
+  function stepNogos(){head(2,'active');input.placeholder='Antworten oder erzählen …';
+    var diet=[['🍽️','alles'],['🥗','vegetarisch'],['🌱','vegan'],['🐟','pescetarisch']];
+    var alg=[['🥜 Nüsse','Nüsse','allergie'],['🌾 Gluten','Gluten','allergie'],['🥛 Laktose','Laktose','allergie'],['🐷 kein Schwein','kein Schweinefleisch','ernaehrungsform']];
+    ask('Super, <b>'+esc(state.persons.join(' & '))+'</b> ✓<br>Kurz zum Essen: <b>Wie ernährt ihr euch?</b>',function(b,c){
+      c.innerHTML='<div class="chips" data-diet>'+diet.map(function(d){return '<span class="chip sug diet'+(d[1]==='alles'?' sel':'')+'" data-v="'+d[1]+'">'+d[0]+' '+d[1]+'</span>';}).join('')+'</div>'
+        +'<div class="cnote" style="margin:.3rem 0 0">Etwas anderes (halal, koscher, Low-Carb …)? Sag&apos;s mir einfach unten.</div>'
+        +'<div class="cnote" style="margin:.55rem 0 .2rem">⛔ Und was <b>geht gar nicht?</b> <span style="color:var(--muted)">(Allergien &amp; Tabus)</span></div>'
+        +'<div class="chips" data-alg>'+alg.map(function(a){return '<span class="chip sug h" data-art="'+a[2]+'" data-v="'+esc(a[1])+'">'+a[0]+'</span>';}).join('')+'</div>'
+        +'<button class="go" data-go style="margin-top:.55rem">Weiter ›</button>';
+      var dw=c.querySelector('[data-diet]'),aw=c.querySelector('[data-alg]');
+      dw.querySelectorAll('.chip.sug').forEach(function(x){x.addEventListener('click',function(){dw.querySelectorAll('.chip.sug').forEach(function(y){y.classList.remove('sel');});x.classList.add('sel');});}); // Ernährungsweise = Einfachauswahl (Ziel)
+      aw.querySelectorAll('.chip.sug').forEach(function(x){x.addEventListener('click',function(){x.classList.toggle('sel');});});           // Allergien/Tabus = Mehrfach (Verbot)
+      var go=c.querySelector('[data-go]');
+      go.addEventListener('click',function(){if(busy)return;
+        var dsel=dw.querySelector('.chip.sug.sel'),dv=dsel?dsel.getAttribute('data-v'):'alles';
+        var sels=[].slice.call(aw.querySelectorAll('.chip.sug.sel'));
+        var proms=[];state.persons.forEach(function(n){var pid=state.ids[n];if(!pid)return;
+          if(dv&&dv!=='alles')proms.push(post('praeferenzen',{person_id:pid,art:'ernaehrungsform',wert:dv,hart:true,haushalt:HH}));
+          sels.forEach(function(x){proms.push(post('praeferenzen',{person_id:pid,art:x.getAttribute('data-art')||'allergie',wert:x.getAttribute('data-v'),hart:true,haushalt:HH}));});});
+        var labels=sels.map(function(x){return x.getAttribute('data-v');});state.nogos=labels;
+        var parts=[];if(dv!=='alles')parts.push(dv);if(labels.length)parts.push(labels.join(', '));
+        Promise.all(proms).then(function(){me(parts.join(' · ')||'alles, keine Tabus');head(2,'done');stepGrund();});});
+      function addTabu(wert,art){if(!wert)return;var s=document.createElement('span');s.className='chip sug h sel';s.setAttribute('data-art',art==='ernaehrungsform'?'ernaehrungsform':'allergie');s.setAttribute('data-v',wert);s.textContent='✨ '+wert;s.addEventListener('click',function(){s.classList.toggle('sel');});aw.appendChild(s);}
+      function normT(s){return (s||'').toLowerCase().replace(/ä/g,'a').replace(/ö/g,'o').replace(/ü/g,'u').replace(/ß/g,'ss').replace(/^kein(e|en)?\s+/,'').replace(/(allergie|unvertraglichkeit|intoleranz)$/,'').replace(/[^a-z]/g,'');}
+      function selectOrAddTabu(wert,art){var w=normT(wert);if(!w)return;var found=null;
+        aw.querySelectorAll('.chip.sug').forEach(function(c){var cv=normT(c.getAttribute('data-v'));if(!cv)return;if(cv===w||(Math.min(cv.length,w.length)>=4&&(cv.indexOf(w)>=0||w.indexOf(cv)>=0)))found=c;});
+        if(found)found.classList.add('sel');else addTabu(wert,art);}
+      function addDiet(name){var v=(name||'').toString().trim();if(!v||v.toLowerCase()==='null'||v.toLowerCase()==='none')return;
+        var ex=dw.querySelector('.chip.sug[data-v="'+v.replace(/"/g,'')+'"]');
+        if(!ex){ex=document.createElement('span');ex.className='chip sug diet';ex.setAttribute('data-v',v);ex.textContent='✨ '+v;ex.addEventListener('click',function(){dw.querySelectorAll('.chip.sug').forEach(function(y){y.classList.remove('sel');});ex.classList.add('sel');});dw.appendChild(ex);}
+        dw.querySelectorAll('.chip.sug').forEach(function(y){y.classList.remove('sel');});ex.classList.add('sel');}
+      curHandler=function(t){me(t);var ty=typing();busy=true;
+        aiParse('ernaehrung',t).then(function(p){ty.remove();busy=false;
+          if(p){
+            if(p.diet)addDiet(p.diet);   // benannte Ernährungsweise (halal, koscher, low-carb, …) als grüner Chip
+            (p.tabus||[]).forEach(function(x){selectOrAddTabu(String(x.wert||'').trim(),x.art);});
+          } else { selectOrAddTabu(t,'allergie'); }  // Fallback: als Allergie/Tabu
+        });};
+      advanceFn=function(){go.click();};});}
+  function stepGrund(){head(3,'active');
+    var eff=[['⚡','meist schnell'],['🍳','mal so, mal so'],['🕒','gern mit Zeit']];
+    var wic=['🥦 viel Gemüse','💪 proteinreich','🥩 wenig Fleisch','🔄 Abwechslung','💶 günstig'];
+    ask('Fast fertig! <b>Wie viel Zeit</b> habt ihr abends fürs Kochen – und was ist euch <b>wichtig?</b>',function(b,c){
+      c.innerHTML='<div class="chips" data-eff>'+eff.map(function(e){return '<span class="chip sug eff'+(e[1]==='mal so, mal so'?' sel':'')+'" data-v="'+e[1]+'">'+e[0]+' '+e[1]+'</span>';}).join('')+'</div>'
+        +'<div class="cnote" style="margin:.55rem 0 .2rem">🎯 Wichtig beim Essen?</div>'
+        +'<div class="chips" data-wic>'+wic.map(function(x){return '<span class="chip sug g">'+x+'</span>';}).join('')+'</div>'
+        +'<button class="go" data-go style="margin-top:.55rem">Weiter ›</button>';
+      var ew=c.querySelector('[data-eff]'),ww=c.querySelector('[data-wic]');
+      ew.querySelectorAll('.chip.sug').forEach(function(x){x.addEventListener('click',function(){ew.querySelectorAll('.chip.sug').forEach(function(y){y.classList.remove('sel');});x.classList.add('sel');});}); // Aufwand = Einfachauswahl
+      ww.querySelectorAll('.chip.sug').forEach(function(x){x.addEventListener('click',function(){x.classList.toggle('sel');});});           // Wichtig = Mehrfach
+      var go=c.querySelector('[data-go]');
+      go.addEventListener('click',function(){if(busy)return;
+        var esel=ew.querySelector('.chip.sug.sel'),ev=esel?esel.getAttribute('data-v'):'';
+        var wics=[].slice.call(ww.querySelectorAll('.chip.sug.sel')).map(function(x){return x.textContent.replace(/[^\p{L} ]/gu,'').trim();});
+        var grund=[];if(ev&&ev!=='mal so, mal so')grund.push('Aufwand: '+ev);wics.forEach(function(w){grund.push(w);});state.grund=grund;
+        Promise.all(grund.map(function(w){return post('regeln',{typ:'wunsch',text:w,haushalt:HH});}))
+          .then(function(){me(grund.join(', ')||'—');head(3,'done');stepRhythm();});});
+      curHandler=function(t){var s=document.createElement('span');s.className='chip sug g sel';s.textContent='✨ '+t;s.addEventListener('click',function(){s.classList.toggle('sel');});ww.appendChild(s);me(t);};
+      advanceFn=function(){go.click();};});}
+  function stepRhythm(){head(4,'active');var names=state.persons;
+    // Leichte Frage statt Wochen-Raster (das würde wie die Planen-Seite aussehen). Raster nur, wenn wirklich jemand regelmäßig weg ist.
+    ask('Fast fertig! Eine Sache noch: <b>Seid ihr abends meistens alle da?</b>',function(b,c){
+      c.innerHTML='<div class="chips"><button class="go" data-yes>👍 Ja, fast immer</button><button class="go" data-no style="background:var(--orange-bg);color:var(--orange);border-color:var(--orange-line)">📅 Manche sind regelmäßig weg</button></div>'
+        +'<div class="cnote" style="margin-top:.4rem">Den Rest der Woche pflegt ihr später einfach auf „Diese Woche" – nur wenn mal was anders ist.</div>';
+      var yes=c.querySelector('[data-yes]'),no=c.querySelector('[data-no]');
+      yes.addEventListener('click',function(){if(busy)return;me('meistens alle da');head(4,'done');stepDone();});
+      no.addEventListener('click',function(){if(busy)return;
+        c.innerHTML='<div class="cnote" style="margin-bottom:.5rem">Tippt die Tage an, an denen jemand <b>regelmäßig weg</b> ist – der Rest gilt als „da".</div>'
+          +names.map(function(n,i){return '<div class="wegrow" data-p="'+i+'"><span class="wegname">'+(i===0?'🧑 ':'👤 ')+esc(n)+'</span><span class="wegdays">'+DOW.map(function(d){return '<button class="dchip" data-d="'+d+'">'+d+'</button>';}).join('')+'</span></div>';}).join('')
+          +'<button class="go" data-go style="margin-top:.5rem">Fertig ✓</button>';
+        c.querySelectorAll('.dchip').forEach(function(x){x.addEventListener('click',function(){x.classList.toggle('on');});});
+        var go=c.querySelector('[data-go]');
+        go.addEventListener('click',function(){if(busy)return;var proms=[];
+          [].slice.call(c.querySelectorAll('.wegrow')).forEach(function(row){var pid=state.ids[names[+row.getAttribute('data-p')]];
+            row.querySelectorAll('.dchip.on').forEach(function(ch){if(pid)proms.push(post('regeln',{person_id:pid,typ:'abwesenheit',wochentag:ch.getAttribute('data-d'),text:'regelmäßig abends weg',haushalt:HH}));});});
+          Promise.all(proms).then(function(){me('Rhythmus gesetzt');head(4,'done');stepDone();});});
+        advanceFn=function(){go.click();};scr();});
+      curHandler=function(t){me(t);};advanceFn=function(){yes.click();};});}
+  function stepDone(){ask('Perfekt — ich hab alles eingetragen. <b>Bereit?</b> 🎉',function(b,c){c.innerHTML='<div class="chips"><button class="go golos" data-golos>Los geht\'s →</button></div>';var g=c.querySelector('[data-golos]');if(g)g.addEventListener('click',dockAndEnter);});}
+
+  function sendText(){if(busy)return;var v=(input.value||'').trim();if(!v){if(advanceFn)advanceFn();return;}if(curHandler)curHandler(v);input.value='';scr();}
+  sendBtn.addEventListener('click',sendText);
+  input.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();sendText();}});
+
+  // ── App-Modus: Nav, Planen, Profil (alles scoped auf HH) ──
+  function isoWeek(d){var t=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()));var dd=(t.getUTCDay()+6)%7;t.setUTCDate(t.getUTCDate()-dd+3);var f=new Date(Date.UTC(t.getUTCFullYear(),0,4));var w=1+Math.round(((t-f)/864e5-3+((f.getUTCDay()+6)%7))/7);return{jahr:t.getUTCFullYear(),kw:w};}
+  var DATA={persons:[],regeln:[],ereignisse:[],woche:null,stimmen:[]};
+  var voteMode=!!q.get('vote'), VOTER={id:null,name:null}, vView=null; // vView: null=auto | 'plan' | 'vote'
+  var HART={allergie:1,ernaehrungsform:1}, ARTLBL={allergie:'Allergie',ernaehrungsform:'Ernährung',abneigung:'mag nicht',vorliebe:'mag'};
+  var TYPLBL={abwesenheit:'abwesend',anwesenheit:'anwesend',hinweis:'Hinweis'};
+  // Assistent-Widget: rotierender Beispiel-Hinweis (lehrt Fähigkeiten & Reichweite) + einmaliger Coachmark
+  var ROT=['Freitag kommt Besuch','Anna ist ab jetzt vegetarisch','diese Woche wenig Fleisch','Montag bin ich nicht da','Max isst jetzt mit','uns ist gesund wichtig'];
+  var rotI=0,rotTimer=null,coached=false;
+  function startRot(){var el=document.getElementById('askrot');if(!el||rotTimer)return;
+    rotTimer=setInterval(function(){rotI=(rotI+1)%ROT.length;var h=el.parentNode;
+      if(reduce){el.textContent=ROT[rotI];return;}
+      h.style.opacity='0';setTimeout(function(){el.textContent=ROT[rotI];h.style.opacity='';},300);},2800);}
+  function showCoach(){if(coached)return;coached=true;var c=document.getElementById('coach');if(c)c.hidden=false;}
+  function hideCoach(){var c=document.getElementById('coach');if(c)c.hidden=true;}
+  var _ok=document.getElementById('coachOk');if(_ok)_ok.addEventListener('click',function(e){e.stopPropagation();hideCoach();});
+  function revealApp(){['appbar','cockpit','stepper','appfoot'].forEach(function(id){var e=document.getElementById(id);if(e)e.hidden=false;});
+    document.getElementById('kw').textContent='KW '+isoWeek(new Date()).kw;navTo('week');refresh();}
+  function enterApp(){document.getElementById('vOnb').classList.remove('on');document.getElementById('inbar').style.display='none';revealApp();showCoach();}
+  // Andock-Sequenz: der Chat faltet sich in die Pill, der Chef-Avatar fliegt mit (Shared Element)
+  // Der Koch als geteiltes Element: fliegt im Bogen von A→B, skaliert scharf runter, ✨-Schweif auf der Bahn, weiche Landung.
+  function dropSpark(x,y){
+    var s=document.createElement('b');s.className='cspark';s.textContent='✨';
+    s.style.left=(x+(Math.random()*10-5))+'px';s.style.top=(y+(Math.random()*8-4))+'px';
+    s.style.fontSize=(0.5+Math.random()*0.28)+'rem';
+    document.body.appendChild(s);setTimeout(function(){if(s.parentNode)s.remove();},560);
+  }
+  function landRipple(b){
+    if(reduce)return;var r=document.createElement('span');r.className='cland';
+    var d=Math.max(b.width,b.height);r.style.width=r.style.height=d+'px';
+    r.style.left=(b.left+b.width/2)+'px';r.style.top=(b.top+b.height/2)+'px';
+    document.body.appendChild(r);setTimeout(function(){if(r.parentNode)r.remove();},520);
+  }
+  function coinFly(fromEl,toEl,arc,opt){
+    opt=opt||{};
+    if(reduce||!fromEl||!toEl){if(toEl)toEl.style.visibility='';return;}
+    var a=opt.fromRect||fromEl.getBoundingClientRect();
+    var b=opt.toRect||toEl.getBoundingClientRect();
+    if(!a.width||!b.width){toEl.style.visibility='';return;}
+    var BASE=Math.max(a.width,b.width,40);                 // groß rendern, nur runterskalieren → scharfes Emoji
+    var fly=document.createElement('span');fly.className='chef flychef';fly.style.setProperty('--sz',BASE+'px');
+    fly.innerHTML='<span class="cf">🧑‍🍳</span><i class="ring"></i>';document.body.appendChild(fly);
+    var sA=a.width/BASE, sB=b.width/BASE, sMid=(sA+sB)/2*1.05;
+    var midx=(a.left+b.left)/2;
+    var lift=arc==='rise'?Math.max(52,Math.abs(a.top-b.top)*0.22):Math.max(30,Math.abs(a.top-b.top)*0.14);
+    var apex=Math.min(a.top,b.top)-lift, tilt=arc==='rise'?-7:7;
+    fromEl.style.visibility='hidden';toEl.style.visibility='hidden';
+    var an=fly.animate([
+      {transform:'translate('+a.left+'px,'+a.top+'px) scale('+sA+') rotate(0deg)',offset:0},
+      {transform:'translate('+midx+'px,'+apex+'px) scale('+sMid+') rotate('+tilt+'deg)',offset:.5},
+      {transform:'translate('+b.left+'px,'+b.top+'px) scale('+sB+') rotate(0deg)',offset:1}
+    ],{duration:arc==='rise'?520:640,easing:'cubic-bezier(.3,.05,.2,1)',fill:'both'});
+    var last=-1;                                           // ✨ exakt dort, wo der Flieger gerade ist
+    (function tick(ts){if(an.playState==='finished'||!fly.parentNode)return;
+      if(last<0||ts-last>62){last=ts;var r=fly.getBoundingClientRect();dropSpark(r.left+r.width/2,r.top+r.height*0.42);}
+      requestAnimationFrame(tick);})(0);
+    an.onfinish=function(){
+      if(fly.parentNode)fly.remove();fromEl.style.visibility='';toEl.style.visibility='';
+      try{toEl.animate([{transform:'scale(.86)'},{transform:'scale(1.07)',offset:.5},{transform:'scale(1)'}],{duration:340,easing:'cubic-bezier(.2,.85,.25,1)'});}catch(e){}
+      landRipple(b);
+    };
+  }
+  // Zielposition des Chat-Kochs messen, BEVOR das Sheet aufklappt (sonst mitten in der Transition falsch).
+  function sheetChefRect(scf){
+    var prev=sheet.style.transition;sheet.style.transition='none';
+    var was=sheet.classList.contains('open');sheet.classList.add('open');
+    var r=scf.getBoundingClientRect();
+    if(!was)sheet.classList.remove('open');sheet.style.transition=prev;return r;
+  }
+  var _cv,_ctx,_parts=[],_raf=null;
+  function fireConfetti(){ if(reduce)return; var cv=document.getElementById('confetti');if(!cv)return;_cv=cv;_ctx=_ctx||cv.getContext('2d');
+    var W=cv.width=cv.offsetWidth||window.innerWidth,H=cv.height=cv.offsetHeight||window.innerHeight;
+    var cols=['#3f9b2f','#2472c8','#f5c542','#ff6b6b','#8bd97a','#5aa2ea','#ffb23e'];
+    for(var i=0;i<130;i++)_parts.push({x:Math.random()*W,y:-20-Math.random()*H*0.6,vx:(Math.random()-0.5)*3.2,vy:2.4+Math.random()*3.4,g:0.05+Math.random()*0.05,rot:Math.random()*6.28,vr:(Math.random()-0.5)*0.45,w:5+Math.random()*5,h:8+Math.random()*7,c:cols[i%cols.length]});
+    if(!_raf)_raf=requestAnimationFrame(_ctick);
+  }
+  function _ctick(){var cv=_cv,ctx=_ctx;if(!cv||!ctx){_raf=null;return;}var W=cv.width,H=cv.height;ctx.clearRect(0,0,W,H);var alive=false;
+    for(var i=0;i<_parts.length;i++){var p=_parts[i];if(p.y>H+40)continue;alive=true;p.vy+=p.g;p.vx*=0.995;p.x+=p.vx;p.y+=p.vy;p.rot+=p.vr;ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.rot);ctx.fillStyle=p.c;ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);ctx.restore();}
+    _parts=_parts.filter(function(p){return p.y<=H+40;});
+    if(alive)_raf=requestAnimationFrame(_ctick);else{_raf=null;ctx.clearRect(0,0,W,H);}
+  }
+  function showParty(){var e=document.getElementById('party');if(e)e.hidden=false;}
+  function hideParty(){var e=document.getElementById('party');if(e)e.hidden=true;}
+  function dockAndEnter(){                                  // Onboarding-Reveal: App zieht hinter dem Chat hervor, mit Party 🎉
+    var onb=document.getElementById('vOnb');
+    pendingIntro='👋 <b>Da bin ich</b> — euer Koch. Sag mir jederzeit, was sich ändert; ich pflege <b>Plan &amp; Profil</b> für euch.';  // erste Chat-Blase
+    revealApp();                                            // App/Board hinter dem Onboarding aufbauen
+    document.body.classList.add('onbrevealing');            // App gedimmt & unscharf
+    showParty();fireConfetti();                             // 🎉 Geschafft!-Belohnung
+    if(reduce){hideParty();document.body.classList.remove('onbrevealing');onb.classList.remove('on');document.body.classList.add('entered');showCoach();return;}
+    setTimeout(function(){
+      onb.classList.add('onbexit');                         // Onboarding fährt nach rechts (mit Party) raus
+      document.body.classList.remove('onbrevealing');        // App zieht scharf in den Fokus
+      fireConfetti();
+      setTimeout(function(){onb.classList.remove('on','onbexit');hideParty();document.body.classList.add('entered');showCoach();fireConfetti();},660);
+    },950);
+  }
+  var navMode='week';
+  function setF(label,act){var fa=document.getElementById('faction');if(!fa)return;fa.hidden=false;fa.textContent=label;fa.setAttribute('data-act',act);}
+  function voterMissing(){var voted={};DATA.stimmen.forEach(function(s){voted[s.voter_id]=1;});var miss=DATA.persons.filter(function(p){return !voted[p.id];}).map(function(p){return p.name;});return miss.length?miss.join(', '):'';}
+  function renderKochbuch(){var g=document.getElementById('kbgrid');if(!g)return;var rec=[['🍝','Pasta al Pomodoro'],['🍄','Pilz-Risotto'],['🍛','Kichererbsen-Curry'],['🍳','Shakshuka'],['🧆','Ofen-Falafel'],['🥗','Couscous-Salat']];g.innerHTML=rec.map(function(r){return '<div class="kbcard"><div class="kbh">'+r[0]+'</div><div class="kbn">'+r[1]+'</div></div>';}).join('');}
+  function navTo(v){navMode=(v==='plan'||v==='week')?'week':v;var m=navMode;
+    document.getElementById('vPlan').classList.toggle('on',m==='week');
+    document.getElementById('vProfil').classList.toggle('on',m==='profil');
+    document.getElementById('vKochbuch').classList.toggle('on',m==='kochbuch');
+    document.querySelectorAll('.appbar .ab-ico button').forEach(function(b){b.classList.toggle('active',b.getAttribute('data-nav')===m);});
+    var stp=document.getElementById('stepper'),cs=document.getElementById('ckstatus');
+    if(m==='week'){renderPlanen();}
+    else if(m==='profil'){renderProfil();if(cs)cs.innerHTML='⚙️ Euer Haushalt';if(stp)stp.innerHTML='<button class="backbar" data-act="goweek">← Zurück zur Woche</button>';var fa=document.getElementById('faction');if(fa){fa.className='faction ghost';setF('＋ Person','addperson');}}
+    else if(m==='kochbuch'){renderKochbuch();if(cs)cs.innerHTML='📖 Euer Kochbuch';if(stp)stp.innerHTML='<button class="backbar" data-act="goweek">← Zurück zur Woche</button>';var fk=document.getElementById('faction');if(fk){fk.className='faction ghost';setF('＋ Rezept','addrezept');}}
+    if(coached&&m!=='week')hideCoach();}
+  document.querySelectorAll('.appbar [data-nav]').forEach(function(b){b.addEventListener('click',function(){navTo(b.getAttribute('data-nav'));});});
+  function refresh(){var w=isoWeek(new Date());
+    return get('wochen?select=id,vorschlaege,status,plan&haushalt=eq.'+HH+'&jahr=eq.'+w.jahr+'&kw=eq.'+w.kw).then(function(wr){
+      DATA.woche=(wr&&wr[0])||null;var wid=DATA.woche&&DATA.woche.id;
+      return Promise.all([
+        get('personen?select=id,name,rolle,gast,praeferenzen(id,art,wert,hart)&haushalt=eq.'+HH+'&order=sort'),
+        get('regeln?select=id,person_id,typ,wochentag,text,personen(name)&haushalt=eq.'+HH+'&order=created_at'),
+        wid?get('woche_ereignisse?select=id,person_id,gast_name,typ,wochentag,text&haushalt=eq.'+HH+'&woche_id=eq.'+wid):Promise.resolve([]),
+        wid?get('stimme?select=tag,option_id,voter_id&haushalt=eq.'+HH+'&woche_id=eq.'+wid):Promise.resolve([])
+      ]);
+    }).then(function(r){DATA.persons=r[0]||[];DATA.regeln=r[1]||[];DATA.ereignisse=r[2]||[];DATA.stimmen=r[3]||[];
+      if(!VOTER.id&&!voteMode&&DATA.persons[0]){VOTER={id:DATA.persons[0].id,name:DATA.persons[0].name};}
+      renderPlanen();renderProfil();});}
+  // Präsenz ist personen-scharf: abwesend gilt genau für die Person (kein Haushalt-weites null mehr).
+  function presentOn(day){return DATA.persons.filter(function(p){
+    if(DATA.ereignisse.some(function(e){return e.typ==='anwesenheit'&&e.wochentag===day&&e.person_id===p.id;}))return true;
+    var awR=DATA.regeln.some(function(r){return r.typ==='abwesenheit'&&r.wochentag===day&&r.person_id===p.id;});
+    var awW=DATA.ereignisse.some(function(e){return e.typ==='abwesenheit'&&e.wochentag===day&&e.person_id===p.id;});
+    return !(awR||awW);});}
+  function guestsOn(day){return DATA.ereignisse.filter(function(e){return e.typ==='gast'&&e.wochentag===day;});}
+  function overridesOn(day){return DATA.ereignisse.filter(function(e){return (e.typ==='abwesenheit'||e.typ==='anwesenheit')&&e.wochentag===day;});}
+  function renderPlanen(){if(_generating||_regenTag)return;var persons=DATA.persons;
+    document.getElementById('plsub').textContent=persons.length?persons.map(function(p){return p.name;}).join(' & '):'euer Haushalt';
+    document.getElementById('legend').innerHTML=persons.map(function(p){return '<span><span class="av">'+esc(initials(p.name))+'</span> '+esc(p.name)+(p.rolle==='kind'?' 🧒':'')+'</span>';}).join('')+'<span>👉 antippen = diese Woche da/weg</span>';
+    var changed=DOW.filter(function(d){return overridesOn(d).length;}).length;
+    document.getElementById('wwsub').innerHTML=changed?('📅 <b>'+changed+' Tag'+(changed>1?'e':'')+' diese Woche geändert</b> – der Rest läuft wie immer.'):'✓ Läuft <b>wie immer</b> – tippt nur an, was <b>diese Woche</b> anders ist.';
+    document.getElementById('agenda').innerHTML=DOW.map(function(d){var here=presentOn(d),hereIds={};here.forEach(function(p){hereIds[p.id]=1;});var g=guestsOn(d);var ov=overridesOn(d);
+      var avs=persons.map(function(p){var on=hereIds[p.id];return '<span class="av'+(on?'':' off')+'" data-pid="'+p.id+'" data-day="'+d+'" title="antippen: diese Woche da/weg">'+esc(initials(p.name))+'</span>';}).join('')
+        +g.map(function(x){return '<span class="av" style="background:var(--orange)">'+esc(initials(x.gast_name||'G'))+'</span>';}).join('');
+      var st=(here.length||g.length)?'<span class="spill cook">Kochen</span>':'<span class="spill out">Auswärts</span>';
+      var row='<div class="dayrow"><div class="dd"><span>'+d+'</span></div><div class="eaters">'+avs+'</div>'+st+'</div>';
+      var note=ov.length?'<div class="daynote">📅 diese Woche geändert <button class="lnk" data-act="revert" data-day="'+d+'">↩︎ wieder wie immer</button><button class="lnk" data-act="promote" data-day="'+d+'">⭑ als Standard merken</button></div>':'';
+      return '<div class="dayblock">'+row+note+'</div>';}).join('');
+    var grund=DATA.regeln.filter(function(r){return r.typ==='wunsch';}).map(function(r){return r.text;});
+    var ctx=grund.length?'<li><b>🏠 Grundsätze:</b> <span class="sx">'+grund.map(esc).join(' · ')+'</span></li>':'';
+    var tp=DOW.map(function(d){var here=presentOn(d);if(!here.length)return '';var hard=[];here.forEach(function(p){(p.praeferenzen||[]).forEach(function(x){if(HART[x.art]&&hard.indexOf(x.wert)<0)hard.push(x.wert);});});
+      var names=here.map(function(p){return esc(p.name)+(p.rolle==='kind'?' 🧒':'');}).join(' & ');
+      return '<li><b>'+d+':</b> '+names+(hard.length?' <span class="hx">⛔ '+hard.map(esc).join(', ')+'</span>':' <span class="sx">keine Einschränkung</span>')+'</li>';}).filter(Boolean).join('');
+    document.getElementById('transp').innerHTML=ctx+(tp||'<li class="sx">—</li>');
+    var wv=DATA.woche&&DATA.woche.vorschlaege&&DATA.woche.vorschlaege.tage&&DATA.woche.vorschlaege.tage.length;
+    var st=(DATA.woche&&DATA.woche.status)||'planen';
+    var page=st==='fest'?(vView==='plan'?'plan':'decided'):(wv?(vView==='plan'?'plan':'vote'):'plan');
+    var po=document.getElementById('planOnly');if(po)po.style.display=(page==='plan')?'':'none';
+    var _pc=document.getElementById('planCards'),_pe=document.getElementById('planEmpty');
+    if(page==='decided'){if(_pe)_pe.style.display='none';renderDecided();}
+    else if(page==='vote'){if(_pe)_pe.style.display='none';renderVoting(DATA.woche.vorschlaege.tage);}
+    else{if(_pc)_pc.innerHTML='';if(_pe){_pe.style.display='';
+      if(wv)_pe.innerHTML='✅ <b>Vorschläge stehen bereit.</b><br><span style="font-size:.85rem">Prüf noch, wer da ist – dann unten <b>„Weiter zum Voten"</b>.</span>';
+      else _pe.innerHTML='🍽️ <b>Noch kein Essensplan.</b><br><span style="font-size:.85rem">Unten <b>„✨ Vorschläge holen"</b> – passend zu wer da ist, Diäten, Zeit &amp; Budget.</span>';}}
+    if(navMode==='week'){var cs=document.getElementById('ckstatus'),fa=document.getElementById('faction');if(fa){fa.hidden=false;fa.className='faction';}
+      if(page==='decided'){if(cs)cs.innerHTML='Die Woche steht 🎉 — Zeit einzukaufen.';setF('🛒 Einkaufsliste','einkauf');}
+      else if(page==='vote'){var miss=voterMissing();if(cs)cs.innerHTML='Stimmt ab — '+(miss?'<span class="warn">'+esc(miss)+' fehlt noch</span>.':'<b>alle durch, leg die Woche fest</b> 🎉');setF('✓ Woche festlegen','festlegen');}
+      else{if(wv){if(cs)cs.innerHTML='Vorschläge stehen bereit — <b>weiter zum Voten.</b>';setF('🗳️ Weiter zum Voten','govote');}else{if(cs)cs.innerHTML='Lass uns die Woche planen — <b>wer isst mit?</b>';setF('✨ Vorschläge holen','gen');}}
+      renderStepper(page);}
+  }
+  function renderStepper(page){var el=document.getElementById('stepper');if(!el)return;
+    var st=(DATA.woche&&DATA.woche.status)||'planen';
+    var wv=DATA.woche&&DATA.woche.vorschlaege&&DATA.woche.vorschlaege.tage&&DATA.woche.vorschlaege.tage.length;
+    page=page||(st==='fest'?'decided':(wv?'vote':'plan'));
+    var cur=page==='decided'?2:(page==='vote'?1:0);
+    var steps=[{t:'Wer da',act:'goplan',on:true},{t:'Voten',act:'govote',on:!!wv},{t:'Steht fest',act:'godecided',on:st==='fest'}];
+    el.innerHTML=steps.map(function(s,i){return '<span class="pstep'+(i===cur?' now':'')+(i<cur?' done':'')+(s.on?'':' off')+'" data-act="'+s.act+'"><b class="pn">'+(i<cur?'✓':(i+1))+'</b>'+s.t+'</span>';}).join('<span class="psep">›</span>');}
+  // ── Vorschlags-Generierung (US-05): Kontext aus Anwesenheit + harten Ausschlüssen + Grundsätzen -> AI-Gerichte ──
+  var DIETWORDS=/^(vegetarisch|vegan|pescetarisch|halal|koscher|flexitarisch|low[\s-]?carb|paleo|keto)$/i;
+  function dayContext(d){var here=presentOn(d),g=guestsOn(d);if(!here.length&&!g.length)return null;
+    var di=[],ve=[];here.forEach(function(p){(p.praeferenzen||[]).forEach(function(x){if(!HART[x.art])return;var w=(x.wert||'').trim();if(!w)return;
+      if(x.art==='ernaehrungsform'&&DIETWORDS.test(w)){if(di.indexOf(w)<0)di.push(w);}else{if(ve.indexOf(w)<0)ve.push(w);}});});
+    return {tag:d,personen:here.map(function(p){return {name:p.name,rolle:p.rolle||'erwachsen'};}),gaeste:g.map(function(e){return e.gast_name||'Gast';}),diaeten:di,vermeiden:ve};}
+  function buildContext(){return {kw:isoWeek(new Date()).kw,grundsaetze:DATA.regeln.filter(function(r){return r.typ==='wunsch';}).map(function(r){return r.text;}),tage:DOW.map(dayContext).filter(Boolean)};}
+  // ── Voting-Helfer (geteilte Aktionsschicht: Finger == Sprache) ──
+  function assignIds(tage){(tage||[]).forEach(function(t){(t.vorschlaege||[]).forEach(function(v,i){if(!v.id)v.id=t.tag+'#'+i;});});}
+  function optId(tag,v,i){return v.id||(tag+'#'+i);}
+  function nameOf(id){var p=DATA.persons.filter(function(x){return x.id===id;})[0];return p?p.name:'Gast';}
+  function votesFor(tag,oid){return DATA.stimmen.filter(function(s){return s.tag===tag&&s.option_id===oid;});}
+  function myVote(tag,oid){return VOTER.id&&DATA.stimmen.some(function(s){return s.tag===tag&&s.option_id===oid&&s.voter_id===VOTER.id;});}
+  function vnorm(s){return (s||'').toLowerCase().replace(/ä/g,'a').replace(/ö/g,'o').replace(/ü/g,'u').replace(/ß/g,'ss').replace(/[^a-z]/g,'');}
+  function tagCoveredBy(cons,list){return vnorm(cons)&&(list||[]).some(function(o){var a=vnorm(o),b=vnorm(cons);return a&&b&&(a===b||a.indexOf(b)>=0||b.indexOf(a)>=0);});}
+  function loadStimmen(){var wid=DATA.woche&&DATA.woche.id;if(!wid)return Promise.resolve();return get('stimme?select=tag,option_id,voter_id&haushalt=eq.'+HH+'&woche_id=eq.'+wid).then(function(s){DATA.stimmen=s||[];});}
+  function dishEmoji(t){t=(t||'').toLowerCase();var m=[['pasta|spaghetti|nudel|amatriciana|bolognese|carbonara|lasagne|penne','🍝'],['pizza|flammkuchen','🍕'],['salat|salad|tabouleh|couscous','🥗'],['ramen|nudelsuppe|pho','🍜'],['suppe|eintopf|gulasch','🍲'],['curry|dal|linsen','🍛'],['bowl|poke','🥣'],['risotto|pilz','🍄'],['reis|nasi|jambalaya','🍚'],['burger','🍔'],['taco|burrito|fajita|quesadilla|wrap','🌯'],['sushi|maki','🍣'],['fisch|lachs|kabeljau|seelachs|thunfisch|garnele|scampi|shrimp','🐟'],['ei|shakshuka|omelett|frittata|quiche|rührei','🍳'],['chili|bohnen','🌶️'],['falafel|kichererbsen|hummus','🧆'],['kartoffel|gratin|pommes','🥔'],['steak|rind|schnitzel|hähnchen|huhn|pute|hack|wurst|fleisch|gyros','🍖'],['tofu|teriyaki|wok|asiatisch|pad thai|gochujang','🥢'],['pancake|waffel|toast','🥞'],['gemüse|veggie|ratatouille|auflauf|ofen','🥦']];for(var i=0;i<m.length;i++){if(new RegExp(m[i][0]).test(t))return m[i][1];}return '🍽️';}
+  function hueOf(s){s=(s||'');var h=0;for(var i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))%360;return h;}
+  function phBg(h){return 'linear-gradient(140deg,hsl('+h+' 52% 82%),hsl('+((h+30)%360)+' 48% 68%))';}
+  function avAt(p,extra,tapDay){var h=hueOf(p.id||p.name);return '<span class="av'+(extra?' '+extra:'')+'" style="background:hsl('+h+' 52% 50%)"'+(tapDay?' data-act="mealtoggle" data-day="'+esc(tapDay)+'"':'')+' title="'+esc(p.name||'Gast')+'">'+esc(initials(p.name||'?'))+'</span>';}
+  // Kuratierte echte Gericht-Fotos (Wikimedia) je Keyword: Veggie + Fisch + Geflügel. Fleisch ohne eigenes Foto -> Emoji; Emoji-Fallback bei Ladefehler.
+  var IMGB='https://upload.wikimedia.org/wikipedia/commons/thumb';
+  var DISHPIC=[
+    [/h(ä|ae)hnchen|h(ü|ue)hn|\bhuhn|\bpute|poulet|gefl(ü|ue)gel|chicken/,'/3/3f/Donauinselfest2007_Grillhendl.jpg/500px-Donauinselfest2007_Grillhendl.jpg'],
+    [/\bpoke\b/,'/1/13/Salmon_Poke.jpg/500px-Salmon_Poke.jpg'],
+    [/fisch|lachs|seelachs|kabeljau|scholle|forelle|thunfisch|dorade|garnele|scampi|shrimp|gambas|meeresfr/,'/f/ff/Fish_and_chips_blackpool.jpg/500px-Fish_and_chips_blackpool.jpg'],
+    [/nasi|gebraten(er|e)? reis|fried rice|jambalaya/,'/2/21/Nasi_goreng_Chinese_style.JPG/500px-Nasi_goreng_Chinese_style.JPG'],
+    [/burrito|wrap|taco|fajita|quesadilla|enchilada/,'/6/60/Burrito.JPG/500px-Burrito.JPG'],
+    [/sp(ä|ae)tzle/,'/e/e2/2015_0718_K%C3%A4sesp%C3%A4tzle_S%C3%B6lden.jpg/500px-2015_0718_K%C3%A4sesp%C3%A4tzle_S%C3%B6lden.jpg'],
+    [/risotto|pilz/,'/0/02/Flickr_-_cyclonebill_-_Risotto_med_fennikel_og_citron.jpg/500px-Flickr_-_cyclonebill_-_Risotto_med_fennikel_og_citron.jpg'],
+    [/falafel|hummus/,'/5/57/Falafels_2.jpg/500px-Falafels_2.jpg'],
+    [/kichererbse|chana|masala|paneer|tikka/,'/0/02/Choleindia.jpg/500px-Choleindia.jpg'],
+    [/shakshuka|schakschuka|frittata|omelett|r(ü|ue)hrei/,'/6/6b/Shakshuka_011.jpg/500px-Shakshuka_011.jpg'],
+    [/pizza|flammkuchen/,'/a/a3/Eq_it-na_pizza-margherita_sep2005_sml.jpg/500px-Eq_it-na_pizza-margherita_sep2005_sml.jpg'],
+    [/lasagne|pasta|spaghetti|nudel|penne|pomodoro|arrabbiata|bolognese|gnocchi|maccheroni/,'/3/33/Spaghettata.JPG/500px-Spaghettata.JPG'],
+    [/curry|dal|linsen|korma/,'/b/b2/Tadka_Dal.jpg/500px-Tadka_Dal.jpg'],
+    [/minestrone|suppe|eintopf|ragout/,'/3/31/Minestrone_soup_%282%29.jpg/500px-Minestrone_soup_%282%29.jpg'],
+    [/salat|salad|bowl/,'/5/5f/Greek_Salad_Choriatiki.jpg/500px-Greek_Salad_Choriatiki.jpg'],
+    [/couscous|bulgur|tabou?leh|quinoa/,'/b/ba/Flickr_-_cyclonebill_-_Tabbouleh.jpg/500px-Flickr_-_cyclonebill_-_Tabbouleh.jpg'],
+    [/gratin|auflauf/,'/2/2a/Gratin_dauphinois.jpg/500px-Gratin_dauphinois.jpg'],
+    [/r(ö|oe)sti/,'/3/3d/Roesti.jpg/500px-Roesti.jpg'],
+    [/puffer|reibekuchen/,'/9/98/Kartoffelpuffer.jpg/500px-Kartoffelpuffer.jpg'],
+    [/paprika/,'/0/03/Gef%C3%BCllte_Paprika_Nahansicht_2026.jpg/500px-Gef%C3%BCllte_Paprika_Nahansicht_2026.jpg'],
+    [/bruschetta|crostini|caprese|mozzarella/,'/2/28/Bruschetta-01.jpg/500px-Bruschetta-01.jpg'],
+    [/kartoffel|erd(a|ä)pfel/,'/c/cd/Bratkartoffeln_1024_768.jpg/500px-Bratkartoffeln_1024_768.jpg'],
+    [/ratatouille|gem(ü|ue)se|zucchini|aubergine|antipasti|ofengem|pfanne|veggie|stir.?fry|wok/,'/2/27/Ratatouille.jpg/500px-Ratatouille.jpg']
+  ];
+  var MEATNOPIC=/\b(rind|schwein|hack|wurst|schnitzel|gyros|lamm|speck|schinken|salami|steak|frikadelle|d(ö|oe)ner|kebab|ente|gulasch|cordon|leberk|bratwurst|k(ö|oe)fte|kalb|kassler)/;
+  function dishPhoto(t){t=(t||'').toLowerCase();
+    if(MEATNOPIC.test(t)&&!/vegetar|veggie|vegan/.test(t))return null;
+    for(var i=0;i<DISHPIC.length;i++){if(DISHPIC[i][0].test(t))return IMGB+DISHPIC[i][1];}return null;}
+  function phTile(titel){var pic=dishPhoto(titel);return (pic?'<img class="phimg" loading="lazy" alt="" src="'+pic+'" onerror="this.remove()">':'')+dishEmoji(titel);}
+  function renderVoting(tage){var pe=document.getElementById('planEmpty');if(pe)pe.style.display='none';
+    var vn=VOTER.name||(VOTER.id?nameOf(VOTER.id):'—');
+    var back='<button class="voteback" data-act="goplan">← Wer ist da? / Plan</button>';
+    var bar='<div class="votebar"><span class="vb-who">Du: <b>'+esc(vn)+'</b></span><span class="vb-switch">'+DATA.persons.map(function(p){return '<button class="vsw'+(p.id===VOTER.id?' on':'')+'" data-act="who" data-id="'+p.id+'" title="'+esc(p.name)+'">'+esc(initials(p.name))+'</button>';}).join('')+'</span><button class="btn-s vb-share" data-act="teilen">🔗 Link teilen</button></div>';
+    var intro='<div class="vlegend">🖐️ Tipp an, was schmeckt — <b>mehrere ok</b>. 🏆 <b>führt</b> → wird gewählt, wenn du festlegst. Tipp auf deinen Avatar = <b>nicht dabei</b>.</div>';
+    var meInHH=VOTER.id&&DATA.persons.some(function(p){return p.id===VOTER.id;});
+    var cards=(tage||[]).map(function(t){var here=presentOn(t.tag),g=guestsOn(t.tag);
+      var meAway=meInHH&&!here.some(function(p){return p.id===VOTER.id;});
+      if(!here.length&&!g.length)return '<div class="vday" data-tag="'+esc(t.tag)+'"><div class="vdh"><span class="dd">'+esc(t.tag)+'</span><span class="dw">niemand da</span></div><div class="cnote" style="text-align:center;padding:.5rem 0">🍽️ auswärts – kein Kochen</div>'+(meInHH?'<button class="dayfb" data-act="mealtoggle" data-day="'+esc(t.tag)+'">🙋 <b>Doch dabei?</b></button>':'')+'</div>';
+      var dc=dayContext(t.tag),cons=dc?[].concat(dc.diaeten,dc.vermeiden):[];
+      var comp=cons.length?'<span class="comp">✓ '+cons.map(esc).join(' · ')+'</span>':'';
+      var stackAv=here.map(function(p){var me=(p.id===VOTER.id);return avAt(p,me?'avme':'',me?t.tag:null);});
+      if(g.length)g.forEach(function(e){stackAv.push(avAt({name:e.gast_name||'Gast'},'',null));});
+      if(meAway){var vp=DATA.persons.filter(function(p){return p.id===VOTER.id;})[0];if(vp)stackAv.push(avAt(vp,'avme avoff',t.tag));}
+      var head='<div class="vdh"><span class="dd">'+esc(t.tag)+'</span><span class="stack">'+stackAv.join('')+'</span>'+comp+'</div>';
+      var strip=meAway?'<div class="outstrip">🙅 Du isst <b>'+esc(t.tag)+'</b> nicht mit <button class="undo" data-act="mealtoggle" data-day="'+esc(t.tag)+'">wieder dabei →</button></div>':'';
+      var opts=(t.vorschlaege||[]);var maxv=0;opts.forEach(function(v,i){var n=votesFor(t.tag,optId(t.tag,v,i)).length;if(n>maxv)maxv=n;});
+      var cells=opts.map(function(v,i){var oid=optId(t.tag,v,i),vs=votesFor(t.tag,oid),lead=maxv>0&&vs.length===maxv,mine=myVote(t.tag,oid);
+        var confl=v.eigen?[]:cons.filter(function(c){return !tagCoveredBy(c,[].concat(v.diaeten_ok||[],v.allergene_frei||[]));});
+        var warn=confl.length?' <span class="vwarn" title="prüfen: '+esc(confl.join(', '))+'">⚠️</span>':'';
+        var tally=vs.length?vs.map(function(s){var p=DATA.persons.filter(function(x){return x.id===s.voter_id;})[0]||{name:nameOf(s.voter_id),id:s.voter_id};return avAt(p,'',null);}).join(''):'<span class="none"></span>';
+        var ribbon=lead?'<span class="ribbon">🏆 führt</span>':'';var meta=v.eigen?('✍️ '+v.eigen):(v.aufwand||v.kurz||'');
+        return '<button class="vcard'+(mine?' mine':'')+(lead?' lead':'')+'" data-act="vote" data-day="'+esc(t.tag)+'" data-oid="'+esc(oid)+'" title="'+esc(v.titel||'')+'">'
+          +ribbon
+          +'<span class="vph" style="background:'+phBg(hueOf(v.titel))+'">'+phTile(v.titel)+'<span class="vote">'+(mine?'✓':'👍')+'</span></span>'
+          +'<span class="vbody"><span class="vname">'+esc(v.titel||'')+warn+'</span><span class="vmt">'+esc(meta)+'</span><span class="vtally">'+tally+'</span></span>'
+          +'</button>';}).join('');
+      var addtile='<button class="addtile" data-act="own" data-day="'+esc(t.tag)+'"><span class="plus">＋</span> Eigener Vorschlag</button>';
+      var fb='<button class="dayfb" data-act="regenday" data-day="'+esc(t.tag)+'">🤷 Nichts dabei? <b>↻ andere Ideen</b></button>';
+      var none=votesFor(t.tag,'__none__');var noneline=none.length?'<div class="noneline">🤷 <b>'+none.map(function(s){return esc(nameOf(s.voter_id));}).join(', ')+'</b> '+(none.length>1?'finden':'findet')+' hier nichts dabei</div>':'';
+      return '<div class="vday'+(meAway?' dayout':'')+'" data-tag="'+esc(t.tag)+'">'+head+strip+'<div class="vopts">'+cells+addtile+'</div>'+noneline+fb+'</div>';}).join('');
+    var voted={};DATA.stimmen.forEach(function(s){voted[s.voter_id]=1;});var miss=DATA.persons.filter(function(p){return !voted[p.id];}).map(function(p){return p.name;});
+    var done='<span class="cnote">'+(DATA.persons.length-miss.length)+'/'+DATA.persons.length+' haben abgestimmt'+(miss.length?' · offen: '+esc(miss.join(', ')):'')+'</span>';
+    var _pcv=document.getElementById('planCards');_pcv.innerHTML=back+bar+intro+cards+'<div class="votefoot">'+done+'</div>';
+    if(_genReveal){_genReveal=false;_pcv.classList.add('genreveal');setTimeout(function(){_pcv.classList.remove('genreveal');},1000);}}
+  function renderDecided(){var pe=document.getElementById('planEmpty');if(pe)pe.style.display='none';var plan=DATA.woche.plan||{};var tage=(DATA.woche.vorschlaege&&DATA.woche.vorschlaege.tage)||[];
+    var cards=tage.map(function(t){var here=presentOn(t.tag),g=guestsOn(t.tag);if(!here.length&&!g.length)return '<div class="dcard out"><b>'+esc(t.tag)+'</b> <span class="cnote">auswärts</span></div>';
+      var ch=plan[t.tag],titel=ch?ch.titel:'—';
+      var alt=(t.vorschlaege||[]).map(function(v,i){var oid=optId(t.tag,v,i);return '<button class="lnk'+(ch&&ch.id===oid?' on':'')+'" data-act="override" data-day="'+t.tag+'" data-oid="'+esc(oid)+'">'+esc(v.titel)+'</button>';}).join('');
+      return '<div class="dcard"><div class="dc-h"><b>'+esc(t.tag)+'</b> <span class="dc-dish">'+esc(titel)+'</span></div><div class="dc-alt">wechseln: '+alt+'</div></div>';}).join('');
+    document.getElementById('planCards').innerHTML='<div class="cnote" style="margin:.2rem 0 .5rem">✓ <b>Die Woche steht fest.</b> Tippe unten ein Gericht an, um es zu wechseln.</div>'+cards+'<div class="votefoot"><button class="lnk" data-act="reopen">↩︎ Abstimmung öffnen</button></div>';}
+  function setVoter(id){var p=DATA.persons.filter(function(x){return x.id===id;})[0];if(p){VOTER={id:p.id,name:p.name};renderPlanen();}}
+  function setVote(tag,oid){if(!VOTER.id){askWhoAreYou();return;}var wid=DATA.woche&&DATA.woche.id;if(!wid)return;var mine=myVote(tag,oid);
+    if(mine)DATA.stimmen=DATA.stimmen.filter(function(s){return !(s.tag===tag&&s.option_id===oid&&s.voter_id===VOTER.id);});else DATA.stimmen.push({tag:tag,option_id:oid,voter_id:VOTER.id});renderPlanen();
+    (mine?rest('DELETE','stimme?woche_id=eq.'+wid+'&tag=eq.'+encodeURIComponent(tag)+'&option_id=eq.'+encodeURIComponent(oid)+'&voter_id=eq.'+VOTER.id):post('stimme',{woche_id:wid,tag:tag,option_id:oid,voter_id:VOTER.id,wert:'up',haushalt:HH})).then(loadStimmen).then(renderPlanen).catch(function(){loadStimmen().then(renderPlanen);});}
+  function addOwn(tag){var title=prompt('Dein Vorschlag für '+tag+':');if(!title||!title.trim())return;var arr=DATA.woche&&DATA.woche.vorschlaege&&DATA.woche.vorschlaege.tage;if(!arr)return;var t=arr.filter(function(x){return x.tag===tag;})[0];if(!t){t={tag:tag,vorschlaege:[]};arr.push(t);}
+    t.vorschlaege.push({id:tag+'#own#'+Math.floor((''+DATA.stimmen.length+title.length).length+t.vorschlaege.length),titel:title.trim(),kurz:'selbst vorgeschlagen',aufwand:'',eigen:(VOTER.name||nameOf(VOTER.id)||'ich')});
+    var wid=DATA.woche.id;if(wid)rest('PATCH','wochen?id=eq.'+wid,{vorschlaege:DATA.woche.vorschlaege});renderPlanen();}
+  function notDa(tag){if(!VOTER.id){askWhoAreYou();return;}ensureWoche().then(function(wid){rest('DELETE','woche_ereignisse?haushalt=eq.'+HH+'&person_id=eq.'+VOTER.id+'&wochentag=eq.'+tag+'&typ=in.(abwesenheit,anwesenheit)').then(function(){return post('woche_ereignisse',{woche_id:wid,person_id:VOTER.id,typ:'abwesenheit',wochentag:tag,text:'nicht dabei (Voting)',haushalt:HH});}).then(refresh);});}
+  function setPlanDay(tag,oid){var arr=DATA.woche.vorschlaege.tage,t=arr.filter(function(x){return x.tag===tag;})[0];if(!t)return;var v=(t.vorschlaege||[]).filter(function(x,i){return optId(tag,x,i)===oid;})[0];if(!v)return;DATA.woche.plan=DATA.woche.plan||{};DATA.woche.plan[tag]={id:oid,titel:v.titel};var wid=DATA.woche.id;if(wid)rest('PATCH','wochen?id=eq.'+wid,{plan:DATA.woche.plan});renderPlanen();}
+  function reopenVote(){DATA.woche.status='voten';var wid=DATA.woche.id;if(wid)rest('PATCH','wochen?id=eq.'+wid,{status:'voten'});renderPlanen();}
+  function einkauf(){var plan=DATA.woche.plan||{};var lines=DOW.map(function(d){return plan[d]?d+': '+plan[d].titel:null;}).filter(Boolean);var txt='🛒 Einkauf diese Woche (Gerichte):\n'+lines.join('\n')+'\n\n(Zutatenliste folgt im Rezept-Update.)';if(navigator.share)navigator.share({title:'Einkaufsliste',text:txt}).catch(function(){});else alert(txt);}
+  function teilen(){var url=location.origin+location.pathname+'?h='+encodeURIComponent(HH)+'&vote=1';openShare(url,'🍽️ Was essen wir diese Woche? Stimm mit ab:');}
+  function openShare(url,title){var ov=document.getElementById('shareov');if(!ov)return;
+    var inp=document.getElementById('shareurl');inp.value=url;
+    document.getElementById('shareWa').href='https://wa.me/?text='+encodeURIComponent((title?title+' ':'')+url);
+    var nat=document.getElementById('shareNative');nat.hidden=!navigator.share;nat._url=url;nat._title=title;
+    document.getElementById('sharemsg').textContent='';ov.hidden=false;
+    setTimeout(function(){try{inp.focus();inp.select();}catch(e){}},40);}
+  function copyUrl(){var inp=document.getElementById('shareurl'),msg=document.getElementById('sharemsg');var ok=function(){msg.textContent='Link kopiert ✓';};var fb=function(){try{inp.focus();inp.select();document.execCommand('copy');ok();}catch(e){msg.textContent='Bitte Link manuell markieren & kopieren';}};
+    if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(inp.value).then(ok,fb);else fb();}
+  function festlegen(){var tage=DATA.woche&&DATA.woche.vorschlaege&&DATA.woche.vorschlaege.tage;if(!tage)return;
+    var voted={};DATA.stimmen.forEach(function(s){voted[s.voter_id]=1;});var miss=DATA.persons.filter(function(p){return !voted[p.id];}).map(function(p){return p.name;});
+    if(miss.length&&!confirm(miss.join(', ')+' ha'+(miss.length>1?'ben':'t')+' noch nicht abgestimmt. Trotzdem festlegen?'))return;
+    var plan={};tage.forEach(function(t){if(!presentOn(t.tag).length&&!guestsOn(t.tag).length)return;var opts=t.vorschlaege||[];if(!opts.length)return;var best=null,bn=-1;opts.forEach(function(v,i){var oid=optId(t.tag,v,i),n=votesFor(t.tag,oid).length;if(n>bn){bn=n;best={id:oid,titel:v.titel};}});if(best)plan[t.tag]=best;});
+    DATA.woche.plan=plan;DATA.woche.status='fest';var wid=DATA.woche.id;if(wid)rest('PATCH','wochen?id=eq.'+wid,{plan:plan,status:'fest'});renderPlanen();}
+  // ── „Die Woche entsteht" — Generierungs-Screen: ein Gesicht, echte Daten, überbrückt die Wartezeit ──
+  var LONGDAY={Mo:'Montag',Di:'Dienstag',Mi:'Mittwoch',Do:'Donnerstag',Fr:'Freitag',Sa:'Samstag',So:'Sonntag'};
+  // generische Gericht-Emojis (pflanzlich/neutral) als „Ideen"-Platzhalter beim Laden — echte Gerichte kommen beim Reveal
+  var GEMOJI=['🍲','🥘','🍝','🍚','🫕','🥗','🍜','🥙','🧆','🍛','🫑','🍅','🥕','🌽','🥔','🍠','🥦','🍆','🍄','🥑','🌯','🍞'];
+  var _genReveal=false,_generating=false,_gtimers=[],GEN=null,GENSTART=0,_regenTag=null;
+  function gt(ms,fn){var id=setTimeout(fn,reduce?0:ms);_gtimers.push(id);return id;}
+  function stopGenTimers(){_gtimers.forEach(clearTimeout);_gtimers=[];}
+  function gHue(i){return (i*53+18)%360;}
+  function gPhBg(h){return 'linear-gradient(140deg,hsl('+h+' 52% 84%),hsl('+((h+30)%360)+' 48% 70%))';}
+  function gUniq(a){var o=[],s={};(a||[]).forEach(function(x){if(!s[x]){s[x]=1;o.push(x);}});return o;}
+  function gCap(s){return s?String(s).charAt(0).toUpperCase()+String(s).slice(1):s;}
+  function gFlat(rows,key){var o=[];rows.forEach(function(t){(t[key]||[]).forEach(function(x){o.push(x);});});return o;}
+  function gAvStack(list,max){max=max||4;var shown=list.slice(0,max),extra=list.length-shown.length;
+    return '<span class="gstack">'+shown.map(function(p){return '<span class="gav'+(p.guest?' guest':'')+'" style="background:hsl('+p.h+' 52% 50%)">'+esc(p.ini)+'</span>';}).join('')+(extra>0?'<span class="gav more">+'+extra+'</span>':'')+'</span>';}
+  // Gedanken NUR aus echten Daten (Quelle sichtbar) — nie erfunden. Fehlt ein Fakt, fehlt der Satz.
+  function genThoughts(ctx){var T=[],persons=DATA.persons||[];
+    for(var i=0;i<ctx.tage.length;i++){var t=ctx.tage[i],pres={};t.personen.forEach(function(p){pres[p.name]=1;});
+      var away=persons.filter(function(p){return !pres[p.name];}).map(function(p){return p.name;});
+      if(away.length){T.push({t:esc(LONGDAY[t.tag]||t.tag)+' ist <b>'+esc(away.join(', '))+'</b> nicht dabei — plan ich schon mal ohne. 🗓️',src:'diese Woche'});break;}}
+    var gd=null;ctx.tage.forEach(function(t){if(!gd&&t.gaeste&&t.gaeste.length)gd=t;});
+    if(gd)T.push({t:esc(LONGDAY[gd.tag]||gd.tag)+' kommt <b>'+esc(gd.gaeste.join(', '))+'</b> dazu — ein Gedeck mehr. 👋',src:'diese Woche'});
+    gUniq(gFlat(ctx.tage,'diaeten')).forEach(function(d){T.push({t:'<b>'+esc(gCap(d))+'</b> — halt ich strikt ein. 🥦',src:'aus eurem Profil'});});
+    var tabus=gUniq(gFlat(ctx.tage,'vermeiden'));
+    if(tabus.length)T.push({t:'<b>'+esc(tabus.join(', '))+'</b>? Kommt mir nicht in die Pfanne. 🚫',src:'aus eurem Profil'});
+    (ctx.grundsaetze||[]).forEach(function(g){T.push({t:'<b>'+esc(g)+'</b> — dran gedacht. ✅',src:'euer Wunsch'});});
+    T.push({t:'Ich krame durch mein ganzes <b>Rezept-Repertoire</b> … 🤔',src:'ich koche'});
+    T.push({t:'Nichts doppelt — <b>Abwechslung</b> ist Ehrensache. 🔄',src:'ich koche'});
+    T.push({t:'Die <b>besten drei</b> pro Abend — gleich habt ihr sie. ✨',src:'ich koche'});
+    return T;}
+  function genScopeHtml(ctx){
+    var people=(DATA.persons||[]).map(function(p,i){return {n:p.name,ini:initials(p.name),h:gHue(i)};});
+    var lbl=people.length<=3?people.map(function(p){return esc(p.n);}).join(' & '):people.length+' essen mit';
+    var diets=gUniq(gFlat(ctx.tage,'diaeten')),tabus=gUniq(gFlat(ctx.tage,'vermeiden'));
+    var over=function(a){return a.slice(0,2).map(esc).join(', ')+(a.length>2?' +'+(a.length-2):'');};
+    var s='<div class="gscope"><span class="gschip">'+gAvStack(people)+'<b>'+lbl+'</b></span>';
+    s+='<span class="gschip">🗓️ <b>'+ctx.tage.length+' Abend'+(ctx.tage.length>1?'e':'')+'</b></span>';
+    if(diets.length)s+='<span class="gschip diet">🌱 <b>'+over(diets)+'</b></span>';
+    if(tabus.length)s+='<span class="gschip no">⛔ <b>'+over(tabus)+'</b></span>';
+    return s+'</div>';}
+  function gStat(txt){var s=document.getElementById('gstat');if(!s)return;s.classList.add('swap');gt(200,function(){var s2=document.getElementById('gstat');if(!s2)return;s2.innerHTML=txt;s2.classList.remove('swap');});}
+  function gProg(f){var b=document.querySelector('#gbar i');if(b)b.style.width=Math.round(f*100)+'%';}
+  function gCount(n,tot){var c=document.getElementById('gcount');if(c)c.textContent=n+' / '+tot;}
+  function fitGenwk(){var wk=document.querySelector('.genwk');if(!wk)return;   // Screen füllt Stepper→Footer, ohne Scrollen
+    wk.style.height='auto';var foot=document.getElementById('appfoot'),top=wk.getBoundingClientRect().top;
+    var footTop=(foot&&!foot.hasAttribute('hidden'))?foot.getBoundingClientRect().top:(window.innerHeight-70);
+    var h=footTop-top-18;if(h>200)wk.style.height=h+'px';}
+  window.addEventListener('resize',function(){if(_generating)fitGenwk();});
+  if(window.visualViewport)window.visualViewport.addEventListener('resize',function(){if(_generating)fitGenwk();});
+  function renderGenLoader(ctx){
+    var pc=document.getElementById('planCards'),pe=document.getElementById('planEmpty'),po=document.getElementById('planOnly');
+    if(pe)pe.style.display='none';if(po)po.style.display='none';if(!pc)return;
+    var planned={};ctx.tage.forEach(function(t){planned[t.tag]=1;});
+    var TH=genThoughts(ctx);
+    var rows=DOW.map(function(d,di){
+      if(!planned[d])return '<div class="gwrow off" data-d="'+d+'"><span class="gwd">'+d+'</span><span class="gwoff">🚶 auswärts</span></div>';
+      var tiles='';for(var j=0;j<3;j++){tiles+='<div class="gtile"><span class="gph" style="background:'+gPhBg((di*40+j*90)%360)+'">'+GEMOJI[(di*3+j)%GEMOJI.length]+'</span></div>';}
+      return '<div class="gwrow" data-d="'+d+'"><span class="gwd">'+d+'</span><span class="gwtiles">'+tiles+'</span><span class="gwtick"></span></div>';
+    }).join('');
+    pc.innerHTML='<div class="genwk">'+genScopeHtml(ctx)+
+      '<div class="gwk">'+rows+'</div>'+
+      '<div class="gthought" id="gthought"><span class="gtx">'+TH[0].t+'</span><span class="gsrc">'+esc(TH[0].src)+'</span></div>'+     /* Gedanke unten (guter Inhalt, gute Position) */
+      '<div class="gfoot"><div class="gbar" id="gbar"><i></i></div><span class="gcount" id="gcount">0 / '+ctx.tage.length+'</span></div></div>';
+    var ck=document.getElementById('ckav');if(ck)ck.classList.add('busy');
+    document.body.classList.add('generating');   // .pl-Scroll aus -> kein weißer Leerraum
+    var cs=document.getElementById('ckstatus');if(cs)cs.innerHTML='Ich stelle <b>eure Woche</b> zusammen …';
+    var fa0=document.getElementById('faction');if(fa0){fa0.textContent='⏳ Der Koch arbeitet …';fa0.setAttribute('data-act','');}   // Footer gesperrt während Loader (auch im Debug)
+    if(!reduce){var ti=1;(function rotate(){gt(2200,function(){var el=document.getElementById('gthought');if(!el)return;el.classList.add('swap');gt(280,function(){var e2=document.getElementById('gthought');if(!e2)return;var th=TH[ti++];if(ti>=TH.length)ti=1;e2.querySelector('.gtx').innerHTML=th.t;e2.querySelector('.gsrc').textContent=th.src;el.classList.remove('swap');rotate();});});})();}
+    requestAnimationFrame(fitGenwk);gt(80,fitGenwk);   // Höhe an den Viewport anpassen (kein Scrollen)
+  }
+  function runWeekWalk(ctx,token,done){
+    var pc=document.getElementById('planCards'),tot=ctx.tage.length,plan=ctx.tage.map(function(t){return t.tag;});
+    if(reduce){pc.querySelectorAll('.gtile').forEach(function(x){x.classList.add('dev');});pc.querySelectorAll('.gwrow:not(.off)').forEach(function(r){r.classList.add('done');});gProg(1);gCount(tot,tot);done();return;}
+    var idx=0,dn=0;
+    function stepDay(){if(GEN!==token)return;
+      if(idx>=plan.length){gStat('✨ eure Woche steht');done();return;}
+      var d=plan[idx],row=pc.querySelector('.gwrow[data-d="'+d+'"]');if(!row){idx++;stepDay();return;}
+      row.classList.add('on');gStat('🍳 stelle <b>'+esc(LONGDAY[d]||d)+'</b> zusammen …');
+      var tiles=row.querySelectorAll('.gtile'),j=0;
+      (function dev(){if(GEN!==token)return;if(j<tiles.length){tiles[j].classList.add('dev');j++;gt(175,dev);}else{row.classList.remove('on');row.classList.add('done');dn++;idx++;gProg(dn/tot);gCount(dn,tot);gt(400,stepDay);}})();}
+    gt(900,stepDay);
+  }
+  var _finSteps=['⚖️ prüfe gegen eure Regeln …','🎯 wähle die besten drei …','🍳 richte an …','✨ gleich fertig …'];
+  function startFinalizing(token){var b=document.getElementById('gbar');if(b)b.classList.add('wait');if(reduce)return;var i=0;(function loop(){if(GEN!==token)return;gStat(_finSteps[i%_finSteps.length]);i++;gt(1600,loop);})();}
+  function generatePlan(retry,onlyTag){
+    if(!retry)hideCoach();   // „Vorschläge holen" geklickt -> Sprechblase weg
+    var ctx=buildContext(),pe=document.getElementById('planEmpty'),pc=document.getElementById('planCards'),po=document.getElementById('planOnly');
+    if(onlyTag){var d=dayContext(onlyTag);if(!d)return;
+      fetch(FN,{method:'POST',headers:H,body:JSON.stringify({generate:true,context:{kw:ctx.kw,grundsaetze:ctx.grundsaetze,tage:[d]},haushalt:HH})}).then(function(r){return r.json();}).then(function(res){
+        if(res&&res.plan&&res.plan.tage&&res.plan.tage.length){assignIds(res.plan.tage);ensureWoche().then(function(wid){var nd=res.plan.tage[0];DATA.woche=DATA.woche||{vorschlaege:{tage:[]}};DATA.woche.vorschlaege=DATA.woche.vorschlaege||{tage:[]};var arr=DATA.woche.vorschlaege.tage,ix=-1;arr.forEach(function(x,k){if(x.tag===onlyTag)ix=k;});if(ix>=0)arr[ix]=nd;else arr.push(nd);DATA.stimmen=DATA.stimmen.filter(function(s){return s.tag!==onlyTag;});if(wid){DATA.woche.id=wid;rest('DELETE','stimme?woche_id=eq.'+wid+'&tag=eq.'+encodeURIComponent(onlyTag));rest('PATCH','wochen?id=eq.'+wid,{vorschlaege:DATA.woche.vorschlaege});}renderPlanen();});}
+        else if(!retry)generatePlan(true,onlyTag);
+      }).catch(function(){if(!retry)generatePlan(true,onlyTag);});return;}
+    if(!ctx.tage.length){if(pe){pe.style.display='';pe.innerHTML='🍽️ Diese Woche ist niemand da zum Kochen.';}return;}
+
+    var token=GEN={};GENSTART=Date.now();stopGenTimers();_genReveal=false;_generating=true;
+    renderGenLoader(ctx);                                              // startet SOFORT beim Klick
+    var fa=document.getElementById('faction');if(fa){fa.textContent='⏳ Der Koch arbeitet …';fa.setAttribute('data-act','');}
+    var state={data:null,err:false,walkDone:false,done:false};
+    function bail(){_generating=false;document.body.classList.remove('generating');stopGenTimers();var ck=document.getElementById('ckav');if(ck)ck.classList.remove('busy');if(po)po.style.display='';if(pc)pc.innerHTML='';if(pe){pe.style.display='';pe.innerHTML='⚠️ Konnte gerade keine Vorschläge holen. <button class="btn-s" data-act="gen">Nochmal</button>';}}
+    function conclude(){if(state.done||GEN!==token)return;if(!state.walkDone||(!state.data&&!state.err))return;state.done=true;
+      var wait=Math.max(reduce?0:700,(reduce?0:4800)-(Date.now()-GENSTART));
+      gt(wait,function(){if(GEN!==token)return;stopGenTimers();var ck=document.getElementById('ckav');if(ck)ck.classList.remove('busy');
+        var res=state.data;
+        if(state.err||!(res&&res.plan&&res.plan.tage&&res.plan.tage.length)){bail();return;}
+        assignIds(res.plan.tage);
+        ensureWoche().then(function(wid){DATA.woche=DATA.woche||{};DATA.woche.vorschlaege=res.plan;DATA.woche.status='voten';DATA.stimmen=[];if(wid){DATA.woche.id=wid;rest('PATCH','wochen?id=eq.'+wid,{vorschlaege:res.plan,status:'voten'});rest('DELETE','stimme?woche_id=eq.'+wid);}_genReveal=true;_generating=false;document.body.classList.remove('generating');renderPlanen();});
+      });}
+    runWeekWalk(ctx,token,function(){state.walkDone=true;if(!state.data&&!state.err)startFinalizing(token);conclude();});
+    (function fetchTry(attempt){
+      fetch(FN,{method:'POST',headers:H,body:JSON.stringify({generate:true,context:ctx,haushalt:HH})}).then(function(r){return r.json();}).then(function(res){
+        if(GEN!==token)return;
+        if(res&&res.plan&&res.plan.tage&&res.plan.tage.length){state.data=res;conclude();}
+        else if(attempt<2)fetchTry(attempt+1);
+        else{state.data=res;conclude();}
+      }).catch(function(){if(GEN!==token)return;if(attempt<2)fetchTry(attempt+1);else{state.err=true;conclude();}});
+    })(1);
+  }
+  // ── DEBUG: Loader-Animation ohne echte Generierung abspielen (Testmodus-Button „🎬 Loader" oder Konsole: genDemo()) ──
+  var _genDebug=false,_dbgSaved=null;
+  function demoPersons(){return [{name:'Anna',rolle:'erwachsen'},{name:'Ben',rolle:'erwachsen'},{name:'Chris',rolle:'erwachsen'},{name:'Dana',rolle:'erwachsen'},{name:'Elif',rolle:'erwachsen'}];}
+  function demoCtx(){var mk=function(tag,names,g){return {tag:tag,personen:names.map(function(n){return {name:n,rolle:'erwachsen'};}),gaeste:g||[],diaeten:['vegetarisch','glutenfrei'],vermeiden:['Nüsse']};};
+    var all=['Anna','Ben','Chris','Dana','Elif'];
+    return {kw:isoWeek(new Date()).kw,grundsaetze:['viel Gemüse','günstig'],
+      tage:[mk('Mo',['Ben','Chris','Dana','Elif']),mk('Di',all),mk('Mi',all),mk('Do',all),mk('Fr',all,['Lisa'])]};}  // Sa/So fehlen -> ausgegraut, Mo ohne Anna, Fr Gast
+  function debugStop(){_genDebug=false;GEN={};stopGenTimers();_generating=false;document.body.classList.remove('generating');
+    if(_dbgSaved){DATA.persons=_dbgSaved;_dbgSaved=null;}
+    var ck=document.getElementById('ckav');if(ck)ck.classList.remove('busy');
+    var bt=document.getElementById('dbgAnim');if(bt)bt.textContent='🎬 Loader';
+    var po=document.getElementById('planOnly');if(po)po.style.display='';renderPlanen();}
+  function debugGenToggle(){
+    if(_genDebug){debugStop();return;}
+    _genDebug=true;var bt=document.getElementById('dbgAnim');if(bt)bt.textContent='⏹ Stop';
+    _dbgSaved=DATA.persons;DATA.persons=demoPersons();                 // konsistenter Demo-Haushalt (Avatar-Stack)
+    var ctx=demoCtx(),token=GEN={};GENSTART=Date.now();stopGenTimers();_generating=true;
+    (function loop(){ if(GEN!==token||!_genDebug)return; stopGenTimers();
+      renderGenLoader(ctx);
+      runWeekWalk(ctx,token,function(){ if(GEN!==token||!_genDebug)return; startFinalizing(token); if(!reduce)gt(2600,loop); });   // Schleife: Walk -> Finalize -> wieder von vorn
+    })();
+  }
+  (function(){var bt=document.getElementById('dbgAnim');if(bt)bt.addEventListener('click',debugGenToggle);window.genDemo=debugGenToggle;})();
+  function doAct(act,day,oid,id){
+    if(act==='gen')generatePlan();else if(act==='vote')setVote(day,oid);else if(act==='who')setVoter(id);else if(act==='teilen')teilen();else if(act==='own')addOwn(day);else if(act==='regenday')regenDayStart(day);else if(act==='mealtoggle'){if(!VOTER.id){askWhoAreYou();return;}togglePresence(VOTER.id,day);}else if(act==='notda')notDa(day);else if(act==='none')setVote(day,'__none__');else if(act==='festlegen')festlegen();else if(act==='override')setPlanDay(day,oid);else if(act==='reopen')reopenVote();else if(act==='einkauf')einkauf();else if(act==='govote'){vView='vote';renderPlanen();}else if(act==='goplan'){vView='plan';renderPlanen();}else if(act==='godecided'){vView=null;renderPlanen();}else if(act==='goweek'){navTo('week');}else if(act==='addperson'){navTo('profil');alert('Neue Person: über „＋ hinzufügen" im Personen-Block.');}else if(act==='addrezept'){alert('Rezepte kommen im Rezept-Sprint.');}
+  }
+  document.getElementById('planwrap').addEventListener('click',function(e){var b=e.target.closest('[data-act]');if(!b)return;doAct(b.getAttribute('data-act'),b.getAttribute('data-day'),b.getAttribute('data-oid'),b.getAttribute('data-id'));});
+  document.getElementById('stepper').addEventListener('click',function(e){var b=e.target.closest('[data-act]');if(!b||b.classList.contains('off'))return;doAct(b.getAttribute('data-act'));});
+  document.getElementById('faction').addEventListener('click',function(){var a=this.getAttribute('data-act');if(a)doAct(a);});
+  (function(){var ov=document.getElementById('shareov');if(!ov)return;
+    document.getElementById('shareCopy').addEventListener('click',copyUrl);
+    document.getElementById('shareClose').addEventListener('click',function(){ov.hidden=true;});
+    ov.addEventListener('click',function(e){if(e.target===ov)ov.hidden=true;});
+    document.getElementById('shareNative').addEventListener('click',function(){if(navigator.share)navigator.share({title:'Wochen-Voting',text:this._title||'',url:this._url}).catch(function(){});});})();
+  // ── Identität für Link-Voter (kein Account) ──
+  function askWhoAreYou(){var ov=document.getElementById('idov'),ch=document.getElementById('idchips');if(!ov||!ch)return;
+    ch.innerHTML=DATA.persons.map(function(p){return '<button data-vid="'+p.id+'">'+esc(p.name)+(p.rolle==='kind'?' 🧒':'')+'</button>';}).join('')+'<button class="new" data-vnew="1">+ Ich bin neu</button>';
+    ov.hidden=false;}
+  document.getElementById('idov').addEventListener('click',function(e){var b=e.target.closest('[data-vid],[data-vnew]');if(!b)return;
+    if(b.getAttribute('data-vnew')){var n=prompt('Wie heißt du?');if(!n||!n.trim())return;n=n.trim();
+      post('personen',{name:n,haushalt:HH,gast:true,sort:99}).then(function(r){var p=r&&r[0];if(!p)return;VOTER={id:p.id,name:p.name};try{localStorage.setItem('kv_'+HH,JSON.stringify(VOTER));}catch(_){}
+        var d=prompt('Isst du alles? Sonst Allergien/Diät eintippen (leer = alles):','');document.getElementById('idov').hidden=true;
+        if(d&&d.trim()){aiParse('ernaehrung',d.trim()).then(function(pp){if(pp){if(pp.diet&&pp.diet.toLowerCase()!=='null')post('praeferenzen',{person_id:p.id,art:'ernaehrungsform',wert:pp.diet,hart:true,haushalt:HH});(pp.tabus||[]).forEach(function(x){post('praeferenzen',{person_id:p.id,art:(x.art==='ernaehrungsform'?'ernaehrungsform':'allergie'),wert:x.wert,hart:true,haushalt:HH});});}refresh();});}
+        else refresh();});
+      return;}
+    var vid=b.getAttribute('data-vid'),p=DATA.persons.filter(function(x){return x.id===vid;})[0];if(p){VOTER={id:p.id,name:p.name};try{localStorage.setItem('kv_'+HH,JSON.stringify(VOTER));}catch(_){}document.getElementById('idov').hidden=true;renderPlanen();}});
+  // ── Per-Tag „andere Ideen": sichtbare In-Card-Generierung (Loader-Sprache, nur dieser Tag) ──
+  function dayCardEl(tag){return document.querySelector('#planCards .vday[data-tag="'+tag+'"]');}
+  function dayThoughts(tag){var dc=dayContext(tag),T=[];var di=(dc&&dc.diaeten)||[],ve=(dc&&dc.vermeiden)||[];
+    di.forEach(function(d){T.push({t:'<b>'+esc(d.charAt(0).toUpperCase()+d.slice(1))+'</b> — halt ich strikt ein. 🥦',src:'aus eurem Profil'});});
+    if(ve.length)T.push({t:'<b>'+esc(ve.join(', '))+'</b>? Kommt mir nicht in die Pfanne. 🚫',src:'aus eurem Profil'});
+    DATA.regeln.filter(function(r){return r.typ==='wunsch';}).forEach(function(r){T.push({t:'<b>'+esc(r.text)+'</b> — dran gedacht. ✅',src:'euer Wunsch'});});
+    T.push({t:'Ich krame durch mein <b>Repertoire</b> … 🤔',src:'ich koche'});
+    T.push({t:'Nichts doppelt zur Woche — <b>Abwechslung</b>. 🔄',src:'ich koche'});
+    T.push({t:'Die <b>besten drei</b> für '+esc(LONGDAY[tag]||tag)+' — gleich da. ✨',src:'ich koche'});
+    return T;}
+  function regenDayStart(tag,opts){opts=opts||{};if(_regenTag||_generating)return;if(!dayContext(tag))return;if(!dayCardEl(tag))return;
+    _regenTag=tag;var hasV=DATA.stimmen.some(function(s){return s.tag===tag;});if(hasV&&!opts.skipConfirm)paintDayConfirm(tag,opts);else regenDayRun(tag,opts);}
+  function regenDone(opts){if(opts&&typeof opts.onDone==='function'){var f=opts.onDone;setTimeout(f,300);}}
+  function paintDayConfirm(tag,opts){opts=opts||{};var card=dayCardEl(tag);if(!card){_regenTag=null;regenDone(opts);return;}
+    var vo=card.querySelector('.vopts'),fb=card.querySelector('.dayfb');if(vo)vo.style.display='none';if(fb)fb.style.display='none';
+    var n=DATA.stimmen.filter(function(s){return s.tag===tag;}).length;
+    var c=document.createElement('div');c.className='dgconfirm';
+    c.innerHTML='<div class="dgq">↻ Neue Ideen für <b>'+esc(LONGDAY[tag]||tag)+'</b>? Die <b>'+n+' Stimme'+(n===1?'':'n')+'</b> für diesen Tag '+(n===1?'geht':'gehen')+' dabei verloren.</div><div class="dgb"><button class="dgno">Behalten</button><button class="dgyes">Ja, neue Ideen</button></div>';
+    card.appendChild(c);
+    c.querySelector('.dgno').addEventListener('click',function(){_regenTag=null;renderPlanen();regenDone(opts);});
+    c.querySelector('.dgyes').addEventListener('click',function(){c.remove();regenDayRun(tag,opts);});}
+  function regenDayRun(tag,opts){opts=opts||{};var card=dayCardEl(tag);if(!card){_regenTag=null;regenDone(opts);return;}
+    stopGenTimers();card.classList.add('busy');
+    var vo=card.querySelector('.vopts'),fb=card.querySelector('.dayfb');if(vo)vo.remove();if(fb)fb.remove();
+    var TH=dayThoughts(tag),di=DOW.indexOf(tag);if(di<0)di=0;
+    var tiles='';for(var j=0;j<3;j++){tiles+='<div class="dgtile"><span class="dgph" style="background:'+gPhBg((di*40+j*90)%360)+'">'+GEMOJI[((di*3+j)%GEMOJI.length)]+'</span></div>';}
+    var g=document.createElement('div');g.className='daygen';
+    g.innerHTML='<div class="dgstatus" id="dgstatus">🍳 koche neue Ideen für <b>'+esc(LONGDAY[tag]||tag)+'</b> …</div><div class="dgtiles">'+tiles+'</div><div class="dgthought" id="dgthought"><span class="gtx">'+TH[0].t+'</span><span class="gsrc">'+esc(TH[0].src)+'</span></div><div class="gbar" id="dgbar"><i></i></div>';
+    card.appendChild(g);
+    var cs=document.getElementById('ckstatus');if(cs)cs.innerHTML='Ich koche <b>neue Ideen für '+esc(LONGDAY[tag]||tag)+'</b> …';
+    var fa=document.getElementById('faction');if(fa){fa.textContent='⏳ Der Koch arbeitet …';fa.setAttribute('data-act','');}
+    function dgStat(t){var s=document.getElementById('dgstatus');if(!s)return;s.classList.add('swap');gt(180,function(){var s2=document.getElementById('dgstatus');if(s2){s2.innerHTML=t;s2.classList.remove('swap');}});}
+    function dgProg(f){var b=document.querySelector('#dgbar i');if(b)b.style.width=Math.round(f*100)+'%';}
+    if(!reduce){var ti=1;(function rot(){gt(1800,function(){if(_regenTag!==tag)return;var el=document.getElementById('dgthought');if(!el)return;el.classList.add('swap');gt(260,function(){var e2=document.getElementById('dgthought');if(!e2)return;var th=TH[ti++%TH.length];e2.querySelector('.gtx').innerHTML=th.t;e2.querySelector('.gsrc').textContent=th.src;el.classList.remove('swap');rot();});});})();}
+    var tl=card.querySelectorAll('.dgtile');
+    if(reduce){tl.forEach(function(x){x.classList.add('dev');});dgProg(1);}
+    else{var k=0;(function dev(){if(_regenTag!==tag)return;if(k<tl.length){tl[k].classList.add('dev');dgProg((k+1)/3);k++;gt(520,dev);}else{var b=document.getElementById('dgbar');if(b)b.classList.add('wait');var fi=0,FIN=['🎯 wähle die besten drei …','⚖️ prüfe gegen eure Regeln …','🍳 richte an …','✨ gleich fertig …'];(function fl(){if(_regenTag!==tag)return;dgStat(FIN[fi%FIN.length]);fi++;gt(1400,fl);})();}})();}
+    var state={data:null,err:false,minDone:false};
+    gt(reduce?0:2600,function(){state.minDone=true;maybe();});
+    (function tryFetch(attempt){var ctx=buildContext(),dcx=dayContext(tag);if(!dcx){state.err=true;maybe();return;}
+      var used=[];((DATA.woche&&DATA.woche.vorschlaege&&DATA.woche.vorschlaege.tage)||[]).forEach(function(tt){if(tt.tag===tag)return;(tt.vorschlaege||[]).forEach(function(v){if(v&&v.titel&&used.indexOf(v.titel)<0)used.push(v.titel);});});
+      var grund=(ctx.grundsaetze||[]).slice();if(used.length)grund.push('Diese Gerichte sind diese Woche an ANDEREN Tagen schon geplant — schlag bewusst etwas ANDERES vor, KEINE Wiederholung davon: '+used.join(', ')+'.');
+      if(opts.grund)grund.push('Der Nutzer wünscht für die Neugenerierung ausdrücklich: '+opts.grund+'.');
+      fetch(FN,{method:'POST',headers:H,body:JSON.stringify({generate:true,context:{kw:ctx.kw,grundsaetze:grund,tage:[dcx]},haushalt:HH})}).then(function(r){return r.json();}).then(function(res){
+        if(_regenTag!==tag)return;
+        if(res&&res.plan&&res.plan.tage&&res.plan.tage.length){state.data=res;maybe();}
+        else if(attempt<2)tryFetch(attempt+1);else{state.err=true;maybe();}
+      }).catch(function(){if(_regenTag!==tag)return;if(attempt<2)tryFetch(attempt+1);else{state.err=true;maybe();}});})(0);
+    function maybe(){if(_regenTag!==tag||!state.minDone)return;if(state.data)applyDayGen(tag,state.data,opts);else if(state.err)failDayGen(tag,opts);}}
+  function applyDayGen(tag,res,opts){opts=opts||{};stopGenTimers();assignIds(res.plan.tage);var nd=res.plan.tage[0];
+    DATA.woche=DATA.woche||{vorschlaege:{tage:[]}};DATA.woche.vorschlaege=DATA.woche.vorschlaege||{tage:[]};
+    var arr=DATA.woche.vorschlaege.tage,ix=-1;arr.forEach(function(x,k){if(x.tag===tag)ix=k;});if(ix>=0)arr[ix]=nd;else arr.push(nd);
+    DATA.stimmen=DATA.stimmen.filter(function(s){return s.tag!==tag;});
+    ensureWoche().then(function(wid){if(wid){DATA.woche.id=wid;rest('DELETE','stimme?woche_id=eq.'+wid+'&tag=eq.'+encodeURIComponent(tag));rest('PATCH','wochen?id=eq.'+wid,{vorschlaege:DATA.woche.vorschlaege});}
+      _regenTag=null;renderPlanen();var c=dayCardEl(tag);if(c){var o=c.querySelector('.vopts');if(o){o.classList.add('dgreveal');gt(1200,function(){var c2=dayCardEl(tag);if(c2){var o2=c2.querySelector('.vopts');if(o2)o2.classList.remove('dgreveal');}});}}regenDone(opts);});}
+  function failDayGen(tag,opts){opts=opts||{};stopGenTimers();_regenTag=null;renderPlanen();var c=dayCardEl(tag);if(c){var note=document.createElement('div');note.className='outstrip';note.style.marginTop='.5rem';note.innerHTML='⚠️ Konnte gerade keine neuen Ideen holen. <button class="undo" data-act="regenday" data-day="'+esc(tag)+'">Nochmal ↻</button>';c.appendChild(note);}regenDone(opts);}
+  // Chat-Bestätigung VOR der Neugenerierung: Assistent fragt, Nutzer gibt per Button frei (Safety-Guard wie im App-Interface)
+  function askChatRegen(tage,grund){
+    var cook=(DATA.woche&&DATA.woche.vorschlaege&&DATA.woche.vorschlaege.tage)||[];
+    var valid={};cook.forEach(function(t){if((t.vorschlaege||[]).length&&(presentOn(t.tag).length||guestsOn(t.tag).length))valid[t.tag]=1;});
+    var wantAll=(tage||[]).some(function(x){return /alle|ganz|woche/i.test(String(x));});
+    var days=(wantAll?Object.keys(valid):(tage||[]).map(function(x){return String(x);}).filter(function(d){return valid[d];}));
+    days=days.filter(function(d,i){return days.indexOf(d)===i;});
+    if(!days.length){sbot('Für diese Tage gibt es gerade nichts zum Neu-Generieren. 🤔');return;}
+    var lost=DATA.stimmen.filter(function(s){return days.indexOf(s.tag)>=0&&s.option_id!=='__none__';}).length;
+    var lbl=days.map(function(d){return esc(LONGDAY[d]||d);}).join(', ');
+    var d=document.createElement('div');d.className='chatconf';
+    d.innerHTML='<div class="cq">🔄 Neue Vorschläge für <b>'+lbl+'</b>?'+(grund?' <span class="cg">('+esc(grund)+')</span>':'')+'</div>'
+      +(lost?'<div class="cw">⚠️ Die <b>'+lost+' Stimme'+(lost===1?'':'n')+'</b> für '+(days.length>1?'diese Tage':'diesen Tag')+' '+(lost===1?'geht':'gehen')+' dabei verloren.</div>':'')
+      +'<div class="cb"><button class="no">Abbrechen</button><button class="yes">✓ Ja, neu generieren</button></div>';
+    slog.appendChild(d);slog.scrollTop=slog.scrollHeight;
+    d.querySelector('.no').addEventListener('click',function(){var b=d.querySelector('.cb');if(b)b.innerHTML='<span class="ccn">Abgebrochen — alles bleibt. 👍</span>';});
+    d.querySelector('.yes').addEventListener('click',function(){var b=d.querySelector('.cb');if(b)b.innerHTML='<span class="ccn">Alles klar — ich lege los! 🍳</span>';closeS();regenFromChat(days,grund);});
+  }
+  // Chat-getriggerte Neugenerierung: Assistent-Tool „vorschlaege_neu_generieren" sagt, welche Tage neu sollen
+  var _regenChatQueue=[],_regenChatGrund='';
+  function regenFromChat(tage,grund){
+    var cook=(DATA.woche&&DATA.woche.vorschlaege&&DATA.woche.vorschlaege.tage)||[];
+    var valid={};cook.forEach(function(t){if((t.vorschlaege||[]).length&&(presentOn(t.tag).length||guestsOn(t.tag).length))valid[t.tag]=1;});
+    var wantAll=(tage||[]).some(function(x){return /alle|ganz|woche/i.test(String(x));});
+    var days=(wantAll?Object.keys(valid):(tage||[]).map(function(x){return String(x);}).filter(function(d){return valid[d];}));
+    days=days.filter(function(d,i){return days.indexOf(d)===i;});
+    if(!days.length)return;
+    try{closeS();}catch(_){}
+    if(vView==='plan')vView='vote';
+    if(!_regenTag)renderPlanen();
+    _regenChatQueue=days.slice();_regenChatGrund=grund||'';regenChatNext();
+  }
+  function regenChatNext(){if(!_regenChatQueue.length){_regenChatGrund='';return;}var d=_regenChatQueue.shift();
+    if(!dayCardEl(d)){regenChatNext();return;}regenDayStart(d,{skipConfirm:true,grund:_regenChatGrund,onDone:regenChatNext});}
+  // ── Mitesser-Chat: der geteilte Link ?vote=1 wird zum scripted Chat, der echte `stimme` schreibt ──
+  var MC={days:[],di:0};
+  function mcLog(){return document.getElementById('mclog');}
+  function mcScroll(){var l=mcLog();if(l)l.scrollTop=l.scrollHeight;}
+  function mcBubble(cls,html){var l=mcLog();if(!l)return null;var d=document.createElement('div');d.className='msg '+cls;d.innerHTML=html;l.appendChild(d);mcScroll();return d;}
+  function mcBot(html,cb,delay){var l=mcLog();if(!l)return;var t=document.createElement('div');t.className='msg typing';t.innerHTML='<span></span><span></span><span></span>';l.appendChild(t);mcScroll();
+    setTimeout(function(){t.remove();mcBubble('bot',html);if(cb)setTimeout(cb,340);},delay||650);}
+  function mcChips(items,onPick){var l=mcLog();if(!l)return;var w=document.createElement('div');w.className='chips mchips';
+    w.innerHTML=items.map(function(it){return '<button class="mchip'+(it.ghost?' ghost':'')+'" data-v="'+esc(it.v)+'">'+esc(it.t)+'</button>';}).join('');
+    l.appendChild(w);mcScroll();
+    w.addEventListener('click',function(e){var b=e.target.closest('[data-v]');if(!b)return;var v=b.getAttribute('data-v');w.remove();onPick(v);});}
+  function startMitesserChat(){
+    var vc=document.getElementById('vChat');document.querySelectorAll('.view').forEach(function(v){v.classList.remove('on');});vc.classList.add('on');
+    mcLog().innerHTML='';MC={days:[],di:0};
+    var tage=(DATA.woche&&DATA.woche.vorschlaege&&DATA.woche.vorschlaege.tage)||[];
+    MC.days=tage.filter(function(t){return (t.vorschlaege||[]).length && (presentOn(t.tag).length||guestsOn(t.tag).length);});
+    var planer=(DATA.persons[0]&&DATA.persons[0].name)||'Der Haushalt';
+    document.getElementById('mcsub').textContent=planer+' plant eure Woche';
+    if(!MC.days.length){mcBot('👋 Die Woche wird gerade noch geplant — schau gleich nochmal rein!');return;}
+    mcBot('👋 Hi! Ich bin euer <b>Koch-Assistent</b> — <b>'+esc(planer)+'</b> plant gerade die Woche.',function(){
+      mcBot('Deine Stimme zählt: tipp einfach an, was dir schmeckt. Kein Account, kein Stress. 🍽️',function(){
+        var sv=null;try{sv=JSON.parse(localStorage.getItem('kv_'+HH)||'null');}catch(_){}
+        if(sv&&sv.id&&DATA.persons.some(function(p){return p.id===sv.id;})){VOTER=sv;mcBot('Willkommen zurück, <b>'+esc(sv.name)+'</b>! 👋',function(){mcAskDay(0);});return;}
+        mcBot('Erstmal — <b>wer bist du?</b>',function(){
+          var chips=DATA.persons.filter(function(p){return !p.gast;}).map(function(p){return {v:'p:'+p.id,t:'🙋 '+p.name};});
+          chips.push({v:'gast',t:'👋 Ich bin Gast',ghost:true});
+          mcChips(chips,function(v){
+            if(v==='gast'){mcBubble('me','👋 Gast');mcAskName();return;}
+            var id=v.slice(2),p=DATA.persons.filter(function(x){return x.id===id;})[0];if(!p)return;
+            VOTER={id:p.id,name:p.name};try{localStorage.setItem('kv_'+HH,JSON.stringify(VOTER));}catch(_){}
+            mcBubble('me',p.name);mcAskDay(0);
+          });
+        });
+      });
+    });
+  }
+  function mcAskName(){
+    mcBot('Schön, dass du dabei bist! Und <b>wie heißen wir dich?</b> ✍️',function(){
+      var l=mcLog();var row=document.createElement('div');row.className='nameadd';
+      row.innerHTML='<input id="mcname" placeholder="Dein Name …" maxlength="24"><button class="add" id="mcnameGo">→</button>';
+      l.appendChild(row);mcScroll();var inp=row.querySelector('#mcname');try{inp.focus();}catch(_){}
+      function go(){var n=(inp.value||'').trim().replace(/[<>&]/g,'')||'Gast';row.remove();mcBubble('me',n);
+        post('personen',{name:n,haushalt:HH,gast:true,sort:99}).then(function(r){var p=r&&r[0];if(!p){mcBot('⚠️ Hoppla, das klappt gerade nicht — probier’s gleich nochmal.');return;}
+          VOTER={id:p.id,name:p.name};DATA.persons.push({id:p.id,name:p.name,gast:true,praeferenzen:[]});try{localStorage.setItem('kv_'+HH,JSON.stringify(VOTER));}catch(_){}
+          mcBot('Hi <b>'+esc(n)+'</b>! 👋',function(){mcAskDay(0);});});}
+      row.querySelector('#mcnameGo').addEventListener('click',go);
+      inp.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();go();}});
+    });
+  }
+  function mcFoodRow(t,v,i){var oid=optId(t.tag,v,i),on=myVote(t.tag,oid);
+    return '<button class="foodrow'+(on?' liked':'')+'" data-fr="'+esc(t.tag)+'|'+esc(oid)+'"><span class="fph" style="background:'+phBg(hueOf(v.titel))+'">'+phTile(v.titel)+'</span><span class="fx"><span class="fnm">'+esc(v.titel||'')+'</span><span class="fmt">'+esc(v.aufwand||v.kurz||'')+'</span></span><span class="heart">'+(on?'♥':'♡')+'</span></button>';}
+  function mcAskDay(di){
+    MC.di=di;if(di>=MC.days.length){mcFinish();return;}
+    var t=MC.days[di];
+    mcBot('🗓️ <b>'+esc(LONGDAY[t.tag]||t.tag)+'</b> — was schmeckt dir? <span class="cnote">(mehrere ok)</span>',function(){
+      var l=mcLog();var wrap=document.createElement('div');wrap.className='ctrl mcday';
+      wrap.innerHTML=(t.vorschlaege||[]).map(function(v,i){return mcFoodRow(t,v,i);}).join('')
+        +'<div class="chips mcnav"><button class="mchip go" data-next="1">Weiter →</button><button class="mchip ghost" data-skip="1">🤷 nichts dabei</button></div>';
+      l.appendChild(wrap);mcScroll();
+      wrap.addEventListener('click',function(e){
+        var fr=e.target.closest('[data-fr]');
+        if(fr){var pp=fr.getAttribute('data-fr').split('|');mcToggle(pp[0],pp[1],fr);return;}
+        var sk=e.target.closest('[data-skip]');if(sk){var nv=wrap.querySelector('.mcnav');if(nv)nv.remove();mcMarkNone(t.tag);mcBubble('me','🤷 nichts dabei');mcAskDay(di+1);return;}
+        var nx=e.target.closest('[data-next]');if(nx){var nv2=wrap.querySelector('.mcnav');if(nv2)nv2.remove();mcAskDay(di+1);return;}
+      });
+    });
+  }
+  function mcToggle(tag,oid,btn){
+    if(!VOTER.id)return;var wid=DATA.woche&&DATA.woche.id;if(!wid)return;var mine=myVote(tag,oid),h=btn.querySelector('.heart');
+    if(mine){DATA.stimmen=DATA.stimmen.filter(function(s){return !(s.tag===tag&&s.option_id===oid&&s.voter_id===VOTER.id);});btn.classList.remove('liked');if(h)h.textContent='♡';
+      rest('DELETE','stimme?woche_id=eq.'+wid+'&tag=eq.'+encodeURIComponent(tag)+'&option_id=eq.'+encodeURIComponent(oid)+'&voter_id=eq.'+VOTER.id);}
+    else{DATA.stimmen.push({tag:tag,option_id:oid,voter_id:VOTER.id});btn.classList.add('liked');if(h)h.textContent='♥';
+      post('stimme',{woche_id:wid,tag:tag,option_id:oid,voter_id:VOTER.id,wert:'up',haushalt:HH});}
+  }
+  function mcMarkNone(tag){var wid=DATA.woche&&DATA.woche.id;if(!wid||!VOTER.id)return;
+    DATA.stimmen=DATA.stimmen.filter(function(s){return !(s.tag===tag&&s.voter_id===VOTER.id&&s.option_id!=='__none__');});
+    rest('DELETE','stimme?woche_id=eq.'+wid+'&tag=eq.'+encodeURIComponent(tag)+'&voter_id=eq.'+VOTER.id+'&option_id=neq.__none__');
+    if(!DATA.stimmen.some(function(s){return s.tag===tag&&s.voter_id===VOTER.id&&s.option_id==='__none__';})){DATA.stimmen.push({tag:tag,option_id:'__none__',voter_id:VOTER.id});post('stimme',{woche_id:wid,tag:tag,option_id:'__none__',voter_id:VOTER.id,wert:'up',haushalt:HH});}}
+  function mcFinish(){
+    var planer=(DATA.persons[0]&&DATA.persons[0].name)||'Der Haushalt';
+    mcBot('🎉 Danke, <b>'+esc(VOTER.name||'')+'</b>! Deine Stimmen sind gespeichert.',function(){
+      var l=mcLog();var card=document.createElement('div');card.className='msg bot recap';
+      var rows=MC.days.map(function(t){var mine=(t.vorschlaege||[]).filter(function(v,i){return myVote(t.tag,optId(t.tag,v,i));}).map(function(v){return esc(v.titel);});
+        return '<div class="recaprow"><span class="rd">'+esc(t.tag)+'</span><span class="rp'+(mine.length?'':' none')+'">'+(mine.length?mine.join(', '):'—')+'</span></div>';}).join('');
+      card.innerHTML='<div class="recaphd">Deine Favoriten</div>'+rows;l.appendChild(card);mcScroll();
+      mcBot('<b>'+esc(planer)+'</b> legt die Woche jetzt fest — du bekommst Bescheid, was gekocht wird. 👋',function(){
+        mcChips([{v:'again',t:'↺ Nochmal ansehen',ghost:true}],function(){startMitesserChat();});
+      });
+    });
+  }
+  function startVoteMode(){document.getElementById('vOnb').classList.remove('on');document.getElementById('inbar').style.display='none';
+    get('personen?select=id&haushalt=eq.'+HH).then(function(ppl){if(!ppl||!ppl.length){document.getElementById('vOnb').classList.add('on');document.getElementById('inbar').style.display='';stepIntro();return;}
+      refresh().then(function(){startMitesserChat();});});}
+  setInterval(function(){if(_generating||_regenTag)return;var vp=document.getElementById('vPlan');if(!(DATA.woche&&DATA.woche.status==='voten'&&vp&&vp.classList.contains('on')))return;var wid=DATA.woche.id;if(!wid)return;
+    get('stimme?select=tag,option_id,voter_id&haushalt=eq.'+HH+'&woche_id=eq.'+wid).then(function(s){s=s||[];if(s.length!==DATA.stimmen.length){DATA.stimmen=s;renderPlanen();}});},6000);
+  function renderProfil(){
+    document.getElementById('pfPersons').innerHTML=DATA.persons.map(function(p){
+      var chips=(p.praeferenzen||[]).map(function(x){return '<span class="pref'+(x.hart?' hart':'')+'"><span class="art">'+esc(ARTLBL[x.art]||x.art)+'</span>'+esc(x.wert)+'<span class="x" data-act="delpref" data-id="'+x.id+'">✕</span></span>';}).join('')||'<span class="cnote">keine</span>';
+      return '<div class="person"><div class="pn">'+(p.rolle==='kind'?'🧒':'👤')+' '+esc(p.name)+' <button class="rolbtn" data-act="togglerolle" data-id="'+p.id+'" data-rolle="'+(p.rolle||'erwachsen')+'">'+(p.rolle==='kind'?'🧒 Kind':'👤 Erwachsen')+'</button><button class="del" data-act="delperson" data-id="'+p.id+'">Entfernen</button></div><div class="prefs">'+chips+'</div>'
+        +'<div class="addrow"><select class="pa-art"><option value="vorliebe">mag</option><option value="abneigung">mag nicht</option><option value="allergie">Allergie (hart)</option><option value="ernaehrungsform">Ernährung (hart)</option></select><input class="pa-wert" placeholder="z. B. Lachs, asiatisch"><button class="btn-s" data-act="addpref" data-id="'+p.id+'">+</button></div></div>';}).join('')
+      +'<div class="addrow"><input id="np-name" placeholder="Neue Person …"><button class="btn-s" data-act="addperson">+ Person</button></div>';
+    var gr=DATA.regeln.filter(function(r){return r.typ==='wunsch';});
+    document.getElementById('pfGrund').innerHTML='<div class="prefs">'+(gr.map(function(r){return '<span class="pref"><span class="art">Grundsatz</span>'+esc(r.text)+'<span class="x" data-act="delreg" data-id="'+r.id+'">✕</span></span>';}).join('')||'<span class="cnote">keine</span>')+'</div><div class="addrow"><input id="ng-text" placeholder="z. B. viel Gemüse"><button class="btn-s" data-act="addgrund">+</button></div>';
+    var rg=DATA.regeln.filter(function(r){return r.typ!=='wunsch';});
+    document.getElementById('pfRegeln').innerHTML=(rg.map(function(r){var wer=r.personen?r.personen.name:'Haushalt';return '<div class="rule"><span class="rtag">'+esc(TYPLBL[r.typ]||r.typ)+'</span>'+(r.wochentag?'<span class="rtag">'+esc(r.wochentag)+'</span>':'')+'<span><b>'+esc(wer)+'</b> — '+esc(r.text||'')+'</span><button class="del" data-act="delreg" data-id="'+r.id+'">✕</button></div>';}).join('')||'<span class="cnote">keine</span>')
+      +'<div class="addrow" id="nr"><select class="nr-person"><option value="">Haushalt</option>'+DATA.persons.map(function(p){return '<option value="'+p.id+'">'+esc(p.name)+'</option>';}).join('')+'</select><select class="nr-typ"><option value="abwesenheit">abwesend</option><option value="hinweis">Hinweis</option></select><select class="nr-dow"><option value="">jeder Tag</option>'+DOW.map(function(d){return '<option>'+d+'</option>';}).join('')+'</select><input class="nr-text" placeholder="Beschreibung"><button class="btn-s" data-act="addreg">+ Regel</button></div>';}
+  document.getElementById('vProfil').addEventListener('click',function(e){var b=e.target.closest('[data-act]');if(!b)return;var act=b.getAttribute('data-act'),id=b.getAttribute('data-id');
+    if(act==='addperson'){var n=document.getElementById('np-name');if(n&&n.value.trim())post('personen',{name:n.value.trim(),haushalt:HH,sort:9}).then(refresh);}
+    else if(act==='delperson'){if(confirm('Person entfernen?'))rest('DELETE','personen?id=eq.'+id).then(refresh);}
+    else if(act==='togglerolle'){var nr=b.getAttribute('data-rolle')==='kind'?'erwachsen':'kind';rest('PATCH','personen?id=eq.'+id,{rolle:nr}).then(refresh);}
+    else if(act==='addpref'){var row=b.closest('.addrow'),art=row.querySelector('.pa-art').value,w=row.querySelector('.pa-wert').value.trim();if(w)post('praeferenzen',{person_id:id,art:art,wert:w,hart:!!HART[art],haushalt:HH}).then(refresh);}
+    else if(act==='delpref'){rest('DELETE','praeferenzen?id=eq.'+id).then(refresh);}
+    else if(act==='addgrund'){var g=document.getElementById('ng-text');if(g&&g.value.trim())post('regeln',{typ:'wunsch',text:g.value.trim(),haushalt:HH}).then(refresh);}
+    else if(act==='delreg'){rest('DELETE','regeln?id=eq.'+id).then(refresh);}
+    else if(act==='addreg'){var r=document.getElementById('nr');var typ=r.querySelector('.nr-typ').value;var pv=r.querySelector('.nr-person').value;if(typ==='abwesenheit'&&!pv){alert('Bei „abwesend" bitte eine Person wählen – Abwesenheit ist immer personen-scharf.');return;}post('regeln',{person_id:pv||null,typ:typ,wochentag:r.querySelector('.nr-dow').value||null,text:r.querySelector('.nr-text').value.trim()||'—',haushalt:HH}).then(refresh);}});
+  function ensureWoche(){var w=isoWeek(new Date());return get('wochen?select=id&haushalt=eq.'+HH+'&jahr=eq.'+w.jahr+'&kw=eq.'+w.kw).then(function(rows){if(rows&&rows[0])return rows[0].id;return post('wochen',{jahr:w.jahr,kw:w.kw,haushalt:HH}).then(function(r){return r&&r[0]&&r[0].id;});});}
+  document.getElementById('addGast').addEventListener('click',function(){var day=prompt('Gast an welchem Tag? (Mo–So)','Do');if(!day)return;day=day.trim();day=day.charAt(0).toUpperCase()+day.slice(1,2).toLowerCase();if(DOW.indexOf(day)<0){alert('Bitte Mo–So');return;}var name=(prompt('Name des Gasts (optional)','Oma')||'Gast');
+    ensureWoche().then(function(wid){return post('woche_ereignisse',{woche_id:wid,typ:'gast',wochentag:day,gast_name:name,text:'Gast: '+name,haushalt:HH});}).then(refresh);});
+  // Namen in der Agenda antippen = diese Woche da/weg (Override, ändert Stammdaten nicht)
+  function togglePresence(pid,day){var wasPresent=presentOn(day).some(function(p){return p.id===pid;});
+    rest('DELETE','woche_ereignisse?haushalt=eq.'+HH+'&person_id=eq.'+pid+'&wochentag=eq.'+day+'&typ=in.(abwesenheit,anwesenheit)')
+      .then(function(){return ensureWoche();})
+      .then(function(wid){var permAbs=DATA.regeln.some(function(r){return r.typ==='abwesenheit'&&r.wochentag===day&&r.person_id===pid;});
+        if(!wasPresent){ if(permAbs) return post('woche_ereignisse',{woche_id:wid,person_id:pid,typ:'anwesenheit',wochentag:day,text:'diese Woche da',haushalt:HH}); return null; }
+        return post('woche_ereignisse',{woche_id:wid,person_id:pid,typ:'abwesenheit',wochentag:day,text:'diese Woche weg',haushalt:HH}); })
+      .then(refresh);}
+  // Ausnahme-Tag zurücksetzen (wieder wie immer) bzw. als neuen Standard in den Rhythmus übernehmen
+  function revertDay(day){rest('DELETE','woche_ereignisse?haushalt=eq.'+HH+'&wochentag=eq.'+day+'&typ=in.(abwesenheit,anwesenheit)').then(refresh);}
+  function promoteDay(day){var here={};presentOn(day).forEach(function(p){here[p.id]=1;});var proms=[];
+    DATA.persons.forEach(function(p){var hasRule=DATA.regeln.some(function(r){return r.typ==='abwesenheit'&&r.wochentag===day&&r.person_id===p.id;});
+      if(here[p.id]){if(hasRule)proms.push(rest('DELETE','regeln?haushalt=eq.'+HH+'&person_id=eq.'+p.id+'&wochentag=eq.'+day+'&typ=eq.abwesenheit'));}
+      else{if(!hasRule)proms.push(post('regeln',{person_id:p.id,typ:'abwesenheit',wochentag:day,text:'regelmäßig weg',haushalt:HH}));}});
+    Promise.all(proms).then(function(){return rest('DELETE','woche_ereignisse?haushalt=eq.'+HH+'&wochentag=eq.'+day+'&typ=in.(abwesenheit,anwesenheit)');}).then(refresh);}
+  document.getElementById('agenda').addEventListener('click',function(e){var act=e.target.closest('[data-act]');
+    if(act){var day=act.getAttribute('data-day'),k=act.getAttribute('data-act');if(k==='revert')revertDay(day);else if(k==='promote')promoteDay(day);return;}
+    var a=e.target.closest('.av[data-pid]');if(a)togglePresence(a.getAttribute('data-pid'),a.getAttribute('data-day'));});
+
+  // ── Assistent-Sheet (echte Function, beide Scopes) ──
+  var sheet=document.getElementById('sheet'),sback=document.getElementById('sback'),slog=document.getElementById('slog'),stext=document.getElementById('stext'),shist=[],sseed=false,curScope='woche';
+  var pendingIntro=null;   // nach dem Onboarding: erste Chat-Blase = „Geschafft!"
+  var SCFG={woche:{greet:'Da bin ich. 👋 Sag mir, was <b>diese Woche</b> anders ist – z.&nbsp;B. „Freitag kommt Besuch".',quick:[['👤 Gast','Am Donnerstag kommt Besuch'],['🚗 Abwesend','Freitag bin ich nicht da'],['🥕 Wunsch','Diese Woche extra viel Brokkoli']]},
+    dauer:{greet:'Da bin ich. 👋 Sag mir, was sich <b>dauerhaft</b> ändert – z.&nbsp;B. „Anna ist ab jetzt vegetarisch".',quick:[['👤 Person','Neue Person: Max'],['⛔ Allergie','Anna hat eine Nussallergie'],['🎯 Grundsatz','Uns ist gesund wichtig']]}};
+  function mdToHtml(s){s=String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    s=s.replace(/`([^`]+)`/g,'<code>$1</code>').replace(/\*\*([^*]+)\*\*/g,'<b>$1</b>').replace(/__([^_]+)__/g,'<b>$1</b>');
+    s=s.replace(/(^|[\s(])\*(?!\s)([^*\n]+?)\*(?=$|[\s.,;:!?)])/g,'$1<i>$2</i>');
+    var lines=s.split(/\r?\n/),html='',list=null;function close(){if(list){html+='</'+list+'>';list=null;}}
+    for(var i=0;i<lines.length;i++){var ln=lines[i],m;
+      if(m=ln.match(/^\s*[-*•]\s+(.+)$/)){if(list!=='ul'){close();html+='<ul>';list='ul';}html+='<li>'+m[1]+'</li>';}
+      else if(m=ln.match(/^\s*\d+[.)]\s+(.+)$/)){if(list!=='ol'){close();html+='<ol>';list='ol';}html+='<li>'+m[1]+'</li>';}
+      else if(m=ln.match(/^#{1,6}\s+(.+)$/)){close();html+='<p><b>'+m[1]+'</b></p>';}
+      else{close();if(ln.trim())html+='<p>'+ln+'</p>';}}
+    close();return html||'<p></p>';}
+  function sbot(h){var d=document.createElement('div');d.className='msg bot';d.innerHTML=h;slog.appendChild(d);slog.scrollTop=slog.scrollHeight;}
+  function sme(t){var d=document.createElement('div');d.className='msg me';d.textContent=t;slog.appendChild(d);slog.scrollTop=slog.scrollHeight;}
+  function chg(c){var w=c.scope==='woche';var d=document.createElement('div');d.className='ccard'+(w?'':' dh');d.innerHTML='<div>'+(w?'📅 diese Woche':'∞ dauerhaft')+' · '+esc(c.text||'gespeichert')+'</div>';slog.appendChild(d);slog.scrollTop=slog.scrollHeight;}
+  function applyScope(sc){curScope=sc;document.querySelectorAll('.scoperow button').forEach(function(x){x.classList.toggle('on',x.getAttribute('data-sc')===sc);});
+    var qk=document.getElementById('qk');qk.innerHTML=SCFG[sc].quick.map(function(qq){return '<button data-q="'+qq[1].replace(/"/g,'&quot;')+'">'+qq[0]+'</button>';}).join('');
+    qk.querySelectorAll('button').forEach(function(bn){bn.addEventListener('click',function(){stext.value=bn.getAttribute('data-q');stext.focus();});});
+    slog.innerHTML='';sbot(SCFG[sc].greet);}
+  document.querySelectorAll('.scoperow button').forEach(function(x){x.addEventListener('click',function(){applyScope(x.getAttribute('data-sc'));});});
+  function openS(){                                        // Chat-Drawer unter dem GESCHRUMPFTEN Cockpit (mehr Platz für den Chat)
+    hideCoach();
+    var ck=document.getElementById('cockpit'),st=ck&&ck.querySelector('.ck-status'),top=0;
+    if(ck){var a=ck.style.transition,b=st?st.style.transition:'';     // Endhöhe des geschrumpften Cockpits ohne Transition messen
+      ck.style.transition='none';if(st)st.style.transition='none';
+      document.body.classList.add('chatopen');
+      top=Math.max(0,Math.round(ck.getBoundingClientRect().bottom));
+      document.body.classList.remove('chatopen');void ck.offsetHeight;
+      ck.style.transition=a;if(st)st.style.transition=b;}
+    document.documentElement.style.setProperty('--drawerTop',top+'px');
+    document.body.classList.add('chatopen');               // Cockpit schrumpft animiert, Stepper weicht
+    sheet.classList.add('open');sback.classList.add('open');
+    if(!sseed){sseed=true;applyScope('woche');if(pendingIntro){slog.innerHTML='';sbot(pendingIntro);pendingIntro=null;}}
+  }
+  function closeS(){sheet.classList.remove('open');sback.classList.remove('open');document.body.classList.remove('chatopen');}
+  document.getElementById('openA').addEventListener('click',openS);
+  document.getElementById('closeA').addEventListener('click',closeS);
+  sback.addEventListener('click',closeS);
+  function ssend(){var t=(stext.value||'').trim();if(!t)return;sme(t);shist.push({role:'user',content:t});stext.value='';
+    var ty=document.createElement('div');ty.className='msg bot typing';ty.innerHTML='<span></span><span></span><span></span>';slog.appendChild(ty);slog.scrollTop=slog.scrollHeight;
+    var w=isoWeek(new Date());
+    fetch(FN,{method:'POST',headers:H,body:JSON.stringify({messages:shist,scope:curScope==='dauer'?'haushalt':'woche',jahr:w.jahr,kw:w.kw,haushalt:HH,benutzer:(DATA.persons[0]&&DATA.persons[0].name)||'',kontext:{phase:(DATA.woche&&DATA.woche.status)||'planen',kw:w.kw,hat_vorschlaege:!!(DATA.woche&&DATA.woche.vorschlaege),tage:((DATA.woche&&DATA.woche.vorschlaege&&DATA.woche.vorschlaege.tage)||[]).map(function(t){return t.tag;})}})}).then(function(r){return r.json();})
+      .then(function(res){ty.remove();if(res.error){sbot('⚠️ '+res.error);return;}sbot(mdToHtml(res.reply||'Erledigt.'));shist.push({role:'assistant',content:res.reply||''});var regen=null;(res.changes||[]).forEach(function(c){if(c&&c.kind==='regenerate'&&c.data)regen=c.data;else chg(c);});var rf=refresh();(rf&&rf.then?rf:Promise.resolve()).then(function(){if(regen)askChatRegen(regen.tage,regen.grund);});})
+      .catch(function(){ty.remove();sbot('⚠️ offline');});}
+  document.getElementById('ssend').addEventListener('click',ssend);
+  stext.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();ssend();}});
+
+  function startNormal(){                                                         // schon eingerichteter Haushalt -> direkt in die App, kein Onboarding
+    var onb=document.getElementById('vOnb');onb.classList.remove('on');           // erst prüfen (nicht flashen)
+    get('personen?select=id&haushalt=eq.'+HH).then(function(ppl){
+      if(ppl&&ppl.length){document.body.classList.add('entered');revealApp();}     // Personen vorhanden -> direkt starten
+      else{onb.classList.add('on');stepIntro();}                                   // neuer Haushalt -> Onboarding
+    }).catch(function(){onb.classList.add('on');stepIntro();});
+  }
+  if(voteMode)startVoteMode();else startNormal();
+})();
+</script>
+</body>
+</html>
