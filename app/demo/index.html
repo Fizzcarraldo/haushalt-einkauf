@@ -1034,7 +1034,9 @@
     var state={data:null,err:false,minDone:false};
     gt(reduce?0:2600,function(){state.minDone=true;maybe();});
     (function tryFetch(attempt){var ctx=buildContext(),dcx=dayContext(tag);if(!dcx){state.err=true;maybe();return;}
-      fetch(FN,{method:'POST',headers:H,body:JSON.stringify({generate:true,context:{kw:ctx.kw,grundsaetze:ctx.grundsaetze,tage:[dcx]},haushalt:HH})}).then(function(r){return r.json();}).then(function(res){
+      var used=[];((DATA.woche&&DATA.woche.vorschlaege&&DATA.woche.vorschlaege.tage)||[]).forEach(function(tt){if(tt.tag===tag)return;(tt.vorschlaege||[]).forEach(function(v){if(v&&v.titel&&used.indexOf(v.titel)<0)used.push(v.titel);});});
+      var grund=(ctx.grundsaetze||[]).slice();if(used.length)grund.push('Diese Gerichte sind diese Woche an ANDEREN Tagen schon geplant — schlag bewusst etwas ANDERES vor, KEINE Wiederholung davon: '+used.join(', ')+'.');
+      fetch(FN,{method:'POST',headers:H,body:JSON.stringify({generate:true,context:{kw:ctx.kw,grundsaetze:grund,tage:[dcx]},haushalt:HH})}).then(function(r){return r.json();}).then(function(res){
         if(_regenTag!==tag)return;
         if(res&&res.plan&&res.plan.tage&&res.plan.tage.length){state.data=res;maybe();}
         else if(attempt<2)tryFetch(attempt+1);else{state.err=true;maybe();}
