@@ -129,6 +129,9 @@
   .msg.bot.mcdhd{margin-top:.9rem;}                          /* klare Trennung ZWISCHEN Tagen */
   .mclog>.msg.bot.mcdhd:first-child,.mclog>.mcdhd:first-of-type{margin-top:0;}
   .mchip.own{background:var(--card);border-color:var(--line);color:var(--green-ink);}
+  .mchip.mcnone.on{background:var(--orange-bg);border-color:var(--orange-line);color:var(--orange);}
+  .mcnav{margin-top:.1rem;gap:.4rem;}
+  .mcfinishbar{margin-top:1.1rem;display:flex;} .mcfin{width:100%;justify-content:center;text-align:center;padding:.75rem;font-size:.95rem;border-radius:.8rem;}
   .foodrow{display:flex;align-items:center;gap:.6rem;width:100%;text-align:left;border:1.5px solid var(--line);border-radius:.8rem;background:var(--card);padding:.4rem .5rem;cursor:pointer;font:inherit;color:inherit;transition:border-color .15s,background .15s;}
   .foodrow.liked{border-color:var(--green);background:var(--green-bg);}
   .foodrow .fph{width:2.7rem;height:2.7rem;border-radius:.6rem;display:grid;place-items:center;font-size:1.55rem;flex:0 0 auto;}
@@ -1159,13 +1162,10 @@
     if(!MC.days.length){mcBot('👋 Die Woche wird gerade noch geplant — schau gleich nochmal rein!');return;}
     var sv=null;try{sv=JSON.parse(localStorage.getItem('kv_'+HH)||'null');}catch(_){}
     if(sv&&sv.id&&DATA.persons.some(function(p){return p.id===sv.id;})){
-      VOTER=sv;var pos=mcLoadPos();
-      if(pos&&(pos.done||pos.di>0)){MC.restoring=true;MC.restoreTo=pos.done?MC.days.length:Math.min(pos.di,MC.days.length-1);
-        mcBubble('bot','👋 <b>Willkommen zurück, '+esc(sv.name)+'</b> — dein Stand ist noch da:');mcAskDay(0);return;}
-      mcBot('Willkommen zurück, <b>'+esc(sv.name)+'</b>! 👋 Tipp an, was dir schmeckt.',function(){mcAskDay(0);});return;
+      VOTER=sv;mcBubble('bot','👋 <b>Willkommen zurück, '+esc(sv.name)+'</b> — tipp an, was dir schmeckt:');mcRenderDay(0);return;
     }
     mcBot('👋 Hi! Ich bin euer <b>Koch-Assistent</b> — <b>'+esc(planer)+'</b> plant gerade die Woche.',function(){
-      mcBot('Deine Stimme zählt: tipp einfach an, was dir schmeckt. Kein Account, kein Stress. 🍽️',function(){
+      mcBot('Deine Stimme zählt: tipp einfach an, was dir schmeckt — mehrere pro Tag ok, am Ende auf <b>Fertig</b>. 🍽️',function(){
         mcBot('Erstmal — <b>wer bist du?</b>',function(){
           var chips=DATA.persons.filter(function(p){return !p.gast;}).map(function(p){return {v:'p:'+p.id,t:'🙋 '+p.name};});
           chips.push({v:'gast',t:'👋 Ich bin Gast',ghost:true});
@@ -1173,7 +1173,7 @@
             if(v==='gast'){mcBubble('me','👋 Gast');mcAskName();return;}
             var id=v.slice(2),p=DATA.persons.filter(function(x){return x.id===id;})[0];if(!p)return;
             VOTER={id:p.id,name:p.name};try{localStorage.setItem('kv_'+HH,JSON.stringify(VOTER));}catch(_){}
-            mcBubble('me',p.name);mcAskDay(0);
+            mcBubble('me',p.name);mcRenderDay(0);
           });
         });
       });
@@ -1187,7 +1187,7 @@
       function go(){var n=(inp.value||'').trim().replace(/[<>&]/g,'')||'Gast';row.remove();mcBubble('me',n);
         post('personen',{name:n,haushalt:HH,gast:true,sort:99}).then(function(r){var p=r&&r[0];if(!p){mcBot('⚠️ Hoppla, das klappt gerade nicht — probier’s gleich nochmal.');return;}
           VOTER={id:p.id,name:p.name};DATA.persons.push({id:p.id,name:p.name,gast:true,praeferenzen:[]});try{localStorage.setItem('kv_'+HH,JSON.stringify(VOTER));}catch(_){}
-          mcBot('Hi <b>'+esc(n)+'</b>! 👋',function(){mcAskDay(0);});});}
+          mcBot('Hi <b>'+esc(n)+'</b>! 👋',function(){mcRenderDay(0);});});}
       row.querySelector('#mcnameGo').addEventListener('click',go);
       inp.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();go();}});
     });
@@ -1195,7 +1195,7 @@
   function mcTally(tag,oid){var vs=votesFor(tag,oid);if(!vs.length)return '';return vs.slice(0,6).map(function(s){var p=DATA.persons.filter(function(x){return x.id===s.voter_id;})[0]||{name:nameOf(s.voter_id),id:s.voter_id};return avAt(p,'',null);}).join('')+(vs.length>6?'<span class="fmore">+'+(vs.length-6)+'</span>':'');}
   function mcFoodRow(t,v,i){var oid=optId(t.tag,v,i),on=myVote(t.tag,oid);
     return '<button class="foodrow'+(on?' liked':'')+'" data-fr="'+esc(t.tag)+'|'+esc(oid)+'"><span class="fph" style="background:'+phBg(hueOf(v.titel))+'">'+phTile(v.titel)+'</span><span class="fx"><span class="fnm">'+esc(v.titel||'')+'</span><span class="fmt">'+esc(v.aufwand||v.kurz||'')+'</span><span class="ftally">'+mcTally(t.tag,oid)+'</span></span><span class="heart">'+(on?'♥':'♡')+'</span></button>';}
-  function mcSavePos(){if(!VOTER.id)return;try{localStorage.setItem('mcpos_'+HH+'_'+VOTER.id,JSON.stringify({di:MC.di,done:MC.di>=MC.days.length}));}catch(_){}}
+  function mcSaveDone(){if(!VOTER.id)return;try{localStorage.setItem('mcpos_'+HH+'_'+VOTER.id,JSON.stringify({done:true}));}catch(_){}}
   function mcLoadPos(){if(!VOTER.id)return null;try{return JSON.parse(localStorage.getItem('mcpos_'+HH+'_'+VOTER.id)||'null');}catch(_){return null;}}
   function mcAddOwn(t,di,wrap){var nv=wrap.querySelector('.mcnav');if(!nv||wrap.querySelector('.nameadd'))return;
     var row=document.createElement('div');row.className='nameadd mcown';
@@ -1211,25 +1211,32 @@
       mcBubble('me','✍️ '+esc(titel));mcScroll();mcRecapUpdate();}
     row.querySelector('#mcownGo').addEventListener('click',go);
     inp.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();go();}});}
-  function mcAskDay(di){
-    MC.di=di;mcSavePos();
-    if(di>=MC.days.length){mcFinish();return;}
+  function mcRenderDay(di){
+    if(di>=MC.days.length){if((mcLoadPos()||{}).done)mcFinish();else mcAppendFertig();return;}
     var t=MC.days[di];
-    mcBot('🗓️ <b>'+esc(LONGDAY[t.tag]||t.tag)+'</b> — was schmeckt dir? <span class="cnote">(mehrere ok)</span>',function(){
-      var l=mcLog();var wrap=document.createElement('div');wrap.className='ctrl mcday';
-      wrap.innerHTML=(t.vorschlaege||[]).map(function(v,i){return mcFoodRow(t,v,i);}).join('')
-        +'<div class="chips mcnav"><button class="mchip go" data-next="1">Weiter →</button><button class="mchip own" data-own="1">✍️ Eigener Vorschlag</button><button class="mchip ghost" data-skip="1">🤷 nichts dabei</button></div>';
-      l.appendChild(wrap);mcScroll();
-      wrap.addEventListener('click',function(e){
-        var fr=e.target.closest('[data-fr]');
-        if(fr){var pp=fr.getAttribute('data-fr').split('|');mcToggle(pp[0],pp[1],fr);return;}
-        var ow=e.target.closest('[data-own]');if(ow){mcAddOwn(t,di,wrap);return;}
-        var sk=e.target.closest('[data-skip]');if(sk){var nv=wrap.querySelector('.mcnav');if(nv)nv.remove();mcMarkNone(t.tag);mcBubble('me','🤷 nichts dabei');mcAskDay(di+1);return;}
-        var nx=e.target.closest('[data-next]');if(nx){var nv2=wrap.querySelector('.mcnav');if(nv2)nv2.remove();mcAskDay(di+1);return;}
-      });
-      if(MC.restoring){if(di<MC.restoreTo){var nv3=wrap.querySelector('.mcnav');if(nv3)nv3.remove();mcAskDay(di+1);}else{MC.restoring=false;}}
-    },null,'mcdhd');
+    var none=DATA.stimmen.some(function(s){return s.tag===t.tag&&s.option_id==='__none__'&&s.voter_id===VOTER.id;});
+    mcBubble('bot mcdhd','🗓️ <b>'+esc(LONGDAY[t.tag]||t.tag)+'</b>');
+    var wrap=document.createElement('div');wrap.className='ctrl mcday';
+    wrap.innerHTML=(t.vorschlaege||[]).map(function(v,i){return mcFoodRow(t,v,i);}).join('')
+      +'<div class="chips mcnav"><button class="mchip own" data-own="1">✍️ Eigener Vorschlag</button><button class="mchip ghost mcnone'+(none?' on':'')+'" data-skip="1">🤷 nichts dabei</button></div>';
+    mcLog().appendChild(wrap);mcScroll();
+    wrap.addEventListener('click',function(e){
+      var fr=e.target.closest('[data-fr]');
+      if(fr){var pp=fr.getAttribute('data-fr').split('|');mcToggle(pp[0],pp[1],fr);return;}
+      var ow=e.target.closest('[data-own]');if(ow){mcAddOwn(t,di,wrap);return;}
+      var sk=e.target.closest('[data-skip]');if(sk){var wid=DATA.woche&&DATA.woche.id;
+        if(sk.classList.contains('on')){DATA.stimmen=DATA.stimmen.filter(function(s){return !(s.tag===t.tag&&s.option_id==='__none__'&&s.voter_id===VOTER.id);});if(wid)rest('DELETE','stimme?woche_id=eq.'+wid+'&tag=eq.'+encodeURIComponent(t.tag)+'&option_id=eq.__none__&voter_id=eq.'+VOTER.id);sk.classList.remove('on');mcRecapUpdate();return;}
+        mcMarkNone(t.tag);sk.classList.add('on');
+        wrap.querySelectorAll('.foodrow.liked').forEach(function(f){f.classList.remove('liked');var h=f.querySelector('.heart');if(h)h.textContent='♡';var p2=f.getAttribute('data-fr').split('|');var ft=f.querySelector('.ftally');if(ft)ft.innerHTML=mcTally(p2[0],p2[1]);});
+        return;}
+    });
+    setTimeout(function(){mcRenderDay(di+1);},reduce?0:200);
   }
+  function mcAppendFertig(){if(mcLog().querySelector('.mcfinishbar'))return;
+    var f=document.createElement('div');f.className='mcfinishbar';
+    f.innerHTML='<button class="mchip go mcfin" data-fin="1">✓ Fertig — Auswahl abschicken</button>';
+    mcLog().appendChild(f);mcScroll();
+    f.addEventListener('click',function(e){if(e.target.closest('[data-fin]')){f.remove();mcFinish();}});}
   function mcToggle(tag,oid,btn){
     if(!VOTER.id)return;var wid=DATA.woche&&DATA.woche.id;if(!wid)return;var mine=myVote(tag,oid),h=btn.querySelector('.heart');
     if(mine){DATA.stimmen=DATA.stimmen.filter(function(s){return !(s.tag===tag&&s.option_id===oid&&s.voter_id===VOTER.id);});btn.classList.remove('liked');if(h)h.textContent='♡';
@@ -1237,7 +1244,8 @@
     else{
       if(DATA.stimmen.some(function(s){return s.tag===tag&&s.option_id==='__none__'&&s.voter_id===VOTER.id;})){DATA.stimmen=DATA.stimmen.filter(function(s){return !(s.tag===tag&&s.option_id==='__none__'&&s.voter_id===VOTER.id);});rest('DELETE','stimme?woche_id=eq.'+wid+'&tag=eq.'+encodeURIComponent(tag)+'&option_id=eq.__none__&voter_id=eq.'+VOTER.id);}
       DATA.stimmen.push({tag:tag,option_id:oid,voter_id:VOTER.id});btn.classList.add('liked');if(h)h.textContent='♥';
-      post('stimme',{woche_id:wid,tag:tag,option_id:oid,voter_id:VOTER.id,wert:'up',haushalt:HH});}
+      post('stimme',{woche_id:wid,tag:tag,option_id:oid,voter_id:VOTER.id,wert:'up',haushalt:HH});
+      var _w=btn.closest('.mcday');if(_w){var _nb=_w.querySelector('.mcnone.on');if(_nb)_nb.classList.remove('on');}}
     var ft=btn.querySelector('.ftally');if(ft)ft.innerHTML=mcTally(tag,oid);
     mcRecapUpdate();
   }
@@ -1250,7 +1258,7 @@
     if(!DATA.stimmen.some(function(s){return s.tag===tag&&s.voter_id===VOTER.id&&s.option_id==='__none__';})){DATA.stimmen.push({tag:tag,option_id:'__none__',voter_id:VOTER.id});post('stimme',{woche_id:wid,tag:tag,option_id:'__none__',voter_id:VOTER.id,wert:'up',haushalt:HH});}
     mcRecapUpdate();}
   function mcFinish(){
-    MC.restoring=false;mcSavePos();
+    mcSaveDone();
     var planer=(DATA.persons[0]&&DATA.persons[0].name)||'Der Haushalt';
     mcBot('🎉 Danke, <b>'+esc(VOTER.name||'')+'</b>! Deine Stimmen sind gespeichert.',function(){
       var l=mcLog();var card=document.createElement('div');card.className='msg bot recap';
