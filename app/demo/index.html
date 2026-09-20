@@ -32,6 +32,11 @@
   .msg.bot p{margin:.2rem 0;} .msg.bot p:first-child{margin-top:0;} .msg.bot p:last-child{margin-bottom:0;}
   .msg.bot ul,.msg.bot ol{margin:.32rem 0;padding-left:1.15rem;} .msg.bot li{margin:.12rem 0;} .msg.bot li::marker{color:var(--green);}
   .msg.bot b{font-weight:750;} .msg.bot code{background:var(--card);border:1px solid var(--line2);border-radius:4px;padding:0 .28rem;font:.86em/1.4 var(--mono);}
+  .chatconf{align-self:flex-start;max-width:96%;border:1px solid var(--line);border-radius:12px;background:var(--card2);padding:.6rem .7rem;display:flex;flex-direction:column;gap:.5rem;animation:in .28s cubic-bezier(.2,.75,.25,1) both;}
+  .chatconf .cq{font-size:.9rem;font-weight:600;} .chatconf .cq b{color:var(--green-ink);} .chatconf .cg{color:var(--muted);font-weight:500;font-size:.82rem;}
+  .chatconf .cw{font-size:.82rem;color:var(--orange);background:var(--orange-bg);border:1px solid var(--orange-line);border-radius:.55rem;padding:.35rem .5rem;} .chatconf .cw b{color:var(--orange);}
+  .chatconf .cb{display:flex;gap:.5rem;align-items:center;} .chatconf .cb button{font:inherit;font-weight:750;font-size:.84rem;border-radius:.6rem;padding:.5rem .8rem;cursor:pointer;border:1px solid var(--line);background:var(--card);color:var(--ink);}
+  .chatconf .cb .yes{margin-left:auto;border:none;color:#fff;background:var(--ai);} .chatconf .ccn{color:var(--muted);font-size:.84rem;font-weight:600;}
   .msg.typing{display:inline-flex;align-self:flex-start;gap:.28rem;} .msg.typing span{width:.46rem;height:.46rem;border-radius:50%;background:var(--muted);animation:bl 1.2s infinite}
   .msg.typing span:nth-child(2){animation-delay:.15s}.msg.typing span:nth-child(3){animation-delay:.3s}@keyframes bl{0%,70%,100%{opacity:.3}35%{opacity:.9}}
   .ctrl{margin-top:.55rem;display:flex;flex-direction:column;gap:.5rem;}
@@ -1091,6 +1096,24 @@
     ensureWoche().then(function(wid){if(wid){DATA.woche.id=wid;rest('DELETE','stimme?woche_id=eq.'+wid+'&tag=eq.'+encodeURIComponent(tag));rest('PATCH','wochen?id=eq.'+wid,{vorschlaege:DATA.woche.vorschlaege});}
       _regenTag=null;renderPlanen();var c=dayCardEl(tag);if(c){var o=c.querySelector('.vopts');if(o){o.classList.add('dgreveal');gt(1200,function(){var c2=dayCardEl(tag);if(c2){var o2=c2.querySelector('.vopts');if(o2)o2.classList.remove('dgreveal');}});}}regenDone(opts);});}
   function failDayGen(tag,opts){opts=opts||{};stopGenTimers();_regenTag=null;renderPlanen();var c=dayCardEl(tag);if(c){var note=document.createElement('div');note.className='outstrip';note.style.marginTop='.5rem';note.innerHTML='⚠️ Konnte gerade keine neuen Ideen holen. <button class="undo" data-act="regenday" data-day="'+esc(tag)+'">Nochmal ↻</button>';c.appendChild(note);}regenDone(opts);}
+  // Chat-Bestätigung VOR der Neugenerierung: Assistent fragt, Nutzer gibt per Button frei (Safety-Guard wie im App-Interface)
+  function askChatRegen(tage,grund){
+    var cook=(DATA.woche&&DATA.woche.vorschlaege&&DATA.woche.vorschlaege.tage)||[];
+    var valid={};cook.forEach(function(t){if((t.vorschlaege||[]).length&&(presentOn(t.tag).length||guestsOn(t.tag).length))valid[t.tag]=1;});
+    var wantAll=(tage||[]).some(function(x){return /alle|ganz|woche/i.test(String(x));});
+    var days=(wantAll?Object.keys(valid):(tage||[]).map(function(x){return String(x);}).filter(function(d){return valid[d];}));
+    days=days.filter(function(d,i){return days.indexOf(d)===i;});
+    if(!days.length){sbot('Für diese Tage gibt es gerade nichts zum Neu-Generieren. 🤔');return;}
+    var lost=DATA.stimmen.filter(function(s){return days.indexOf(s.tag)>=0&&s.option_id!=='__none__';}).length;
+    var lbl=days.map(function(d){return esc(LONGDAY[d]||d);}).join(', ');
+    var d=document.createElement('div');d.className='chatconf';
+    d.innerHTML='<div class="cq">🔄 Neue Vorschläge für <b>'+lbl+'</b>?'+(grund?' <span class="cg">('+esc(grund)+')</span>':'')+'</div>'
+      +(lost?'<div class="cw">⚠️ Die <b>'+lost+' Stimme'+(lost===1?'':'n')+'</b> für '+(days.length>1?'diese Tage':'diesen Tag')+' '+(lost===1?'geht':'gehen')+' dabei verloren.</div>':'')
+      +'<div class="cb"><button class="no">Abbrechen</button><button class="yes">✓ Ja, neu generieren</button></div>';
+    slog.appendChild(d);slog.scrollTop=slog.scrollHeight;
+    d.querySelector('.no').addEventListener('click',function(){var b=d.querySelector('.cb');if(b)b.innerHTML='<span class="ccn">Abgebrochen — alles bleibt. 👍</span>';});
+    d.querySelector('.yes').addEventListener('click',function(){var b=d.querySelector('.cb');if(b)b.innerHTML='<span class="ccn">Alles klar — ich lege los! 🍳</span>';closeS();regenFromChat(days,grund);});
+  }
   // Chat-getriggerte Neugenerierung: Assistent-Tool „vorschlaege_neu_generieren" sagt, welche Tage neu sollen
   var _regenChatQueue=[],_regenChatGrund='';
   function regenFromChat(tage,grund){
@@ -1289,7 +1312,7 @@
     var ty=document.createElement('div');ty.className='msg bot typing';ty.innerHTML='<span></span><span></span><span></span>';slog.appendChild(ty);slog.scrollTop=slog.scrollHeight;
     var w=isoWeek(new Date());
     fetch(FN,{method:'POST',headers:H,body:JSON.stringify({messages:shist,scope:curScope==='dauer'?'haushalt':'woche',jahr:w.jahr,kw:w.kw,haushalt:HH,benutzer:(DATA.persons[0]&&DATA.persons[0].name)||'',kontext:{phase:(DATA.woche&&DATA.woche.status)||'planen',kw:w.kw,hat_vorschlaege:!!(DATA.woche&&DATA.woche.vorschlaege),tage:((DATA.woche&&DATA.woche.vorschlaege&&DATA.woche.vorschlaege.tage)||[]).map(function(t){return t.tag;})}})}).then(function(r){return r.json();})
-      .then(function(res){ty.remove();if(res.error){sbot('⚠️ '+res.error);return;}sbot(mdToHtml(res.reply||'Erledigt.'));shist.push({role:'assistant',content:res.reply||''});var regen=null;(res.changes||[]).forEach(function(c){if(c&&c.kind==='regenerate'&&c.data)regen=c.data;chg(c);});var rf=refresh();(rf&&rf.then?rf:Promise.resolve()).then(function(){if(regen)regenFromChat(regen.tage,regen.grund);});})
+      .then(function(res){ty.remove();if(res.error){sbot('⚠️ '+res.error);return;}sbot(mdToHtml(res.reply||'Erledigt.'));shist.push({role:'assistant',content:res.reply||''});var regen=null;(res.changes||[]).forEach(function(c){if(c&&c.kind==='regenerate'&&c.data)regen=c.data;else chg(c);});var rf=refresh();(rf&&rf.then?rf:Promise.resolve()).then(function(){if(regen)askChatRegen(regen.tage,regen.grund);});})
       .catch(function(){ty.remove();sbot('⚠️ offline');});}
   document.getElementById('ssend').addEventListener('click',ssend);
   stext.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();ssend();}});
