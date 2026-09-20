@@ -126,6 +126,23 @@
   .recap{width:100%;} .recaphd{font:800 .68rem/1 var(--mono);text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin-bottom:.45rem;}
   .recaprow{display:flex;gap:.6rem;padding:.28rem 0;border-top:1px solid var(--line2);} .recaprow:first-of-type{border-top:none;}
   .recaprow .rd{font-weight:800;width:2rem;flex:0 0 auto;} .recaprow .rp{font-size:.88rem;font-weight:600;} .recaprow .rp.none{color:var(--muted);font-weight:500;}
+  /* Per-Tag „andere Ideen" – In-Card-Generierung (Loader-Sprache, ein Tag) */
+  .vday.busy{border-color:color-mix(in oklab,var(--green) 30%,var(--line));box-shadow:0 12px 30px -16px color-mix(in oklab,var(--green) 55%,transparent);}
+  .daygen{display:flex;flex-direction:column;gap:.5rem;animation:glin .3s ease both;}
+  .dgstatus{font-weight:650;font-size:.84rem;min-height:1.2em;transition:opacity .2s;} .dgstatus.swap{opacity:0;}
+  .dgtiles{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;}
+  .dgtile{position:relative;border-radius:.9rem;overflow:hidden;border:1.5px solid var(--line);min-height:4.4rem;background:var(--card2);box-shadow:0 3px 8px -4px rgba(0,0,0,.14);}
+  .dgph{position:absolute;inset:0;display:grid;place-items:center;font-size:2rem;opacity:.32;transition:opacity .5s ease;}
+  .dgtile::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 20%,rgba(255,255,255,.5) 50%,transparent 80%);transform:translateX(-120%);animation:gsh 1.15s ease-in-out infinite;}
+  .dgtile.dev .dgph{opacity:1;animation:gdev .55s cubic-bezier(.3,.8,.3,1) both;} .dgtile.dev::after{opacity:0;animation:none;}
+  .dgthought{min-height:2.9em;transition:opacity .26s,transform .26s;} .dgthought.swap{opacity:0;transform:translateY(5px);}
+  .dgconfirm{display:flex;flex-direction:column;gap:.55rem;border:1px solid var(--orange-line);background:var(--orange-bg);border-radius:.8rem;padding:.6rem .7rem;margin:.15rem 0 .1rem;animation:glin .25s ease both;}
+  .dgconfirm .dgq{font-size:.85rem;line-height:1.35;} .dgconfirm .dgq b{color:var(--orange);}
+  .dgconfirm .dgb{display:flex;gap:.5rem;} .dgconfirm button{font:inherit;font-weight:750;font-size:.82rem;border-radius:.6rem;padding:.45rem .8rem;cursor:pointer;border:1px solid var(--line);background:var(--card);color:var(--ink);}
+  .dgconfirm .dgyes{margin-left:auto;border:none;color:#fff;background:var(--ai);}
+  .dgreveal .vcard{animation:dgpop .4s cubic-bezier(.2,.8,.25,1.3) both;} .dgreveal .vcard:nth-child(2){animation-delay:.08s;} .dgreveal .vcard:nth-child(3){animation-delay:.16s;}
+  @keyframes dgpop{from{opacity:0;transform:translateY(8px) scale(.97)}to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){.dgtile::after,.dgtile.dev .dgph,.dgreveal .vcard{animation:none!important;}}
   .govote{display:block;width:100%;margin:.4rem 0 0;background:var(--green);color:#fff;border:none;border-radius:14px;padding:.85rem;font:800 1rem/1 var(--sans);cursor:pointer;box-shadow:0 4px 16px color-mix(in oklab,var(--green) 34%,transparent);}
   .shareurl{width:100%;font:inherit;font-size:.8rem;padding:.55rem .6rem;border:1px solid var(--line);border-radius:10px;background:var(--card2);color:var(--ink);margin:.55rem 0;}
   .sharebtns{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;} .sharebtns .wa{text-decoration:none;background:#25d366;color:#fff;display:inline-flex;align-items:center;} .sharebtns .lnk{background:none;border:none;color:var(--muted);font-weight:700;cursor:pointer;font-size:.82rem;}
@@ -690,7 +707,7 @@
     return !(awR||awW);});}
   function guestsOn(day){return DATA.ereignisse.filter(function(e){return e.typ==='gast'&&e.wochentag===day;});}
   function overridesOn(day){return DATA.ereignisse.filter(function(e){return (e.typ==='abwesenheit'||e.typ==='anwesenheit')&&e.wochentag===day;});}
-  function renderPlanen(){if(_generating)return;var persons=DATA.persons;
+  function renderPlanen(){if(_generating||_regenTag)return;var persons=DATA.persons;
     document.getElementById('plsub').textContent=persons.length?persons.map(function(p){return p.name;}).join(' & '):'euer Haushalt';
     document.getElementById('legend').innerHTML=persons.map(function(p){return '<span><span class="av">'+esc(initials(p.name))+'</span> '+esc(p.name)+(p.rolle==='kind'?' 🧒':'')+'</span>';}).join('')+'<span>👉 antippen = diese Woche da/weg</span>';
     var changed=DOW.filter(function(d){return overridesOn(d).length;}).length;
@@ -759,7 +776,7 @@
     var meInHH=VOTER.id&&DATA.persons.some(function(p){return p.id===VOTER.id;});
     var cards=(tage||[]).map(function(t){var here=presentOn(t.tag),g=guestsOn(t.tag);
       var meAway=meInHH&&!here.some(function(p){return p.id===VOTER.id;});
-      if(!here.length&&!g.length)return '<div class="vday"><div class="vdh"><span class="dd">'+esc(t.tag)+'</span><span class="dw">niemand da</span></div><div class="cnote" style="text-align:center;padding:.5rem 0">🍽️ auswärts – kein Kochen</div>'+(meInHH?'<button class="dayfb" data-act="mealtoggle" data-day="'+esc(t.tag)+'">🙋 <b>Doch dabei?</b></button>':'')+'</div>';
+      if(!here.length&&!g.length)return '<div class="vday" data-tag="'+esc(t.tag)+'"><div class="vdh"><span class="dd">'+esc(t.tag)+'</span><span class="dw">niemand da</span></div><div class="cnote" style="text-align:center;padding:.5rem 0">🍽️ auswärts – kein Kochen</div>'+(meInHH?'<button class="dayfb" data-act="mealtoggle" data-day="'+esc(t.tag)+'">🙋 <b>Doch dabei?</b></button>':'')+'</div>';
       var dc=dayContext(t.tag),cons=dc?[].concat(dc.diaeten,dc.vermeiden):[];
       var comp=cons.length?'<span class="comp">✓ '+cons.map(esc).join(' · ')+'</span>':'';
       var stackAv=here.map(function(p){var me=(p.id===VOTER.id);return avAt(p,me?'avme':'',me?t.tag:null);});
@@ -780,7 +797,7 @@
           +'</button>';}).join('');
       var addtile='<button class="addtile" data-act="own" data-day="'+esc(t.tag)+'"><span class="plus">＋</span> Eigener Vorschlag</button>';
       var fb='<button class="dayfb" data-act="regenday" data-day="'+esc(t.tag)+'">🤷 Nichts dabei? <b>↻ andere Ideen</b></button>';
-      return '<div class="vday'+(meAway?' dayout':'')+'">'+head+strip+'<div class="vopts">'+cells+addtile+'</div>'+fb+'</div>';}).join('');
+      return '<div class="vday'+(meAway?' dayout':'')+'" data-tag="'+esc(t.tag)+'">'+head+strip+'<div class="vopts">'+cells+addtile+'</div>'+fb+'</div>';}).join('');
     var voted={};DATA.stimmen.forEach(function(s){voted[s.voter_id]=1;});var miss=DATA.persons.filter(function(p){return !voted[p.id];}).map(function(p){return p.name;});
     var done='<span class="cnote">'+(DATA.persons.length-miss.length)+'/'+DATA.persons.length+' haben abgestimmt'+(miss.length?' · offen: '+esc(miss.join(', ')):'')+'</span>';
     var _pcv=document.getElementById('planCards');_pcv.innerHTML=back+bar+intro+cards+'<div class="votefoot">'+done+'</div>';
@@ -820,7 +837,7 @@
   var LONGDAY={Mo:'Montag',Di:'Dienstag',Mi:'Mittwoch',Do:'Donnerstag',Fr:'Freitag',Sa:'Samstag',So:'Sonntag'};
   // generische Gericht-Emojis (pflanzlich/neutral) als „Ideen"-Platzhalter beim Laden — echte Gerichte kommen beim Reveal
   var GEMOJI=['🍲','🥘','🍝','🍚','🫕','🥗','🍜','🥙','🧆','🍛','🫑','🍅','🥕','🌽','🥔','🍠','🥦','🍆','🍄','🥑','🌯','🍞'];
-  var _genReveal=false,_generating=false,_gtimers=[],GEN=null,GENSTART=0;
+  var _genReveal=false,_generating=false,_gtimers=[],GEN=null,GENSTART=0,_regenTag=null;
   function gt(ms,fn){var id=setTimeout(fn,reduce?0:ms);_gtimers.push(id);return id;}
   function stopGenTimers(){_gtimers.forEach(clearTimeout);_gtimers=[];}
   function gHue(i){return (i*53+18)%360;}
@@ -956,7 +973,7 @@
   }
   (function(){var bt=document.getElementById('dbgAnim');if(bt)bt.addEventListener('click',debugGenToggle);window.genDemo=debugGenToggle;})();
   function doAct(act,day,oid,id){
-    if(act==='gen')generatePlan();else if(act==='vote')setVote(day,oid);else if(act==='who')setVoter(id);else if(act==='teilen')teilen();else if(act==='own')addOwn(day);else if(act==='regenday'){var hasV=DATA.stimmen.some(function(s){return s.tag===day;});if(hasV&&!confirm('Neue Ideen für '+(LONGDAY[day]||day)+' holen? Die bisherigen Stimmen für diesen Tag gehen dabei verloren.'))return;generatePlan(false,day);}else if(act==='mealtoggle'){if(!VOTER.id){askWhoAreYou();return;}togglePresence(VOTER.id,day);}else if(act==='notda')notDa(day);else if(act==='none')setVote(day,'__none__');else if(act==='festlegen')festlegen();else if(act==='override')setPlanDay(day,oid);else if(act==='reopen')reopenVote();else if(act==='einkauf')einkauf();else if(act==='govote'){vView='vote';renderPlanen();}else if(act==='goplan'){vView='plan';renderPlanen();}else if(act==='godecided'){vView=null;renderPlanen();}else if(act==='goweek'){navTo('week');}else if(act==='addperson'){navTo('profil');alert('Neue Person: über „＋ hinzufügen" im Personen-Block.');}else if(act==='addrezept'){alert('Rezepte kommen im Rezept-Sprint.');}
+    if(act==='gen')generatePlan();else if(act==='vote')setVote(day,oid);else if(act==='who')setVoter(id);else if(act==='teilen')teilen();else if(act==='own')addOwn(day);else if(act==='regenday')regenDayStart(day);else if(act==='mealtoggle'){if(!VOTER.id){askWhoAreYou();return;}togglePresence(VOTER.id,day);}else if(act==='notda')notDa(day);else if(act==='none')setVote(day,'__none__');else if(act==='festlegen')festlegen();else if(act==='override')setPlanDay(day,oid);else if(act==='reopen')reopenVote();else if(act==='einkauf')einkauf();else if(act==='govote'){vView='vote';renderPlanen();}else if(act==='goplan'){vView='plan';renderPlanen();}else if(act==='godecided'){vView=null;renderPlanen();}else if(act==='goweek'){navTo('week');}else if(act==='addperson'){navTo('profil');alert('Neue Person: über „＋ hinzufügen" im Personen-Block.');}else if(act==='addrezept'){alert('Rezepte kommen im Rezept-Sprint.');}
   }
   document.getElementById('planwrap').addEventListener('click',function(e){var b=e.target.closest('[data-act]');if(!b)return;doAct(b.getAttribute('data-act'),b.getAttribute('data-day'),b.getAttribute('data-oid'),b.getAttribute('data-id'));});
   document.getElementById('stepper').addEventListener('click',function(e){var b=e.target.closest('[data-act]');if(!b||b.classList.contains('off'))return;doAct(b.getAttribute('data-act'));});
@@ -978,6 +995,58 @@
         else refresh();});
       return;}
     var vid=b.getAttribute('data-vid'),p=DATA.persons.filter(function(x){return x.id===vid;})[0];if(p){VOTER={id:p.id,name:p.name};try{localStorage.setItem('kv_'+HH,JSON.stringify(VOTER));}catch(_){}document.getElementById('idov').hidden=true;renderPlanen();}});
+  // ── Per-Tag „andere Ideen": sichtbare In-Card-Generierung (Loader-Sprache, nur dieser Tag) ──
+  function dayCardEl(tag){return document.querySelector('#planCards .vday[data-tag="'+tag+'"]');}
+  function dayThoughts(tag){var dc=dayContext(tag),T=[];var di=(dc&&dc.diaeten)||[],ve=(dc&&dc.vermeiden)||[];
+    di.forEach(function(d){T.push({t:'<b>'+esc(d.charAt(0).toUpperCase()+d.slice(1))+'</b> — halt ich strikt ein. 🥦',src:'aus eurem Profil'});});
+    if(ve.length)T.push({t:'<b>'+esc(ve.join(', '))+'</b>? Kommt mir nicht in die Pfanne. 🚫',src:'aus eurem Profil'});
+    DATA.regeln.filter(function(r){return r.typ==='wunsch';}).forEach(function(r){T.push({t:'<b>'+esc(r.text)+'</b> — dran gedacht. ✅',src:'euer Wunsch'});});
+    T.push({t:'Ich krame durch mein <b>Repertoire</b> … 🤔',src:'ich koche'});
+    T.push({t:'Nichts doppelt zur Woche — <b>Abwechslung</b>. 🔄',src:'ich koche'});
+    T.push({t:'Die <b>besten drei</b> für '+esc(LONGDAY[tag]||tag)+' — gleich da. ✨',src:'ich koche'});
+    return T;}
+  function regenDayStart(tag){if(_regenTag||_generating)return;if(!dayContext(tag))return;if(!dayCardEl(tag))return;
+    _regenTag=tag;var hasV=DATA.stimmen.some(function(s){return s.tag===tag;});if(hasV)paintDayConfirm(tag);else regenDayRun(tag);}
+  function paintDayConfirm(tag){var card=dayCardEl(tag);if(!card){_regenTag=null;return;}
+    var opts=card.querySelector('.vopts'),fb=card.querySelector('.dayfb');if(opts)opts.style.display='none';if(fb)fb.style.display='none';
+    var n=DATA.stimmen.filter(function(s){return s.tag===tag;}).length;
+    var c=document.createElement('div');c.className='dgconfirm';
+    c.innerHTML='<div class="dgq">↻ Neue Ideen für <b>'+esc(LONGDAY[tag]||tag)+'</b>? Die <b>'+n+' Stimme'+(n===1?'':'n')+'</b> für diesen Tag '+(n===1?'geht':'gehen')+' dabei verloren.</div><div class="dgb"><button class="dgno">Behalten</button><button class="dgyes">Ja, neue Ideen</button></div>';
+    card.appendChild(c);
+    c.querySelector('.dgno').addEventListener('click',function(){_regenTag=null;renderPlanen();});
+    c.querySelector('.dgyes').addEventListener('click',function(){c.remove();regenDayRun(tag);});}
+  function regenDayRun(tag){var card=dayCardEl(tag);if(!card){_regenTag=null;return;}
+    stopGenTimers();card.classList.add('busy');
+    var opts=card.querySelector('.vopts'),fb=card.querySelector('.dayfb');if(opts)opts.remove();if(fb)fb.remove();
+    var TH=dayThoughts(tag),di=DOW.indexOf(tag);if(di<0)di=0;
+    var tiles='';for(var j=0;j<3;j++){tiles+='<div class="dgtile"><span class="dgph" style="background:'+gPhBg((di*40+j*90)%360)+'">'+GEMOJI[((di*3+j)%GEMOJI.length)]+'</span></div>';}
+    var g=document.createElement('div');g.className='daygen';
+    g.innerHTML='<div class="dgstatus" id="dgstatus">🍳 koche neue Ideen für <b>'+esc(LONGDAY[tag]||tag)+'</b> …</div><div class="dgtiles">'+tiles+'</div><div class="dgthought" id="dgthought"><span class="gtx">'+TH[0].t+'</span><span class="gsrc">'+esc(TH[0].src)+'</span></div><div class="gbar" id="dgbar"><i></i></div>';
+    card.appendChild(g);
+    var cs=document.getElementById('ckstatus');if(cs)cs.innerHTML='Ich koche <b>neue Ideen für '+esc(LONGDAY[tag]||tag)+'</b> …';
+    var fa=document.getElementById('faction');if(fa){fa.textContent='⏳ Der Koch arbeitet …';fa.setAttribute('data-act','');}
+    function dgStat(t){var s=document.getElementById('dgstatus');if(!s)return;s.classList.add('swap');gt(180,function(){var s2=document.getElementById('dgstatus');if(s2){s2.innerHTML=t;s2.classList.remove('swap');}});}
+    function dgProg(f){var b=document.querySelector('#dgbar i');if(b)b.style.width=Math.round(f*100)+'%';}
+    if(!reduce){var ti=1;(function rot(){gt(1800,function(){if(_regenTag!==tag)return;var el=document.getElementById('dgthought');if(!el)return;el.classList.add('swap');gt(260,function(){var e2=document.getElementById('dgthought');if(!e2)return;var th=TH[ti++%TH.length];e2.querySelector('.gtx').innerHTML=th.t;e2.querySelector('.gsrc').textContent=th.src;el.classList.remove('swap');rot();});});})();}
+    var tl=card.querySelectorAll('.dgtile');
+    if(reduce){tl.forEach(function(x){x.classList.add('dev');});dgProg(1);}
+    else{var k=0;(function dev(){if(_regenTag!==tag)return;if(k<tl.length){tl[k].classList.add('dev');dgProg((k+1)/3);k++;gt(520,dev);}else{var b=document.getElementById('dgbar');if(b)b.classList.add('wait');var fi=0,FIN=['🎯 wähle die besten drei …','⚖️ prüfe gegen eure Regeln …','🍳 richte an …','✨ gleich fertig …'];(function fl(){if(_regenTag!==tag)return;dgStat(FIN[fi%FIN.length]);fi++;gt(1400,fl);})();}})();}
+    var state={data:null,err:false,minDone:false};
+    gt(reduce?0:2600,function(){state.minDone=true;maybe();});
+    (function tryFetch(attempt){var ctx=buildContext(),dcx=dayContext(tag);if(!dcx){state.err=true;maybe();return;}
+      fetch(FN,{method:'POST',headers:H,body:JSON.stringify({generate:true,context:{kw:ctx.kw,grundsaetze:ctx.grundsaetze,tage:[dcx]},haushalt:HH})}).then(function(r){return r.json();}).then(function(res){
+        if(_regenTag!==tag)return;
+        if(res&&res.plan&&res.plan.tage&&res.plan.tage.length){state.data=res;maybe();}
+        else if(attempt<2)tryFetch(attempt+1);else{state.err=true;maybe();}
+      }).catch(function(){if(_regenTag!==tag)return;if(attempt<2)tryFetch(attempt+1);else{state.err=true;maybe();}});})(0);
+    function maybe(){if(_regenTag!==tag||!state.minDone)return;if(state.data)applyDayGen(tag,state.data);else if(state.err)failDayGen(tag);}}
+  function applyDayGen(tag,res){stopGenTimers();assignIds(res.plan.tage);var nd=res.plan.tage[0];
+    DATA.woche=DATA.woche||{vorschlaege:{tage:[]}};DATA.woche.vorschlaege=DATA.woche.vorschlaege||{tage:[]};
+    var arr=DATA.woche.vorschlaege.tage,ix=-1;arr.forEach(function(x,k){if(x.tag===tag)ix=k;});if(ix>=0)arr[ix]=nd;else arr.push(nd);
+    DATA.stimmen=DATA.stimmen.filter(function(s){return s.tag!==tag;});
+    ensureWoche().then(function(wid){if(wid){DATA.woche.id=wid;rest('DELETE','stimme?woche_id=eq.'+wid+'&tag=eq.'+encodeURIComponent(tag));rest('PATCH','wochen?id=eq.'+wid,{vorschlaege:DATA.woche.vorschlaege});}
+      _regenTag=null;renderPlanen();var c=dayCardEl(tag);if(c){var o=c.querySelector('.vopts');if(o){o.classList.add('dgreveal');gt(1200,function(){var c2=dayCardEl(tag);if(c2){var o2=c2.querySelector('.vopts');if(o2)o2.classList.remove('dgreveal');}});}}});}
+  function failDayGen(tag){stopGenTimers();_regenTag=null;renderPlanen();var c=dayCardEl(tag);if(c){var note=document.createElement('div');note.className='outstrip';note.style.marginTop='.5rem';note.innerHTML='⚠️ Konnte gerade keine neuen Ideen holen. <button class="undo" data-act="regenday" data-day="'+esc(tag)+'">Nochmal ↻</button>';c.appendChild(note);}}
   // ── Mitesser-Chat: der geteilte Link ?vote=1 wird zum scripted Chat, der echte `stimme` schreibt ──
   var MC={days:[],di:0};
   function mcLog(){return document.getElementById('mclog');}
@@ -1067,7 +1136,7 @@
   function startVoteMode(){document.getElementById('vOnb').classList.remove('on');document.getElementById('inbar').style.display='none';
     get('personen?select=id&haushalt=eq.'+HH).then(function(ppl){if(!ppl||!ppl.length){document.getElementById('vOnb').classList.add('on');document.getElementById('inbar').style.display='';stepIntro();return;}
       refresh().then(function(){startMitesserChat();});});}
-  setInterval(function(){var vp=document.getElementById('vPlan');if(!(DATA.woche&&DATA.woche.status==='voten'&&vp&&vp.classList.contains('on')))return;var wid=DATA.woche.id;if(!wid)return;
+  setInterval(function(){if(_generating||_regenTag)return;var vp=document.getElementById('vPlan');if(!(DATA.woche&&DATA.woche.status==='voten'&&vp&&vp.classList.contains('on')))return;var wid=DATA.woche.id;if(!wid)return;
     get('stimme?select=tag,option_id,voter_id&haushalt=eq.'+HH+'&woche_id=eq.'+wid).then(function(s){s=s||[];if(s.length!==DATA.stimmen.length){DATA.stimmen=s;renderPlanen();}});},6000);
   function renderProfil(){
     document.getElementById('pfPersons').innerHTML=DATA.persons.map(function(p){
