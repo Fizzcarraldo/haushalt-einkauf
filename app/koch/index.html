@@ -1130,7 +1130,7 @@
   function regenChatNext(){if(!_regenChatQueue.length){_regenChatGrund='';return;}var d=_regenChatQueue.shift();
     if(!dayCardEl(d)){regenChatNext();return;}regenDayStart(d,{skipConfirm:true,grund:_regenChatGrund,onDone:regenChatNext});}
   // ── Mitesser-Chat: der geteilte Link ?vote=1 wird zum scripted Chat, der echte `stimme` schreibt ──
-  var MC={days:[],di:0};
+  var MC={days:[],di:0,recapCard:null};
   function mcLog(){return document.getElementById('mclog');}
   function mcScroll(){var l=mcLog();if(l)l.scrollTop=l.scrollHeight;}
   function mcBubble(cls,html){var l=mcLog();if(!l)return null;var d=document.createElement('div');d.className='msg '+cls;d.innerHTML=html;l.appendChild(d);mcScroll();return d;}
@@ -1142,7 +1142,7 @@
     w.addEventListener('click',function(e){var b=e.target.closest('[data-v]');if(!b)return;var v=b.getAttribute('data-v');w.remove();onPick(v);});}
   function startMitesserChat(){
     var vc=document.getElementById('vChat');document.querySelectorAll('.view').forEach(function(v){v.classList.remove('on');});vc.classList.add('on');
-    mcLog().innerHTML='';MC={days:[],di:0};
+    mcLog().innerHTML='';MC={days:[],di:0,recapCard:null};
     var tage=(DATA.woche&&DATA.woche.vorschlaege&&DATA.woche.vorschlaege.tage)||[];
     MC.days=tage.filter(function(t){return (t.vorschlaege||[]).length && (presentOn(t.tag).length||guestsOn(t.tag).length);});
     var planer=(DATA.persons[0]&&DATA.persons[0].name)||'Der Haushalt';
@@ -1200,21 +1200,26 @@
     if(!VOTER.id)return;var wid=DATA.woche&&DATA.woche.id;if(!wid)return;var mine=myVote(tag,oid),h=btn.querySelector('.heart');
     if(mine){DATA.stimmen=DATA.stimmen.filter(function(s){return !(s.tag===tag&&s.option_id===oid&&s.voter_id===VOTER.id);});btn.classList.remove('liked');if(h)h.textContent='♡';
       rest('DELETE','stimme?woche_id=eq.'+wid+'&tag=eq.'+encodeURIComponent(tag)+'&option_id=eq.'+encodeURIComponent(oid)+'&voter_id=eq.'+VOTER.id);}
-    else{DATA.stimmen.push({tag:tag,option_id:oid,voter_id:VOTER.id});btn.classList.add('liked');if(h)h.textContent='♥';
+    else{
+      if(DATA.stimmen.some(function(s){return s.tag===tag&&s.option_id==='__none__'&&s.voter_id===VOTER.id;})){DATA.stimmen=DATA.stimmen.filter(function(s){return !(s.tag===tag&&s.option_id==='__none__'&&s.voter_id===VOTER.id);});rest('DELETE','stimme?woche_id=eq.'+wid+'&tag=eq.'+encodeURIComponent(tag)+'&option_id=eq.__none__&voter_id=eq.'+VOTER.id);}
+      DATA.stimmen.push({tag:tag,option_id:oid,voter_id:VOTER.id});btn.classList.add('liked');if(h)h.textContent='♥';
       post('stimme',{woche_id:wid,tag:tag,option_id:oid,voter_id:VOTER.id,wert:'up',haushalt:HH});}
+    mcRecapUpdate();
   }
+  function mcRecapRows(){return MC.days.map(function(t){var mine=(t.vorschlaege||[]).filter(function(v,i){return myVote(t.tag,optId(t.tag,v,i));}).map(function(v){return esc(v.titel);});
+    return '<div class="recaprow"><span class="rd">'+esc(t.tag)+'</span><span class="rp'+(mine.length?'':' none')+'">'+(mine.length?mine.join(', '):'—')+'</span></div>';}).join('');}
+  function mcRecapUpdate(){if(MC.recapCard)MC.recapCard.innerHTML='<div class="recaphd">Deine Favoriten</div>'+mcRecapRows();}
   function mcMarkNone(tag){var wid=DATA.woche&&DATA.woche.id;if(!wid||!VOTER.id)return;
     DATA.stimmen=DATA.stimmen.filter(function(s){return !(s.tag===tag&&s.voter_id===VOTER.id&&s.option_id!=='__none__');});
     rest('DELETE','stimme?woche_id=eq.'+wid+'&tag=eq.'+encodeURIComponent(tag)+'&voter_id=eq.'+VOTER.id+'&option_id=neq.__none__');
-    if(!DATA.stimmen.some(function(s){return s.tag===tag&&s.voter_id===VOTER.id&&s.option_id==='__none__';})){DATA.stimmen.push({tag:tag,option_id:'__none__',voter_id:VOTER.id});post('stimme',{woche_id:wid,tag:tag,option_id:'__none__',voter_id:VOTER.id,wert:'up',haushalt:HH});}}
+    if(!DATA.stimmen.some(function(s){return s.tag===tag&&s.voter_id===VOTER.id&&s.option_id==='__none__';})){DATA.stimmen.push({tag:tag,option_id:'__none__',voter_id:VOTER.id});post('stimme',{woche_id:wid,tag:tag,option_id:'__none__',voter_id:VOTER.id,wert:'up',haushalt:HH});}
+    mcRecapUpdate();}
   function mcFinish(){
     var planer=(DATA.persons[0]&&DATA.persons[0].name)||'Der Haushalt';
     mcBot('🎉 Danke, <b>'+esc(VOTER.name||'')+'</b>! Deine Stimmen sind gespeichert.',function(){
       var l=mcLog();var card=document.createElement('div');card.className='msg bot recap';
-      var rows=MC.days.map(function(t){var mine=(t.vorschlaege||[]).filter(function(v,i){return myVote(t.tag,optId(t.tag,v,i));}).map(function(v){return esc(v.titel);});
-        return '<div class="recaprow"><span class="rd">'+esc(t.tag)+'</span><span class="rp'+(mine.length?'':' none')+'">'+(mine.length?mine.join(', '):'—')+'</span></div>';}).join('');
-      card.innerHTML='<div class="recaphd">Deine Favoriten</div>'+rows;l.appendChild(card);mcScroll();
-      mcBot('<b>'+esc(planer)+'</b> legt die Woche jetzt fest — du bekommst Bescheid, was gekocht wird. 👋',function(){
+      card.innerHTML='<div class="recaphd">Deine Favoriten</div>'+mcRecapRows();MC.recapCard=card;l.appendChild(card);mcScroll();
+      mcBot('<b>'+esc(planer)+'</b> legt die Woche fest — du bekommst Bescheid. 👋 <span class="cnote">Du kannst deine Auswahl oben jederzeit noch anpassen.</span>',function(){
         mcChips([{v:'again',t:'↺ Nochmal ansehen',ghost:true}],function(){startMitesserChat();});
       });
     });
