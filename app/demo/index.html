@@ -143,6 +143,10 @@
   .dgreveal .vcard{animation:dgpop .4s cubic-bezier(.2,.8,.25,1.3) both;} .dgreveal .vcard:nth-child(2){animation-delay:.08s;} .dgreveal .vcard:nth-child(3){animation-delay:.16s;}
   @keyframes dgpop{from{opacity:0;transform:translateY(8px) scale(.97)}to{opacity:1;transform:none}}
   @media (prefers-reduced-motion:reduce){.dgtile::after,.dgtile.dev .dgph,.dgreveal .vcard{animation:none!important;}}
+  /* Echte Gericht-Fotos (kuratiert) über der Emoji-Kachel; Emoji bleibt Fallback (onerror entfernt img) */
+  .phimg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;z-index:1;}
+  .vph .phimg{border-radius:inherit;} .foodrow .fph{position:relative;overflow:hidden;}
+  .noneline{font-size:.8rem;color:var(--orange);margin-top:.5rem;line-height:1.3;} .noneline b{color:var(--orange);font-weight:750;}
   .govote{display:block;width:100%;margin:.4rem 0 0;background:var(--green);color:#fff;border:none;border-radius:14px;padding:.85rem;font:800 1rem/1 var(--sans);cursor:pointer;box-shadow:0 4px 16px color-mix(in oklab,var(--green) 34%,transparent);}
   .shareurl{width:100%;font:inherit;font-size:.8rem;padding:.55rem .6rem;border:1px solid var(--line);border-radius:10px;background:var(--card2);color:var(--ink);margin:.55rem 0;}
   .sharebtns{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;} .sharebtns .wa{text-decoration:none;background:#25d366;color:#fff;display:inline-flex;align-items:center;} .sharebtns .lnk{background:none;border:none;color:var(--muted);font-weight:700;cursor:pointer;font-size:.82rem;}
@@ -768,6 +772,30 @@
   function hueOf(s){s=(s||'');var h=0;for(var i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))%360;return h;}
   function phBg(h){return 'linear-gradient(140deg,hsl('+h+' 52% 82%),hsl('+((h+30)%360)+' 48% 68%))';}
   function avAt(p,extra,tapDay){var h=hueOf(p.id||p.name);return '<span class="av'+(extra?' '+extra:'')+'" style="background:hsl('+h+' 52% 50%)"'+(tapDay?' data-act="mealtoggle" data-day="'+esc(tapDay)+'"':'')+' title="'+esc(p.name||'Gast')+'">'+esc(initials(p.name||'?'))+'</span>';}
+  // Kuratierte echte Gericht-Fotos (Wikimedia, bewusst vegetarisch/diät-sicher) je Keyword; Emoji als Fallback.
+  var IMGB='https://upload.wikimedia.org/wikipedia/commons/thumb';
+  var DISHPIC=[
+    [/sp(ä|ae)tzle/,'/e/e2/2015_0718_K%C3%A4sesp%C3%A4tzle_S%C3%B6lden.jpg/500px-2015_0718_K%C3%A4sesp%C3%A4tzle_S%C3%B6lden.jpg'],
+    [/risotto|pilz/,'/0/02/Flickr_-_cyclonebill_-_Risotto_med_fennikel_og_citron.jpg/500px-Flickr_-_cyclonebill_-_Risotto_med_fennikel_og_citron.jpg'],
+    [/falafel|hummus/,'/5/57/Falafels_2.jpg/500px-Falafels_2.jpg'],
+    [/kichererbse|chana|masala|paneer|tikka/,'/0/02/Choleindia.jpg/500px-Choleindia.jpg'],
+    [/shakshuka|schakschuka|frittata|omelett|r(ü|ue)hrei/,'/6/6b/Shakshuka_011.jpg/500px-Shakshuka_011.jpg'],
+    [/pizza|flammkuchen/,'/a/a3/Eq_it-na_pizza-margherita_sep2005_sml.jpg/500px-Eq_it-na_pizza-margherita_sep2005_sml.jpg'],
+    [/lasagne|pasta|spaghetti|nudel|penne|pomodoro|arrabbiata|bolognese|gnocchi|maccheroni/,'/3/33/Spaghettata.JPG/500px-Spaghettata.JPG'],
+    [/curry|dal|linsen|korma/,'/b/b2/Tadka_Dal.jpg/500px-Tadka_Dal.jpg'],
+    [/minestrone|suppe|eintopf|ragout/,'/3/31/Minestrone_soup_%282%29.jpg/500px-Minestrone_soup_%282%29.jpg'],
+    [/salat|salad|bowl/,'/5/5f/Greek_Salad_Choriatiki.jpg/500px-Greek_Salad_Choriatiki.jpg'],
+    [/couscous|bulgur|tabou?leh|quinoa/,'/b/ba/Flickr_-_cyclonebill_-_Tabbouleh.jpg/500px-Flickr_-_cyclonebill_-_Tabbouleh.jpg'],
+    [/gratin|auflauf/,'/2/2a/Gratin_dauphinois.jpg/500px-Gratin_dauphinois.jpg'],
+    [/r(ö|oe)sti/,'/3/3d/Roesti.jpg/500px-Roesti.jpg'],
+    [/puffer|reibekuchen/,'/9/98/Kartoffelpuffer.jpg/500px-Kartoffelpuffer.jpg'],
+    [/paprika/,'/0/03/Gef%C3%BCllte_Paprika_Nahansicht_2026.jpg/500px-Gef%C3%BCllte_Paprika_Nahansicht_2026.jpg'],
+    [/bruschetta|crostini|caprese|mozzarella/,'/2/28/Bruschetta-01.jpg/500px-Bruschetta-01.jpg'],
+    [/kartoffel|erd(a|ä)pfel/,'/c/cd/Bratkartoffeln_1024_768.jpg/500px-Bratkartoffeln_1024_768.jpg'],
+    [/ratatouille|gem(ü|ue)se|zucchini|aubergine|antipasti|ofengem|pfanne|veggie|stir.?fry|wok/,'/2/27/Ratatouille.jpg/500px-Ratatouille.jpg']
+  ];
+  function dishPhoto(t){t=(t||'').toLowerCase();for(var i=0;i<DISHPIC.length;i++){if(DISHPIC[i][0].test(t))return IMGB+DISHPIC[i][1];}return null;}
+  function phTile(titel){var pic=dishPhoto(titel);return (pic?'<img class="phimg" loading="lazy" alt="" src="'+pic+'" onerror="this.remove()">':'')+dishEmoji(titel);}
   function renderVoting(tage){var pe=document.getElementById('planEmpty');if(pe)pe.style.display='none';
     var vn=VOTER.name||(VOTER.id?nameOf(VOTER.id):'—');
     var back='<button class="voteback" data-act="goplan">← Wer ist da? / Plan</button>';
@@ -792,12 +820,13 @@
         var ribbon=lead?'<span class="ribbon">🏆 führt</span>':'';var meta=v.eigen?('✍️ '+v.eigen):(v.aufwand||v.kurz||'');
         return '<button class="vcard'+(mine?' mine':'')+(lead?' lead':'')+'" data-act="vote" data-day="'+esc(t.tag)+'" data-oid="'+esc(oid)+'" title="'+esc(v.titel||'')+'">'
           +ribbon
-          +'<span class="vph" style="background:'+phBg(hueOf(v.titel))+'">'+dishEmoji(v.titel)+'<span class="vote">'+(mine?'✓':'👍')+'</span></span>'
+          +'<span class="vph" style="background:'+phBg(hueOf(v.titel))+'">'+phTile(v.titel)+'<span class="vote">'+(mine?'✓':'👍')+'</span></span>'
           +'<span class="vbody"><span class="vname">'+esc(v.titel||'')+warn+'</span><span class="vmt">'+esc(meta)+'</span><span class="vtally">'+tally+'</span></span>'
           +'</button>';}).join('');
       var addtile='<button class="addtile" data-act="own" data-day="'+esc(t.tag)+'"><span class="plus">＋</span> Eigener Vorschlag</button>';
       var fb='<button class="dayfb" data-act="regenday" data-day="'+esc(t.tag)+'">🤷 Nichts dabei? <b>↻ andere Ideen</b></button>';
-      return '<div class="vday'+(meAway?' dayout':'')+'" data-tag="'+esc(t.tag)+'">'+head+strip+'<div class="vopts">'+cells+addtile+'</div>'+fb+'</div>';}).join('');
+      var none=votesFor(t.tag,'__none__');var noneline=none.length?'<div class="noneline">🤷 <b>'+none.map(function(s){return esc(nameOf(s.voter_id));}).join(', ')+'</b> '+(none.length>1?'finden':'findet')+' hier nichts dabei</div>':'';
+      return '<div class="vday'+(meAway?' dayout':'')+'" data-tag="'+esc(t.tag)+'">'+head+strip+'<div class="vopts">'+cells+addtile+'</div>'+noneline+fb+'</div>';}).join('');
     var voted={};DATA.stimmen.forEach(function(s){voted[s.voter_id]=1;});var miss=DATA.persons.filter(function(p){return !voted[p.id];}).map(function(p){return p.name;});
     var done='<span class="cnote">'+(DATA.persons.length-miss.length)+'/'+DATA.persons.length+' haben abgestimmt'+(miss.length?' · offen: '+esc(miss.join(', ')):'')+'</span>';
     var _pcv=document.getElementById('planCards');_pcv.innerHTML=back+bar+intro+cards+'<div class="votefoot">'+done+'</div>';
@@ -1099,7 +1128,7 @@
     });
   }
   function mcFoodRow(t,v,i){var oid=optId(t.tag,v,i),on=myVote(t.tag,oid);
-    return '<button class="foodrow'+(on?' liked':'')+'" data-fr="'+esc(t.tag)+'|'+esc(oid)+'"><span class="fph" style="background:'+phBg(hueOf(v.titel))+'">'+dishEmoji(v.titel)+'</span><span class="fx"><span class="fnm">'+esc(v.titel||'')+'</span><span class="fmt">'+esc(v.aufwand||v.kurz||'')+'</span></span><span class="heart">'+(on?'♥':'♡')+'</span></button>';}
+    return '<button class="foodrow'+(on?' liked':'')+'" data-fr="'+esc(t.tag)+'|'+esc(oid)+'"><span class="fph" style="background:'+phBg(hueOf(v.titel))+'">'+phTile(v.titel)+'</span><span class="fx"><span class="fnm">'+esc(v.titel||'')+'</span><span class="fmt">'+esc(v.aufwand||v.kurz||'')+'</span></span><span class="heart">'+(on?'♥':'♡')+'</span></button>';}
   function mcAskDay(di){
     MC.di=di;if(di>=MC.days.length){mcFinish();return;}
     var t=MC.days[di];
@@ -1111,7 +1140,7 @@
       wrap.addEventListener('click',function(e){
         var fr=e.target.closest('[data-fr]');
         if(fr){var pp=fr.getAttribute('data-fr').split('|');mcToggle(pp[0],pp[1],fr);return;}
-        var sk=e.target.closest('[data-skip]');if(sk){var nv=wrap.querySelector('.mcnav');if(nv)nv.remove();mcBubble('me','nichts dabei');mcAskDay(di+1);return;}
+        var sk=e.target.closest('[data-skip]');if(sk){var nv=wrap.querySelector('.mcnav');if(nv)nv.remove();mcMarkNone(t.tag);mcBubble('me','🤷 nichts dabei');mcAskDay(di+1);return;}
         var nx=e.target.closest('[data-next]');if(nx){var nv2=wrap.querySelector('.mcnav');if(nv2)nv2.remove();mcAskDay(di+1);return;}
       });
     });
@@ -1123,6 +1152,10 @@
     else{DATA.stimmen.push({tag:tag,option_id:oid,voter_id:VOTER.id});btn.classList.add('liked');if(h)h.textContent='♥';
       post('stimme',{woche_id:wid,tag:tag,option_id:oid,voter_id:VOTER.id,wert:'up',haushalt:HH});}
   }
+  function mcMarkNone(tag){var wid=DATA.woche&&DATA.woche.id;if(!wid||!VOTER.id)return;
+    DATA.stimmen=DATA.stimmen.filter(function(s){return !(s.tag===tag&&s.voter_id===VOTER.id&&s.option_id!=='__none__');});
+    rest('DELETE','stimme?woche_id=eq.'+wid+'&tag=eq.'+encodeURIComponent(tag)+'&voter_id=eq.'+VOTER.id+'&option_id=neq.__none__');
+    if(!DATA.stimmen.some(function(s){return s.tag===tag&&s.voter_id===VOTER.id&&s.option_id==='__none__';})){DATA.stimmen.push({tag:tag,option_id:'__none__',voter_id:VOTER.id});post('stimme',{woche_id:wid,tag:tag,option_id:'__none__',voter_id:VOTER.id,wert:'up',haushalt:HH});}}
   function mcFinish(){
     var planer=(DATA.persons[0]&&DATA.persons[0].name)||'Der Haushalt';
     mcBot('🎉 Danke, <b>'+esc(VOTER.name||'')+'</b>! Deine Stimmen sind gespeichert.',function(){
