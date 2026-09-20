@@ -29,6 +29,9 @@
   @keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
   .msg.bot{align-self:flex-start;background:var(--card2);border:1px solid var(--line2);border-bottom-left-radius:5px;}
   .msg.me{align-self:flex-end;background:var(--green);color:#fff;border-bottom-right-radius:5px;font-weight:600;}
+  .msg.bot p{margin:.2rem 0;} .msg.bot p:first-child{margin-top:0;} .msg.bot p:last-child{margin-bottom:0;}
+  .msg.bot ul,.msg.bot ol{margin:.32rem 0;padding-left:1.15rem;} .msg.bot li{margin:.12rem 0;} .msg.bot li::marker{color:var(--green);}
+  .msg.bot b{font-weight:750;} .msg.bot code{background:var(--card);border:1px solid var(--line2);border-radius:4px;padding:0 .28rem;font:.86em/1.4 var(--mono);}
   .msg.typing{display:inline-flex;align-self:flex-start;gap:.28rem;} .msg.typing span{width:.46rem;height:.46rem;border-radius:50%;background:var(--muted);animation:bl 1.2s infinite}
   .msg.typing span:nth-child(2){animation-delay:.15s}.msg.typing span:nth-child(3){animation-delay:.3s}@keyframes bl{0%,70%,100%{opacity:.3}35%{opacity:.9}}
   .ctrl{margin-top:.55rem;display:flex;flex-direction:column;gap:.5rem;}
@@ -772,9 +775,14 @@
   function hueOf(s){s=(s||'');var h=0;for(var i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))%360;return h;}
   function phBg(h){return 'linear-gradient(140deg,hsl('+h+' 52% 82%),hsl('+((h+30)%360)+' 48% 68%))';}
   function avAt(p,extra,tapDay){var h=hueOf(p.id||p.name);return '<span class="av'+(extra?' '+extra:'')+'" style="background:hsl('+h+' 52% 50%)"'+(tapDay?' data-act="mealtoggle" data-day="'+esc(tapDay)+'"':'')+' title="'+esc(p.name||'Gast')+'">'+esc(initials(p.name||'?'))+'</span>';}
-  // Kuratierte echte Gericht-Fotos (Wikimedia, bewusst vegetarisch/diät-sicher) je Keyword; Emoji als Fallback.
+  // Kuratierte echte Gericht-Fotos (Wikimedia) je Keyword: Veggie + Fisch + Geflügel. Fleisch ohne eigenes Foto -> Emoji; Emoji-Fallback bei Ladefehler.
   var IMGB='https://upload.wikimedia.org/wikipedia/commons/thumb';
   var DISHPIC=[
+    [/h(ä|ae)hnchen|h(ü|ue)hn|\bhuhn|\bpute|poulet|gefl(ü|ue)gel|chicken/,'/3/3f/Donauinselfest2007_Grillhendl.jpg/500px-Donauinselfest2007_Grillhendl.jpg'],
+    [/\bpoke\b/,'/1/13/Salmon_Poke.jpg/500px-Salmon_Poke.jpg'],
+    [/fisch|lachs|seelachs|kabeljau|scholle|forelle|thunfisch|dorade|garnele|scampi|shrimp|gambas|meeresfr/,'/f/ff/Fish_and_chips_blackpool.jpg/500px-Fish_and_chips_blackpool.jpg'],
+    [/nasi|gebraten(er|e)? reis|fried rice|jambalaya/,'/2/21/Nasi_goreng_Chinese_style.JPG/500px-Nasi_goreng_Chinese_style.JPG'],
+    [/burrito|wrap|taco|fajita|quesadilla|enchilada/,'/6/60/Burrito.JPG/500px-Burrito.JPG'],
     [/sp(ä|ae)tzle/,'/e/e2/2015_0718_K%C3%A4sesp%C3%A4tzle_S%C3%B6lden.jpg/500px-2015_0718_K%C3%A4sesp%C3%A4tzle_S%C3%B6lden.jpg'],
     [/risotto|pilz/,'/0/02/Flickr_-_cyclonebill_-_Risotto_med_fennikel_og_citron.jpg/500px-Flickr_-_cyclonebill_-_Risotto_med_fennikel_og_citron.jpg'],
     [/falafel|hummus/,'/5/57/Falafels_2.jpg/500px-Falafels_2.jpg'],
@@ -794,7 +802,10 @@
     [/kartoffel|erd(a|ä)pfel/,'/c/cd/Bratkartoffeln_1024_768.jpg/500px-Bratkartoffeln_1024_768.jpg'],
     [/ratatouille|gem(ü|ue)se|zucchini|aubergine|antipasti|ofengem|pfanne|veggie|stir.?fry|wok/,'/2/27/Ratatouille.jpg/500px-Ratatouille.jpg']
   ];
-  function dishPhoto(t){t=(t||'').toLowerCase();for(var i=0;i<DISHPIC.length;i++){if(DISHPIC[i][0].test(t))return IMGB+DISHPIC[i][1];}return null;}
+  var MEATNOPIC=/\b(rind|schwein|hack|wurst|schnitzel|gyros|lamm|speck|schinken|salami|steak|frikadelle|d(ö|oe)ner|kebab|ente|gulasch|cordon|leberk|bratwurst|k(ö|oe)fte|kalb|kassler)/;
+  function dishPhoto(t){t=(t||'').toLowerCase();
+    if(MEATNOPIC.test(t)&&!/vegetar|veggie|vegan/.test(t))return null;
+    for(var i=0;i<DISHPIC.length;i++){if(DISHPIC[i][0].test(t))return IMGB+DISHPIC[i][1];}return null;}
   function phTile(titel){var pic=dishPhoto(titel);return (pic?'<img class="phimg" loading="lazy" alt="" src="'+pic+'" onerror="this.remove()">':'')+dishEmoji(titel);}
   function renderVoting(tage){var pe=document.getElementById('planEmpty');if(pe)pe.style.display='none';
     var vn=VOTER.name||(VOTER.id?nameOf(VOTER.id):'—');
@@ -1238,6 +1249,16 @@
   var pendingIntro=null;   // nach dem Onboarding: erste Chat-Blase = „Geschafft!"
   var SCFG={woche:{greet:'Da bin ich. 👋 Sag mir, was <b>diese Woche</b> anders ist – z.&nbsp;B. „Freitag kommt Besuch".',quick:[['👤 Gast','Am Donnerstag kommt Besuch'],['🚗 Abwesend','Freitag bin ich nicht da'],['🥕 Wunsch','Diese Woche extra viel Brokkoli']]},
     dauer:{greet:'Da bin ich. 👋 Sag mir, was sich <b>dauerhaft</b> ändert – z.&nbsp;B. „Anna ist ab jetzt vegetarisch".',quick:[['👤 Person','Neue Person: Max'],['⛔ Allergie','Anna hat eine Nussallergie'],['🎯 Grundsatz','Uns ist gesund wichtig']]}};
+  function mdToHtml(s){s=String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    s=s.replace(/`([^`]+)`/g,'<code>$1</code>').replace(/\*\*([^*]+)\*\*/g,'<b>$1</b>').replace(/__([^_]+)__/g,'<b>$1</b>');
+    s=s.replace(/(^|[\s(])\*(?!\s)([^*\n]+?)\*(?=$|[\s.,;:!?)])/g,'$1<i>$2</i>');
+    var lines=s.split(/\r?\n/),html='',list=null;function close(){if(list){html+='</'+list+'>';list=null;}}
+    for(var i=0;i<lines.length;i++){var ln=lines[i],m;
+      if(m=ln.match(/^\s*[-*•]\s+(.+)$/)){if(list!=='ul'){close();html+='<ul>';list='ul';}html+='<li>'+m[1]+'</li>';}
+      else if(m=ln.match(/^\s*\d+[.)]\s+(.+)$/)){if(list!=='ol'){close();html+='<ol>';list='ol';}html+='<li>'+m[1]+'</li>';}
+      else if(m=ln.match(/^#{1,6}\s+(.+)$/)){close();html+='<p><b>'+m[1]+'</b></p>';}
+      else{close();if(ln.trim())html+='<p>'+ln+'</p>';}}
+    close();return html||'<p></p>';}
   function sbot(h){var d=document.createElement('div');d.className='msg bot';d.innerHTML=h;slog.appendChild(d);slog.scrollTop=slog.scrollHeight;}
   function sme(t){var d=document.createElement('div');d.className='msg me';d.textContent=t;slog.appendChild(d);slog.scrollTop=slog.scrollHeight;}
   function chg(c){var w=c.scope==='woche';var d=document.createElement('div');d.className='ccard'+(w?'':' dh');d.innerHTML='<div>'+(w?'📅 diese Woche':'∞ dauerhaft')+' · '+esc(c.text||'gespeichert')+'</div>';slog.appendChild(d);slog.scrollTop=slog.scrollHeight;}
@@ -1268,7 +1289,7 @@
     var ty=document.createElement('div');ty.className='msg bot typing';ty.innerHTML='<span></span><span></span><span></span>';slog.appendChild(ty);slog.scrollTop=slog.scrollHeight;
     var w=isoWeek(new Date());
     fetch(FN,{method:'POST',headers:H,body:JSON.stringify({messages:shist,scope:curScope==='dauer'?'haushalt':'woche',jahr:w.jahr,kw:w.kw,haushalt:HH,benutzer:(DATA.persons[0]&&DATA.persons[0].name)||'',kontext:{phase:(DATA.woche&&DATA.woche.status)||'planen',kw:w.kw,hat_vorschlaege:!!(DATA.woche&&DATA.woche.vorschlaege),tage:((DATA.woche&&DATA.woche.vorschlaege&&DATA.woche.vorschlaege.tage)||[]).map(function(t){return t.tag;})}})}).then(function(r){return r.json();})
-      .then(function(res){ty.remove();if(res.error){sbot('⚠️ '+res.error);return;}sbot(res.reply||'Erledigt.');shist.push({role:'assistant',content:res.reply||''});var regen=null;(res.changes||[]).forEach(function(c){if(c&&c.kind==='regenerate'&&c.data)regen=c.data;chg(c);});var rf=refresh();(rf&&rf.then?rf:Promise.resolve()).then(function(){if(regen)regenFromChat(regen.tage,regen.grund);});})
+      .then(function(res){ty.remove();if(res.error){sbot('⚠️ '+res.error);return;}sbot(mdToHtml(res.reply||'Erledigt.'));shist.push({role:'assistant',content:res.reply||''});var regen=null;(res.changes||[]).forEach(function(c){if(c&&c.kind==='regenerate'&&c.data)regen=c.data;chg(c);});var rf=refresh();(rf&&rf.then?rf:Promise.resolve()).then(function(){if(regen)regenFromChat(regen.tage,regen.grund);});})
       .catch(function(){ty.remove();sbot('⚠️ offline');});}
   document.getElementById('ssend').addEventListener('click',ssend);
   stext.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();ssend();}});
