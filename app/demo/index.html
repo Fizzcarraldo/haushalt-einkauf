@@ -129,6 +129,20 @@
   .wc-cand .cph{position:relative;height:2.8rem;display:grid;place-items:center;font-size:1.55rem;}
   .wc-cand .cph::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.18),transparent 55%);}
   .wc-cand .cbd{padding:.4rem .5rem;} .wc-cand .cn{font-weight:750;font-size:.74rem;line-height:1.15;}
+  /* P2 · Lebenszyklus — Phasen-Band, Bestätigen, heute/gekocht, Toast */
+  .wc-band{display:flex;align-items:center;gap:.4rem;font:700 .6rem/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;border-radius:.6rem;padding:.42rem .6rem;margin:.1rem 0 .7rem;}
+  .wc-band.entwurf{background:var(--orange-bg);color:var(--orange);border:1px solid var(--orange-line);}
+  .wc-band.fest{background:var(--green-bg);color:var(--green-ink);border:1px solid color-mix(in oklab,var(--green) 30%,transparent);}
+  .wc-reopen{margin-left:auto;border:none;background:none;color:inherit;text-decoration:underline;cursor:pointer;font:inherit;text-transform:none;letter-spacing:0;}
+  .wc.today{border-color:var(--blue-line);box-shadow:0 0 0 1px var(--blue-line) inset,0 10px 20px -16px color-mix(in oklab,var(--blue) 60%,transparent);}
+  .wc.cooked{opacity:.66;} .wc.cooked .wc-ph{filter:grayscale(.7);} .wc.cooked .wc-nm{color:var(--muted);}
+  .wc-cookbtn{border:none;background:var(--ai);color:#fff;border-radius:999px;padding:.44rem .7rem;font:800 .74rem/1 var(--sans);cursor:pointer;}
+  .wc-confirm{border:1px solid var(--green);border-radius:1rem;background:var(--card);box-shadow:0 8px 22px -18px rgba(0,0,0,.5);padding:.8rem;margin:0 0 .8rem;}
+  .wcc-t{font-weight:800;font-size:1rem;} .wcc-s{color:var(--muted);font-size:.8rem;margin:.25rem 0 .55rem;line-height:1.4;}
+  .wcc-sum{font:700 .74rem/1.4 var(--sans);background:var(--card2);border:1px solid var(--line);border-radius:.6rem;padding:.45rem .55rem;margin-bottom:.6rem;}
+  .wcc-b{display:flex;gap:.5rem;} .wcc-no{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:.7rem;padding:.6rem .9rem;font:800 .8rem/1 var(--sans);cursor:pointer;} .wcc-yes{flex:1;border:none;background:var(--green);color:#fff;border-radius:.7rem;padding:.6rem;font:800 .82rem/1 var(--sans);cursor:pointer;}
+  .wctoast{position:fixed;left:50%;bottom:calc(1rem + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(14px);background:var(--ink);color:var(--paper);border-radius:.7rem;padding:.55rem .8rem;font:600 .8rem/1.3 var(--sans);box-shadow:0 10px 30px -10px rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:.2s;z-index:60;max-width:88vw;text-align:center;}
+  .wctoast.on{opacity:1;transform:translateX(-50%) translateY(0);}
   /* Voting-Karten – Direkt-Variante (portiert aus voting-konzept.html) */
   .vlegend{font-size:.78rem;color:var(--muted);background:var(--card2);border:1px solid var(--line2);border-radius:.7rem;padding:.5rem .65rem;margin:.1rem 0 .6rem;line-height:1.4;} .vlegend b{color:var(--ink);}
   .vday{background:var(--card);border:1px solid var(--line);border-radius:1.1rem;padding:.75rem .7rem .6rem;margin:.2rem 0 .8rem;box-shadow:0 8px 22px -18px rgba(0,0,0,.5);}
@@ -790,7 +804,7 @@
     document.getElementById('transp').innerHTML=ctx+(tp||'<li class="sx">—</li>');
     var wv=DATA.woche&&DATA.woche.vorschlaege&&DATA.woche.vorschlaege.tage&&DATA.woche.vorschlaege.tage.length;
     var st=(DATA.woche&&DATA.woche.status)||'planen';
-    var page=st==='fest'?(vView==='plan'?'plan':'decided'):(wv?(vView==='plan'?'plan':'vote'):'plan');
+    _live=(st==='fest');var page=(st==='fest'||st==='entscheiden')?(vView==='plan'?'plan':'decided'):(wv?(vView==='plan'?'plan':'vote'):'plan');
     var po=document.getElementById('planOnly');if(po)po.style.display=(page==='plan')?'':'none';
     var _pc=document.getElementById('planCards'),_pe=document.getElementById('planEmpty');
     if(page==='decided'){if(_pe)_pe.style.display='none';renderDecided();}
@@ -799,7 +813,12 @@
       if(wv)_pe.innerHTML='✅ <b>Vorschläge stehen bereit.</b><br><span style="font-size:.85rem">Prüf noch, wer da ist – dann unten <b>„Weiter zum Voten"</b>.</span>';
       else _pe.innerHTML='🍽️ <b>Noch kein Essensplan.</b><br><span style="font-size:.85rem">Unten <b>„✨ Vorschläge holen"</b> – passend zu wer da ist, Diäten, Zeit &amp; Budget.</span>';}}
     if(navMode==='week'){var cs=document.getElementById('ckstatus'),fa=document.getElementById('faction');if(fa){fa.hidden=false;fa.className='faction';}
-      if(page==='decided'){if(cs)cs.innerHTML='Die Woche steht 🎉 — Zeit einzukaufen.';setF('🛒 Einkaufsliste','einkauf');}
+      if(page==='decided'){
+        if(_live){var _tt=todayTag(),_td=(DATA.woche.plan||{})[_tt],_pres=presentOn(_tt).length||guestsOn(_tt).length;
+          if(cs)cs.innerHTML='Die Woche läuft'+(_td?' — heute: <b>'+esc(_td.titel)+'</b>':'')+'.';
+          if(_td&&_td.status!=='gekocht'&&_pres)setF('🍳 Heute kochen','cooktoday');else setF('🛒 Einkaufsliste','einkauf');}
+        else{if(cs)cs.innerHTML='<b>Entwurf</b> — Plan feinschleifen, dann bestätigen.';setF('✓ Woche bestätigen','confirmweek');}
+      }
       else if(page==='vote'){var miss=voterMissing();if(cs)cs.innerHTML='Stimmt ab — '+(miss?'<span class="warn">'+esc(miss)+' fehlt noch</span>.':'<b>alle durch, leg die Woche fest</b> 🎉');setF('✓ Woche festlegen','festlegen');}
       else{if(wv){if(cs)cs.innerHTML='Vorschläge stehen bereit — <b>weiter zum Voten.</b>';setF('🗳️ Weiter zum Voten','govote');}else{if(cs)cs.innerHTML='Lass uns die Woche planen — <b>wer isst mit?</b>';setF('✨ Vorschläge holen','gen');}}
       renderStepper(page);}
@@ -809,7 +828,7 @@
     var wv=DATA.woche&&DATA.woche.vorschlaege&&DATA.woche.vorschlaege.tage&&DATA.woche.vorschlaege.tage.length;
     page=page||(st==='fest'?'decided':(wv?'vote':'plan'));
     var cur=page==='decided'?2:(page==='vote'?1:0);
-    var steps=[{t:'Wer da',act:'goplan',on:true},{t:'Voten',act:'govote',on:!!wv},{t:'Steht fest',act:'godecided',on:st==='fest'}];
+    var steps=[{t:'Wer da',act:'goplan',on:true},{t:'Voten',act:'govote',on:!!wv},{t:'Steht fest',act:'godecided',on:(st==='fest'||st==='entscheiden')}];
     el.innerHTML=steps.map(function(s,i){return '<span class="pstep'+(i===cur?' now':'')+(i<cur?' done':'')+(s.on?'':' off')+'" data-act="'+s.act+'"><b class="pn">'+(i<cur?'✓':(i+1))+'</b>'+s.t+'</span>';}).join('<span class="psep">›</span>');}
   // ── Vorschlags-Generierung (US-05): Kontext aus Anwesenheit + harten Ausschlüssen + Grundsätzen -> AI-Gerichte ──
   var DIETWORDS=/^(vegetarisch|vegan|pescetarisch|halal|koscher|flexitarisch|low[\s-]?carb|paleo|keto)$/i;
@@ -898,7 +917,12 @@
     var done='<span class="cnote">'+(DATA.persons.length-miss.length)+'/'+DATA.persons.length+' haben abgestimmt'+(miss.length?' · offen: '+esc(miss.join(', ')):'')+'</span>';
     var _pcv=document.getElementById('planCards');_pcv.innerHTML=back+bar+intro+cards+'<div class="votefoot">'+done+'</div>';
     if(_genReveal){_genReveal=false;_pcv.classList.add('genreveal');setTimeout(function(){_pcv.classList.remove('genreveal');},1000);}}
-  var _moveDay=null,_expDays={};
+  var _moveDay=null,_expDays={},_live=false,_confirming=false;
+  function todayTag(){return DOW[(new Date().getDay()+6)%7];}
+  function wcToast(m){var t=document.getElementById('wctoast');if(!t){t=document.createElement('div');t.id='wctoast';t.className='wctoast';document.body.appendChild(t);}t.textContent=m;t.classList.add('on');clearTimeout(wcToast._t);wcToast._t=setTimeout(function(){t.classList.remove('on');},2600);}
+  function confirmWeek(){DATA.woche.status='fest';_confirming=false;var wid=DATA.woche.id;if(wid)rest('PATCH','wochen?id=eq.'+wid,{status:'fest'});renderPlanen();wcToast('✓ Woche bestätigt · Mitesser informiert');}
+  function reopenWeek(){DATA.woche.status='entscheiden';_confirming=false;var wid=DATA.woche.id;if(wid)rest('PATCH','wochen?id=eq.'+wid,{status:'entscheiden'});renderPlanen();wcToast('Woche wieder im Entwurf — Änderungen ohne Meldung');}
+  function markCooked(day){var plan=DATA.woche.plan=DATA.woche.plan||{};var ch=plan[day];if(!ch)return;ch.status=(ch.status==='gekocht')?undefined:'gekocht';persistPlan();renderPlanen();if(ch.status==='gekocht')wcToast('🍳 '+ch.titel+' — gekocht!'+(_live?' · notiert':''));}
   var WCHEV='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>';
   function optAufwand(t,ch){var vs=t.vorschlaege||[];for(var i=0;i<vs.length;i++){if(optId(t.tag,vs[i],i)===ch.id)return vs[i].aufwand||'';}return '';}
   function phGrad(t){var h=hueOf(t||'');return 'linear-gradient(140deg,hsl('+h+' 52% 82%),hsl('+((h+30)%360)+' 48% 68%))';}
@@ -910,15 +934,15 @@
     return '<span class="av wcq" data-act="setcook" data-day="'+esc(day)+'" title="wer kocht?">?</span>';}
   function cycleCook(day){var plan=DATA.woche.plan=DATA.woche.plan||{};var ch=plan[day];if(!ch)return;var ids=DATA.persons.map(function(p){return p.id;});if(!ids.length)return;var cur=ch.koch||null,ix=ids.indexOf(cur);ch.koch=(ix<0)?ids[0]:((ix+1>=ids.length)?null:ids[ix+1]);persistPlan();renderPlanen();}
   function wcMovePicker(day){var tage=(DATA.woche.vorschlaege&&DATA.woche.vorschlaege.tage)||[];var opts=tage.filter(function(t){return t.tag!==day&&(presentOn(t.tag).length||guestsOn(t.tag).length);}).map(function(t){var ch=(DATA.woche.plan||{})[t.tag];return '<button class="wc-mo" data-act="moveto" data-day="'+esc(day)+'" data-oid="'+esc(t.tag)+'">'+esc(t.tag)+(ch?' ↔ '+esc(ch.titel):' (frei)')+'</button>';}).join('');return '<div class="wc-move"><span class="wc-movel">📅 Tausch mit</span>'+(opts||'<span class="wc-movel">keine anderen Kochtage</span>')+'<button class="wc-mo cancel" data-act="movecancel">✕</button></div>';}
-  function moveDishTo(src,dst){var plan=DATA.woche.plan=DATA.woche.plan||{};var tmp=plan[src];plan[src]=plan[dst]||null;plan[dst]=tmp;if(!plan[src])delete plan[src];if(plan[dst])plan[dst].moved=true;if(plan[src])plan[src].moved=true;_moveDay=null;_expDays[dst]=true;persistPlan();renderPlanen();}
+  function moveDishTo(src,dst){var plan=DATA.woche.plan=DATA.woche.plan||{};var tmp=plan[src];plan[src]=plan[dst]||null;plan[dst]=tmp;if(!plan[src])delete plan[src];if(plan[dst])plan[dst].moved=true;if(plan[src])plan[src].moved=true;_moveDay=null;_expDays[dst]=true;persistPlan();renderPlanen();if(_live)wcToast('↔ verschoben · Mitesser informiert');}
   function renderDecided(){var pe=document.getElementById('planEmpty');if(pe)pe.style.display='none';var plan=DATA.woche.plan||{};var tage=(DATA.woche.vorschlaege&&DATA.woche.vorschlaege.tage)||[];
     var cards=tage.map(function(t){var here=presentOn(t.tag),g=guestsOn(t.tag);var wd=LONGDAY[t.tag]||t.tag;
       if(!here.length&&!g.length)return '<div class="wc slim"><span class="wc-tico">🍽️</span><span class="wc-day">'+esc(t.tag)+'</span><span class="wc-lbl">auswärts essen</span></div>';
       var ch=plan[t.tag];
       if(!ch){var cands=(t.vorschlaege||[]).map(function(v,i){var oid=optId(t.tag,v,i);return '<button class="wc-cand" data-act="override" data-day="'+esc(t.tag)+'" data-oid="'+esc(oid)+'"><span class="cph" style="background:'+phGrad(v.titel)+'">'+emojiFor(v.titel)+'</span><span class="cbd"><span class="cn">'+esc(v.titel)+'</span></span></button>';}).join('');
         return '<div class="wc open2"><div class="wc-head"><span class="wc-day"><span class="wc-tico">🍳</span>'+esc(t.tag)+'<span class="wc-wd">'+esc(wd)+'</span></span></div><div class="wc-oh">🤔 Noch offen — Gericht wählen</div><div class="wc-cands">'+(cands||'—')+'</div></div>';}
-      var titel=ch.titel,exp=!!_expDays[t.tag];
-      var mk=ch.moved?'<div class="wc-mk moved">↔ verschoben</div>':'';
+      var titel=ch.titel,exp=!!_expDays[t.tag],gek=ch.status==='gekocht',isToday=_live&&t.tag===todayTag()&&!gek;
+      var mk=gek?'<div class="wc-mk cooked">✓ gekocht</div>':(isToday?'<div class="wc-mk today">heute</div>':(ch.moved?'<div class="wc-mk moved">↔ verschoben</div>':''));
       var tags=(g.length?'<span class="wc-tg guest">👥 +'+g.length+' Gast'+(g.length>1?'e':'')+'</span>':'')+'<span class="wc-tg">🍽️ '+(here.length+g.length)+'</span>';
       var auf=optAufwand(t,ch);if(auf)tags+='<span class="wc-tg">⏲ '+esc(auf)+'</span>';
       var head='<div class="wc-head" data-act="wctoggle" data-day="'+esc(t.tag)+'"><span class="wc-day"><span class="wc-tico">🍳</span>'+esc(t.tag)+'<span class="wc-wd">'+esc(wd)+'</span></span>'+mk+'<span class="wc-disc">'+WCHEV+'</span></div>';
@@ -928,11 +952,17 @@
       var exph='';
       if(exp){var altbtns=(t.vorschlaege||[]).map(function(v,i){var oid=optId(t.tag,v,i);return '<button class="wc-altb'+(ch.id===oid?' on':'')+'" data-act="override" data-day="'+esc(t.tag)+'" data-oid="'+esc(oid)+'">'+esc(v.titel)+'</button>';}).join('');
         var mv=_moveDay===t.tag?wcMovePicker(t.tag):'';
-        exph='<div class="wc-exp"><div class="wc-strip"><span class="wc-ichip">🛒 Zutaten &amp; Rezept folgen</span></div>'
+        var cookrow=(_live&&!gek)?'<div class="wc-arow"><button class="wc-cookbtn" data-act="cooked" data-day="'+esc(t.tag)+'">🍳 Als gekocht markieren</button></div>':((_live&&gek)?'<div class="wc-arow"><button class="wc-aj" data-act="cooked" data-day="'+esc(t.tag)+'">↩︎ doch nicht gekocht</button></div>':'');
+        exph='<div class="wc-exp"><div class="wc-strip"><span class="wc-ichip">🛒 Zutaten &amp; Rezept folgen</span></div>'+cookrow
           +'<div class="wc-arow"><button class="wc-aj" data-act="movedish" data-day="'+esc(t.tag)+'">📅 Verschieben</button>'
           +'<details class="wc-alt"><summary>↺ Gericht wechseln</summary><div class="wc-altwrap">'+altbtns+'</div></details></div>'+mv+'</div>';}
-      return '<div class="wc'+(exp?' exp':'')+'">'+head+main+exph+'</div>';}).join('');
-    document.getElementById('planCards').innerHTML='<div class="cnote" style="margin:.2rem 0 .6rem">✓ <b>Die Woche steht fest.</b> Karte antippen für Details · Koch-Avatar tippen · 📅 verschieben.</div>'+cards+'<div class="votefoot"><button class="lnk" data-act="reopen">↩︎ Abstimmung öffnen</button></div>';}
+      return '<div class="wc'+(exp?' exp':'')+(isToday?' today':'')+(gek?' cooked':'')+'">'+head+main+exph+'</div>';}).join('');
+    var band=_live?'<div class="wc-band fest">✓ Woche bestätigt<button class="wc-reopen" data-act="reopenweek">Woche wieder öffnen</button></div>':'<div class="wc-band entwurf">✎ Entwurf · noch nicht bestätigt</div>';
+    var confirm='';
+    if(_confirming&&!_live){var nc=0,no=0,gs=false;tage.forEach(function(t){var h2=presentOn(t.tag),g2=guestsOn(t.tag);if(!h2.length&&!g2.length){no++;return;}if(plan[t.tag])nc++;if(g2.length)gs=true;});
+      confirm='<div class="wc-confirm"><div class="wcc-t">Woche bestätigen?</div><div class="wcc-s">Danach ist der Plan verbindlich — die Mitesser werden informiert. Ändern bleibt möglich (wird als Update gemeldet).</div><div class="wcc-sum">🍳 '+nc+' Kochtage · 🍽️ '+no+' auswärts'+(gs?' · 👥 mit Gästen':'')+'</div><div class="wcc-b"><button class="wcc-no" data-act="confirmno">Zurück</button><button class="wcc-yes" data-act="confirmyes">✓ Bestätigen &amp; informieren</button></div></div>';}
+    var foot=_live?'<div class="votefoot"><button class="lnk" data-act="reopenweek">↩︎ Woche wieder öffnen</button></div>':'<div class="votefoot"><button class="lnk" data-act="reopen">↩︎ Abstimmung öffnen</button></div>';
+    document.getElementById('planCards').innerHTML=band+confirm+cards+foot;}
   function setVoter(id){var p=DATA.persons.filter(function(x){return x.id===id;})[0];if(p){VOTER={id:p.id,name:p.name};renderPlanen();}}
   function setVote(tag,oid){if(!VOTER.id){askWhoAreYou();return;}var wid=DATA.woche&&DATA.woche.id;if(!wid)return;var mine=myVote(tag,oid);
     if(mine)DATA.stimmen=DATA.stimmen.filter(function(s){return !(s.tag===tag&&s.option_id===oid&&s.voter_id===VOTER.id);});else DATA.stimmen.push({tag:tag,option_id:oid,voter_id:VOTER.id});renderPlanen();
@@ -941,7 +971,7 @@
     t.vorschlaege.push({id:tag+'#own#'+Math.floor((''+DATA.stimmen.length+title.length).length+t.vorschlaege.length),titel:title.trim(),kurz:'selbst vorgeschlagen',aufwand:'',eigen:(VOTER.name||nameOf(VOTER.id)||'ich')});
     var wid=DATA.woche.id;if(wid)rest('PATCH','wochen?id=eq.'+wid,{vorschlaege:DATA.woche.vorschlaege});renderPlanen();}
   function notDa(tag){if(!VOTER.id){askWhoAreYou();return;}ensureWoche().then(function(wid){rest('DELETE','woche_ereignisse?haushalt=eq.'+HH+'&person_id=eq.'+VOTER.id+'&wochentag=eq.'+tag+'&typ=in.(abwesenheit,anwesenheit)').then(function(){return post('woche_ereignisse',{woche_id:wid,person_id:VOTER.id,typ:'abwesenheit',wochentag:tag,text:'nicht dabei (Voting)',haushalt:HH});}).then(refresh);});}
-  function setPlanDay(tag,oid){var arr=DATA.woche.vorschlaege.tage,t=arr.filter(function(x){return x.tag===tag;})[0];if(!t)return;var v=(t.vorschlaege||[]).filter(function(x,i){return optId(tag,x,i)===oid;})[0];if(!v)return;DATA.woche.plan=DATA.woche.plan||{};DATA.woche.plan[tag]={id:oid,titel:v.titel};var wid=DATA.woche.id;if(wid)rest('PATCH','wochen?id=eq.'+wid,{plan:DATA.woche.plan});renderPlanen();}
+  function setPlanDay(tag,oid){var arr=DATA.woche.vorschlaege.tage,t=arr.filter(function(x){return x.tag===tag;})[0];if(!t)return;var v=(t.vorschlaege||[]).filter(function(x,i){return optId(tag,x,i)===oid;})[0];if(!v)return;DATA.woche.plan=DATA.woche.plan||{};var _prev=DATA.woche.plan[tag]||{};DATA.woche.plan[tag]={id:oid,titel:v.titel,koch:_prev.koch,status:_prev.status};var wid=DATA.woche.id;if(wid)rest('PATCH','wochen?id=eq.'+wid,{plan:DATA.woche.plan});renderPlanen();if(_live)wcToast('↺ '+v.titel+' · Mitesser informiert');}
   function reopenVote(){DATA.woche.status='voten';var wid=DATA.woche.id;if(wid)rest('PATCH','wochen?id=eq.'+wid,{status:'voten'});renderPlanen();}
   function einkauf(){var plan=DATA.woche.plan||{};var lines=DOW.map(function(d){return plan[d]?d+': '+plan[d].titel:null;}).filter(Boolean);var txt='🛒 Einkauf diese Woche (Gerichte):\n'+lines.join('\n')+'\n\n(Zutatenliste folgt im Rezept-Update.)';if(navigator.share)navigator.share({title:'Einkaufsliste',text:txt}).catch(function(){});else alert(txt);}
   function teilen(){var url=location.origin+location.pathname+'?h='+encodeURIComponent(HH)+'&vote=1';openShare(url,'🍽️ Was essen wir diese Woche? Stimm mit ab:');}
@@ -957,7 +987,7 @@
     var voted={};DATA.stimmen.forEach(function(s){voted[s.voter_id]=1;});var miss=DATA.persons.filter(function(p){return !voted[p.id];}).map(function(p){return p.name;});
     if(miss.length&&!confirm(miss.join(', ')+' ha'+(miss.length>1?'ben':'t')+' noch nicht abgestimmt. Trotzdem festlegen?'))return;
     var plan={};tage.forEach(function(t){if(!presentOn(t.tag).length&&!guestsOn(t.tag).length)return;var opts=t.vorschlaege||[];if(!opts.length)return;var best=null,bn=-1;opts.forEach(function(v,i){var oid=optId(t.tag,v,i),n=votesFor(t.tag,oid).length;if(n>bn){bn=n;best={id:oid,titel:v.titel};}});if(best)plan[t.tag]=best;});
-    DATA.woche.plan=plan;DATA.woche.status='fest';var wid=DATA.woche.id;if(wid)rest('PATCH','wochen?id=eq.'+wid,{plan:plan,status:'fest'});renderPlanen();}
+    DATA.woche.plan=plan;DATA.woche.status='entscheiden';var wid=DATA.woche.id;if(wid)rest('PATCH','wochen?id=eq.'+wid,{plan:plan,status:'entscheiden'});renderPlanen();}
   // ── „Die Woche entsteht" — Generierungs-Screen: ein Gesicht, echte Daten, überbrückt die Wartezeit ──
   var LONGDAY={Mo:'Montag',Di:'Dienstag',Mi:'Mittwoch',Do:'Donnerstag',Fr:'Freitag',Sa:'Samstag',So:'Sonntag'};
   // generische Gericht-Emojis (pflanzlich/neutral) als „Ideen"-Platzhalter beim Laden — echte Gerichte kommen beim Reveal
@@ -1098,7 +1128,7 @@
   }
   (function(){var bt=document.getElementById('dbgAnim');if(bt)bt.addEventListener('click',debugGenToggle);window.genDemo=debugGenToggle;})();
   function doAct(act,day,oid,id){
-    if(act==='gen')generatePlan();else if(act==='vote')setVote(day,oid);else if(act==='who')setVoter(id);else if(act==='teilen')teilen();else if(act==='own')addOwn(day);else if(act==='regenday')regenDayStart(day);else if(act==='mealtoggle'){if(!VOTER.id){askWhoAreYou();return;}togglePresence(VOTER.id,day);}else if(act==='notda')notDa(day);else if(act==='none')setVote(day,'__none__');else if(act==='festlegen')festlegen();else if(act==='override')setPlanDay(day,oid);else if(act==='reopen')reopenVote();else if(act==='wctoggle'){_expDays[day]=!_expDays[day];renderPlanen();}else if(act==='setcook')cycleCook(day);else if(act==='movedish'){_moveDay=(_moveDay===day?null:day);renderPlanen();}else if(act==='movecancel'){_moveDay=null;renderPlanen();}else if(act==='moveto')moveDishTo(day,oid);else if(act==='einkauf')einkauf();else if(act==='govote'){vView='vote';renderPlanen();}else if(act==='goplan'){vView='plan';renderPlanen();}else if(act==='godecided'){vView=null;renderPlanen();}else if(act==='goweek'){navTo('week');}else if(act==='addperson'){navTo('profil');alert('Neue Person: über „＋ hinzufügen" im Personen-Block.');}else if(act==='addrezept'){alert('Rezepte kommen im Rezept-Sprint.');}
+    if(act==='gen')generatePlan();else if(act==='vote')setVote(day,oid);else if(act==='who')setVoter(id);else if(act==='teilen')teilen();else if(act==='own')addOwn(day);else if(act==='regenday')regenDayStart(day);else if(act==='mealtoggle'){if(!VOTER.id){askWhoAreYou();return;}togglePresence(VOTER.id,day);}else if(act==='notda')notDa(day);else if(act==='none')setVote(day,'__none__');else if(act==='festlegen')festlegen();else if(act==='override')setPlanDay(day,oid);else if(act==='reopen')reopenVote();else if(act==='wctoggle'){_expDays[day]=!_expDays[day];renderPlanen();}else if(act==='confirmweek'){_confirming=true;renderPlanen();}else if(act==='confirmno'){_confirming=false;renderPlanen();}else if(act==='confirmyes')confirmWeek();else if(act==='reopenweek')reopenWeek();else if(act==='cooked')markCooked(day);else if(act==='cooktoday')markCooked(todayTag());else if(act==='setcook')cycleCook(day);else if(act==='movedish'){_moveDay=(_moveDay===day?null:day);renderPlanen();}else if(act==='movecancel'){_moveDay=null;renderPlanen();}else if(act==='moveto')moveDishTo(day,oid);else if(act==='einkauf')einkauf();else if(act==='govote'){vView='vote';renderPlanen();}else if(act==='goplan'){vView='plan';renderPlanen();}else if(act==='godecided'){vView=null;renderPlanen();}else if(act==='goweek'){navTo('week');}else if(act==='addperson'){navTo('profil');alert('Neue Person: über „＋ hinzufügen" im Personen-Block.');}else if(act==='addrezept'){alert('Rezepte kommen im Rezept-Sprint.');}
   }
   document.getElementById('planwrap').addEventListener('click',function(e){var b=e.target.closest('[data-act]');if(!b)return;doAct(b.getAttribute('data-act'),b.getAttribute('data-day'),b.getAttribute('data-oid'),b.getAttribute('data-id'));});
   document.getElementById('stepper').addEventListener('click',function(e){var b=e.target.closest('[data-act]');if(!b||b.classList.contains('off'))return;doAct(b.getAttribute('data-act'));});
