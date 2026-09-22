@@ -87,31 +87,48 @@
   /* Voting-Board als eigene Seite: Emoji-Karten im Raster (angelehnt an die alte Wochenseite) */
   .voteback{background:none;border:none;color:var(--blue);font-weight:700;font-size:.82rem;cursor:pointer;padding:.1rem 0;margin:.1rem 0 .4rem;}
   .voteintro{font-size:.86rem;color:var(--muted);margin:.1rem 0 .6rem;}
-  /* P1 · Wochen-Timeline — durchdachte .dc-Karten (kollisionsfrei: .wc*) */
-  .wc{background:var(--card);border:1px solid var(--line);border-radius:1.1rem;padding:.6rem .7rem;margin:.2rem 0 .7rem;box-shadow:0 8px 22px -18px rgba(0,0,0,.5);}
-  .wc.slim{display:flex;align-items:center;gap:.6rem;padding:.6rem .8rem;color:var(--muted);}
-  .wc.slim .wc-tico{font-size:1.1rem;} .wc.slim .wc-day{font-weight:700;font-size:.82rem;} .wc.slim .wc-lbl{font-size:.82rem;}
-  .wc-h{display:flex;align-items:baseline;gap:.4rem;}
+  /* Wochen-Timeline — durchdachte .dc-Karten, ausgearbeitetes Niveau (kollisionsfrei: .wc*) */
+  .wc{position:relative;background:var(--card);border:1px solid var(--line);border-radius:1.1rem;padding:.65rem;margin:.2rem 0 .65rem;box-shadow:0 8px 22px -18px rgba(0,0,0,.5);transition:box-shadow .2s,border-color .2s;}
+  .wc:not(.exp):not(.slim){cursor:pointer;}
+  .wc:not(.exp):not(.slim):active{transform:scale(.995);}
+  .wc-head{display:flex;align-items:baseline;gap:.4rem;}
   .wc-tico{font-size:1rem;align-self:center;}
-  .wc-day{font-weight:850;font-size:1.15rem;letter-spacing:-.02em;display:flex;align-items:baseline;gap:.35rem;}
-  .wc-wd{font:400 .78rem/1.2 var(--sans);color:var(--muted);}
-  .wc-m{display:flex;align-items:center;gap:.6rem;margin-top:.5rem;}
-  .wc-ph{width:2.9rem;height:2.9rem;flex:0 0 auto;border-radius:.7rem;display:grid;place-items:center;font-size:1.5rem;box-shadow:inset 0 0 0 1px rgba(0,0,0,.05);}
+  .wc-day{font-weight:800;font-size:1.15rem;letter-spacing:-.02em;display:flex;align-items:baseline;gap:.35rem;}
+  .wc-wd{font:500 .74rem/1 var(--sans);color:var(--muted);}
+  .wc-mk{margin-left:auto;align-self:center;font:700 .62rem/1 var(--mono);border-radius:999px;padding:.25rem .5rem;text-transform:uppercase;display:inline-flex;align-items:center;gap:.25rem;}
+  .wc-mk.today{color:#fff;background:var(--blue);} .wc-mk.cooked{color:var(--green-ink);background:var(--green-bg);} .wc-mk.moved{color:var(--blue);background:var(--blue-bg);border:1px solid var(--blue-line);}
+  .wc-disc{flex:0 0 auto;width:1.8rem;height:1.8rem;display:inline-flex;align-items:center;justify-content:center;color:var(--muted);transition:transform .22s cubic-bezier(.2,.8,.3,1);}
+  .wc.exp .wc-disc{transform:rotate(180deg);}
+  .wc-m{display:flex;align-items:center;gap:.65rem;margin-top:.5rem;}
+  .wc-ph{width:2.9rem;height:2.9rem;flex:0 0 auto;border-radius:.7rem;display:grid;place-items:center;font-size:1.5rem;position:relative;overflow:hidden;box-shadow:inset 0 0 0 1px rgba(0,0,0,.05);}
+  .wc-ph::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.16),transparent 55%);}
   .wc-i{flex:1;min-width:0;} .wc-nm{font-weight:750;font-size:.95rem;line-height:1.2;display:block;}
-  .wc-tags{display:flex;gap:.25rem;margin-top:.2rem;flex-wrap:wrap;}
-  .wc-tg{font:600 .62rem/1.3 var(--mono);padding:.12rem .34rem;border-radius:.4rem;color:var(--muted);background:var(--card2);}
-  .wc-tg.guest{color:var(--blue);background:var(--blue-bg);}
+  .wc-tags{display:flex;gap:.25rem;margin-top:.25rem;flex-wrap:wrap;align-items:center;}
+  .wc-tg{display:inline-flex;align-items:center;gap:.2rem;font:600 .62rem/1.3 var(--mono);padding:.12rem .34rem;border-radius:.4rem;color:var(--muted);background:var(--card2);}
+  .wc-tg.guest{color:var(--blue);background:var(--blue-bg);} .wc-tg.veg{color:var(--green-ink);background:var(--green-bg);}
   .wc-cook{display:flex;flex-direction:column;align-items:flex-end;gap:.15rem;flex:0 0 auto;} .wc-cl{font:700 .58rem/1 var(--mono);text-transform:uppercase;color:var(--muted);}
   .wc .av.wcq{background:var(--card2);color:var(--orange);border:1.5px dashed color-mix(in oklab,var(--orange) 55%,var(--line));cursor:pointer;}
-  .wc-act{display:flex;align-items:center;gap:.5rem;margin-top:.55rem;flex-wrap:wrap;}
-  .wc-aj{display:inline-flex;align-items:center;gap:.3rem;font:700 .74rem/1 var(--sans);border:1px solid var(--line);background:var(--card2);color:var(--ink);border-radius:999px;padding:.4rem .6rem;cursor:pointer;}
-  .wc-alt{font-size:.74rem;} .wc-alt summary{list-style:none;cursor:pointer;color:var(--muted);font-weight:700;padding:.4rem .2rem;} .wc-alt summary::-webkit-details-marker{display:none;}
-  .wc-altwrap{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.3rem;}
-  .wc-altb{font:700 .72rem/1 var(--sans);border:1px solid var(--line);background:var(--card);border-radius:.5rem;padding:.35rem .5rem;cursor:pointer;color:var(--ink);} .wc-altb.on{border-color:var(--green);background:var(--green-bg);color:var(--green-ink);}
-  .wc.open .wc-choose{margin-top:.5rem;font-size:.8rem;color:var(--muted);display:flex;flex-wrap:wrap;gap:.35rem;align-items:center;}
-  .wc-move{display:flex;flex-wrap:wrap;gap:.35rem;align-items:center;margin-top:.5rem;padding:.5rem;border:1px dashed var(--line);border-radius:.6rem;background:var(--card2);}
-  .wc-movel{font:700 .68rem/1 var(--mono);color:var(--muted);}
+  .wc-exp{margin-top:.6rem;padding-top:.6rem;border-top:1px dashed var(--line2);display:flex;flex-direction:column;gap:.55rem;}
+  .wc-strip{display:flex;gap:.4rem;flex-wrap:wrap;align-items:center;}
+  .wc-ichip{display:inline-flex;align-items:center;gap:.3rem;font:600 .72rem/1 var(--sans);border:1px solid var(--line);background:var(--card2);color:var(--muted);border-radius:999px;padding:.38rem .58rem;}
+  .wc-arow{display:flex;gap:.4rem;flex-wrap:wrap;align-items:center;}
+  .wc-aj{display:inline-flex;align-items:center;gap:.3rem;font:700 .74rem/1 var(--sans);border:1px solid var(--line);background:var(--card2);color:var(--ink);border-radius:999px;padding:.42rem .62rem;cursor:pointer;}
+  .wc-alt{font-size:.74rem;} .wc-alt summary{list-style:none;cursor:pointer;color:var(--ink);font-weight:700;padding:.42rem .62rem;border:1px solid var(--line);border-radius:999px;background:var(--card2);display:inline-flex;align-items:center;gap:.3rem;} .wc-alt summary::-webkit-details-marker{display:none;}
+  .wc-altwrap{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.4rem;}
+  .wc-altb{font:700 .72rem/1 var(--sans);border:1px solid var(--line);background:var(--card);border-radius:.5rem;padding:.38rem .55rem;cursor:pointer;color:var(--ink);} .wc-altb.on{border-color:var(--green);background:var(--green-bg);color:var(--green-ink);}
+  .wc-move{display:flex;flex-wrap:wrap;gap:.35rem;align-items:center;padding:.5rem;border:1px dashed var(--line);border-radius:.6rem;background:var(--card2);}
+  .wc-movel{font:700 .64rem/1 var(--mono);color:var(--muted);}
   .wc-mo{font:700 .72rem/1 var(--sans);border:1px solid var(--line);background:var(--card);border-radius:.5rem;padding:.35rem .5rem;cursor:pointer;color:var(--ink);} .wc-mo.cancel{color:var(--muted);border:none;background:none;margin-left:auto;}
+  .wc.slim{display:flex;align-items:center;gap:.6rem;padding:.65rem .8rem;color:var(--muted);}
+  .wc.slim .wc-tico{font-size:1.1rem;} .wc.slim .wc-day{font-size:.82rem;font-weight:700;} .wc.slim .wc-lbl{font-size:.82rem;flex:1;}
+  .wc.open2{border-color:var(--orange-line);box-shadow:0 0 0 1px color-mix(in oklab,var(--orange) 20%,transparent) inset,0 8px 22px -18px rgba(0,0,0,.5);}
+  .wc-oh{font:600 .74rem/1.3 var(--sans);color:var(--orange);margin:.15rem 0 .5rem;display:flex;gap:.35rem;}
+  .wc-cands{display:grid;grid-template-columns:1fr 1fr;gap:.4rem;}
+  .wc-cand{border:1.5px solid var(--line);border-radius:.6rem;background:var(--card2);overflow:hidden;cursor:pointer;text-align:left;padding:0;display:flex;flex-direction:column;font:inherit;color:inherit;}
+  .wc-cand:active{transform:translateY(1px);}
+  .wc-cand .cph{position:relative;height:2.8rem;display:grid;place-items:center;font-size:1.55rem;}
+  .wc-cand .cph::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.18),transparent 55%);}
+  .wc-cand .cbd{padding:.4rem .5rem;} .wc-cand .cn{font-weight:750;font-size:.74rem;line-height:1.15;}
   /* Voting-Karten – Direkt-Variante (portiert aus voting-konzept.html) */
   .vlegend{font-size:.78rem;color:var(--muted);background:var(--card2);border:1px solid var(--line2);border-radius:.7rem;padding:.5rem .65rem;margin:.1rem 0 .6rem;line-height:1.4;} .vlegend b{color:var(--ink);}
   .vday{background:var(--card);border:1px solid var(--line);border-radius:1.1rem;padding:.75rem .7rem .6rem;margin:.2rem 0 .8rem;box-shadow:0 8px 22px -18px rgba(0,0,0,.5);}
@@ -881,7 +898,9 @@
     var done='<span class="cnote">'+(DATA.persons.length-miss.length)+'/'+DATA.persons.length+' haben abgestimmt'+(miss.length?' · offen: '+esc(miss.join(', ')):'')+'</span>';
     var _pcv=document.getElementById('planCards');_pcv.innerHTML=back+bar+intro+cards+'<div class="votefoot">'+done+'</div>';
     if(_genReveal){_genReveal=false;_pcv.classList.add('genreveal');setTimeout(function(){_pcv.classList.remove('genreveal');},1000);}}
-  var _moveDay=null;
+  var _moveDay=null,_expDays={};
+  var WCHEV='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>';
+  function optAufwand(t,ch){var vs=t.vorschlaege||[];for(var i=0;i<vs.length;i++){if(optId(t.tag,vs[i],i)===ch.id)return vs[i].aufwand||'';}return '';}
   function phGrad(t){var h=hueOf(t||'');return 'linear-gradient(140deg,hsl('+h+' 52% 82%),hsl('+((h+30)%360)+' 48% 68%))';}
   function emojiFor(t){return GEMOJI[hueOf(t||'')%GEMOJI.length];}
   function personById(id){for(var i=0;i<DATA.persons.length;i++)if(DATA.persons[i].id===id)return DATA.persons[i];return null;}
@@ -891,21 +910,29 @@
     return '<span class="av wcq" data-act="setcook" data-day="'+esc(day)+'" title="wer kocht?">?</span>';}
   function cycleCook(day){var plan=DATA.woche.plan=DATA.woche.plan||{};var ch=plan[day];if(!ch)return;var ids=DATA.persons.map(function(p){return p.id;});if(!ids.length)return;var cur=ch.koch||null,ix=ids.indexOf(cur);ch.koch=(ix<0)?ids[0]:((ix+1>=ids.length)?null:ids[ix+1]);persistPlan();renderPlanen();}
   function wcMovePicker(day){var tage=(DATA.woche.vorschlaege&&DATA.woche.vorschlaege.tage)||[];var opts=tage.filter(function(t){return t.tag!==day&&(presentOn(t.tag).length||guestsOn(t.tag).length);}).map(function(t){var ch=(DATA.woche.plan||{})[t.tag];return '<button class="wc-mo" data-act="moveto" data-day="'+esc(day)+'" data-oid="'+esc(t.tag)+'">'+esc(t.tag)+(ch?' ↔ '+esc(ch.titel):' (frei)')+'</button>';}).join('');return '<div class="wc-move"><span class="wc-movel">📅 Tausch mit</span>'+(opts||'<span class="wc-movel">keine anderen Kochtage</span>')+'<button class="wc-mo cancel" data-act="movecancel">✕</button></div>';}
-  function moveDishTo(src,dst){var plan=DATA.woche.plan=DATA.woche.plan||{};var tmp=plan[src];plan[src]=plan[dst]||null;plan[dst]=tmp;if(!plan[src])delete plan[src];_moveDay=null;persistPlan();renderPlanen();}
+  function moveDishTo(src,dst){var plan=DATA.woche.plan=DATA.woche.plan||{};var tmp=plan[src];plan[src]=plan[dst]||null;plan[dst]=tmp;if(!plan[src])delete plan[src];if(plan[dst])plan[dst].moved=true;if(plan[src])plan[src].moved=true;_moveDay=null;_expDays[dst]=true;persistPlan();renderPlanen();}
   function renderDecided(){var pe=document.getElementById('planEmpty');if(pe)pe.style.display='none';var plan=DATA.woche.plan||{};var tage=(DATA.woche.vorschlaege&&DATA.woche.vorschlaege.tage)||[];
     var cards=tage.map(function(t){var here=presentOn(t.tag),g=guestsOn(t.tag);var wd=LONGDAY[t.tag]||t.tag;
       if(!here.length&&!g.length)return '<div class="wc slim"><span class="wc-tico">🍽️</span><span class="wc-day">'+esc(t.tag)+'</span><span class="wc-lbl">auswärts essen</span></div>';
       var ch=plan[t.tag];
-      var altbtns=(t.vorschlaege||[]).map(function(v,i){var oid=optId(t.tag,v,i);return '<button class="wc-altb'+(ch&&ch.id===oid?' on':'')+'" data-act="override" data-day="'+esc(t.tag)+'" data-oid="'+esc(oid)+'">'+esc(v.titel)+'</button>';}).join('');
-      if(!ch)return '<div class="wc open"><div class="wc-h"><span class="wc-tico">🍳</span><span class="wc-day">'+esc(t.tag)+'<span class="wc-wd">'+esc(wd)+'</span></span></div><div class="wc-choose">Gericht wählen: '+(altbtns||'—')+'</div></div>';
-      var titel=ch.titel;var tags=(g.length?'<span class="wc-tg guest">👥 +'+g.length+' Gast'+(g.length>1?'e':'')+'</span>':'')+'<span class="wc-tg">🍽️ '+(here.length+g.length)+'</span>';
-      var mv=_moveDay===t.tag?wcMovePicker(t.tag):'';
-      return '<div class="wc"><div class="wc-h"><span class="wc-tico">🍳</span><span class="wc-day">'+esc(t.tag)+'<span class="wc-wd">'+esc(wd)+'</span></span></div>'
-        +'<div class="wc-m"><span class="wc-ph" style="background:'+phGrad(titel)+'">'+emojiFor(titel)+'</span>'
+      if(!ch){var cands=(t.vorschlaege||[]).map(function(v,i){var oid=optId(t.tag,v,i);return '<button class="wc-cand" data-act="override" data-day="'+esc(t.tag)+'" data-oid="'+esc(oid)+'"><span class="cph" style="background:'+phGrad(v.titel)+'">'+emojiFor(v.titel)+'</span><span class="cbd"><span class="cn">'+esc(v.titel)+'</span></span></button>';}).join('');
+        return '<div class="wc open2"><div class="wc-head"><span class="wc-day"><span class="wc-tico">🍳</span>'+esc(t.tag)+'<span class="wc-wd">'+esc(wd)+'</span></span></div><div class="wc-oh">🤔 Noch offen — Gericht wählen</div><div class="wc-cands">'+(cands||'—')+'</div></div>';}
+      var titel=ch.titel,exp=!!_expDays[t.tag];
+      var mk=ch.moved?'<div class="wc-mk moved">↔ verschoben</div>':'';
+      var tags=(g.length?'<span class="wc-tg guest">👥 +'+g.length+' Gast'+(g.length>1?'e':'')+'</span>':'')+'<span class="wc-tg">🍽️ '+(here.length+g.length)+'</span>';
+      var auf=optAufwand(t,ch);if(auf)tags+='<span class="wc-tg">⏲ '+esc(auf)+'</span>';
+      var head='<div class="wc-head" data-act="wctoggle" data-day="'+esc(t.tag)+'"><span class="wc-day"><span class="wc-tico">🍳</span>'+esc(t.tag)+'<span class="wc-wd">'+esc(wd)+'</span></span>'+mk+'<span class="wc-disc">'+WCHEV+'</span></div>';
+      var main='<div class="wc-m" data-act="wctoggle" data-day="'+esc(t.tag)+'"><span class="wc-ph" style="background:'+phGrad(titel)+'">'+emojiFor(titel)+'</span>'
         +'<span class="wc-i"><span class="wc-nm">'+esc(titel)+'</span><span class="wc-tags">'+tags+'</span></span>'
-        +'<span class="wc-cook"><span class="wc-cl">kocht</span>'+wcCook(t.tag)+'</span></div>'
-        +'<div class="wc-act"><button class="wc-aj" data-act="movedish" data-day="'+esc(t.tag)+'">📅 Verschieben</button><details class="wc-alt"><summary>↺ Gericht wechseln</summary><div class="wc-altwrap">'+altbtns+'</div></details></div>'+mv+'</div>';}).join('');
-    document.getElementById('planCards').innerHTML='<div class="cnote" style="margin:.2rem 0 .6rem">✓ <b>Die Woche steht fest.</b> Wer kocht antippen · 📅 verschieben · ↺ Gericht wechseln.</div>'+cards+'<div class="votefoot"><button class="lnk" data-act="reopen">↩︎ Abstimmung öffnen</button></div>';}
+        +'<span class="wc-cook"><span class="wc-cl">kocht</span>'+wcCook(t.tag)+'</span></div>';
+      var exph='';
+      if(exp){var altbtns=(t.vorschlaege||[]).map(function(v,i){var oid=optId(t.tag,v,i);return '<button class="wc-altb'+(ch.id===oid?' on':'')+'" data-act="override" data-day="'+esc(t.tag)+'" data-oid="'+esc(oid)+'">'+esc(v.titel)+'</button>';}).join('');
+        var mv=_moveDay===t.tag?wcMovePicker(t.tag):'';
+        exph='<div class="wc-exp"><div class="wc-strip"><span class="wc-ichip">🛒 Zutaten &amp; Rezept folgen</span></div>'
+          +'<div class="wc-arow"><button class="wc-aj" data-act="movedish" data-day="'+esc(t.tag)+'">📅 Verschieben</button>'
+          +'<details class="wc-alt"><summary>↺ Gericht wechseln</summary><div class="wc-altwrap">'+altbtns+'</div></details></div>'+mv+'</div>';}
+      return '<div class="wc'+(exp?' exp':'')+'">'+head+main+exph+'</div>';}).join('');
+    document.getElementById('planCards').innerHTML='<div class="cnote" style="margin:.2rem 0 .6rem">✓ <b>Die Woche steht fest.</b> Karte antippen für Details · Koch-Avatar tippen · 📅 verschieben.</div>'+cards+'<div class="votefoot"><button class="lnk" data-act="reopen">↩︎ Abstimmung öffnen</button></div>';}
   function setVoter(id){var p=DATA.persons.filter(function(x){return x.id===id;})[0];if(p){VOTER={id:p.id,name:p.name};renderPlanen();}}
   function setVote(tag,oid){if(!VOTER.id){askWhoAreYou();return;}var wid=DATA.woche&&DATA.woche.id;if(!wid)return;var mine=myVote(tag,oid);
     if(mine)DATA.stimmen=DATA.stimmen.filter(function(s){return !(s.tag===tag&&s.option_id===oid&&s.voter_id===VOTER.id);});else DATA.stimmen.push({tag:tag,option_id:oid,voter_id:VOTER.id});renderPlanen();
@@ -1071,7 +1098,7 @@
   }
   (function(){var bt=document.getElementById('dbgAnim');if(bt)bt.addEventListener('click',debugGenToggle);window.genDemo=debugGenToggle;})();
   function doAct(act,day,oid,id){
-    if(act==='gen')generatePlan();else if(act==='vote')setVote(day,oid);else if(act==='who')setVoter(id);else if(act==='teilen')teilen();else if(act==='own')addOwn(day);else if(act==='regenday')regenDayStart(day);else if(act==='mealtoggle'){if(!VOTER.id){askWhoAreYou();return;}togglePresence(VOTER.id,day);}else if(act==='notda')notDa(day);else if(act==='none')setVote(day,'__none__');else if(act==='festlegen')festlegen();else if(act==='override')setPlanDay(day,oid);else if(act==='reopen')reopenVote();else if(act==='setcook')cycleCook(day);else if(act==='movedish'){_moveDay=(_moveDay===day?null:day);renderPlanen();}else if(act==='movecancel'){_moveDay=null;renderPlanen();}else if(act==='moveto')moveDishTo(day,oid);else if(act==='einkauf')einkauf();else if(act==='govote'){vView='vote';renderPlanen();}else if(act==='goplan'){vView='plan';renderPlanen();}else if(act==='godecided'){vView=null;renderPlanen();}else if(act==='goweek'){navTo('week');}else if(act==='addperson'){navTo('profil');alert('Neue Person: über „＋ hinzufügen" im Personen-Block.');}else if(act==='addrezept'){alert('Rezepte kommen im Rezept-Sprint.');}
+    if(act==='gen')generatePlan();else if(act==='vote')setVote(day,oid);else if(act==='who')setVoter(id);else if(act==='teilen')teilen();else if(act==='own')addOwn(day);else if(act==='regenday')regenDayStart(day);else if(act==='mealtoggle'){if(!VOTER.id){askWhoAreYou();return;}togglePresence(VOTER.id,day);}else if(act==='notda')notDa(day);else if(act==='none')setVote(day,'__none__');else if(act==='festlegen')festlegen();else if(act==='override')setPlanDay(day,oid);else if(act==='reopen')reopenVote();else if(act==='wctoggle'){_expDays[day]=!_expDays[day];renderPlanen();}else if(act==='setcook')cycleCook(day);else if(act==='movedish'){_moveDay=(_moveDay===day?null:day);renderPlanen();}else if(act==='movecancel'){_moveDay=null;renderPlanen();}else if(act==='moveto')moveDishTo(day,oid);else if(act==='einkauf')einkauf();else if(act==='govote'){vView='vote';renderPlanen();}else if(act==='goplan'){vView='plan';renderPlanen();}else if(act==='godecided'){vView=null;renderPlanen();}else if(act==='goweek'){navTo('week');}else if(act==='addperson'){navTo('profil');alert('Neue Person: über „＋ hinzufügen" im Personen-Block.');}else if(act==='addrezept'){alert('Rezepte kommen im Rezept-Sprint.');}
   }
   document.getElementById('planwrap').addEventListener('click',function(e){var b=e.target.closest('[data-act]');if(!b)return;doAct(b.getAttribute('data-act'),b.getAttribute('data-day'),b.getAttribute('data-oid'),b.getAttribute('data-id'));});
   document.getElementById('stepper').addEventListener('click',function(e){var b=e.target.closest('[data-act]');if(!b||b.classList.contains('off'))return;doAct(b.getAttribute('data-act'));});
