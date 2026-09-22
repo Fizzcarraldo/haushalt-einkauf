@@ -143,6 +143,19 @@
   .wcc-b{display:flex;gap:.5rem;} .wcc-no{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:.7rem;padding:.6rem .9rem;font:800 .8rem/1 var(--sans);cursor:pointer;} .wcc-yes{flex:1;border:none;background:var(--green);color:#fff;border-radius:.7rem;padding:.6rem;font:800 .82rem/1 var(--sans);cursor:pointer;}
   .wctoast{position:fixed;left:50%;bottom:calc(1rem + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(14px);background:var(--ink);color:var(--paper);border-radius:.7rem;padding:.55rem .8rem;font:600 .8rem/1.3 var(--sans);box-shadow:0 10px 30px -10px rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:.2s;z-index:60;max-width:88vw;text-align:center;}
   .wctoast.on{opacity:1;transform:translateX(-50%) translateY(0);}
+  /* P4 · Einkauf-Ort + echter Zutaten-Status auf den Karten */
+  .wc-ichip.ok{color:var(--green-ink);background:var(--green-bg);border-color:transparent;} .wc-ichip.need{color:var(--orange);background:var(--orange-bg);border-color:var(--orange-line);}
+  .wc-tg.ok{color:var(--green-ink);background:var(--green-bg);} .wc-tg.need{color:var(--orange);background:var(--orange-bg);}
+  .ek-cat{font:700 .58rem/1 var(--mono);text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:.7rem .2rem .3rem;}
+  .ek-row{display:flex;align-items:center;gap:.6rem;padding:.5rem .2rem;border-top:1px solid var(--line2);} .ek-row:first-of-type{border-top:none;}
+  .ek-row.got .ek-n,.ek-row.pan .ek-n{text-decoration:line-through;color:var(--muted);}
+  .ek-box{width:1.5rem;height:1.5rem;flex:0 0 auto;border:1.6px solid var(--line);border-radius:.4rem;background:var(--card2);color:transparent;font-size:.85rem;cursor:pointer;display:grid;place-items:center;} .ek-row.got .ek-box{background:var(--green);border-color:transparent;color:#fff;}
+  .ek-n{flex:1;font-size:.9rem;} .ek-mg{font:600 .68rem/1 var(--mono);color:var(--muted);} .ek-tg{font:700 .58rem/1 var(--mono);color:var(--blue);background:var(--blue-bg);border-radius:.25rem;padding:.06rem .28rem;}
+  .ek-pan{border:1px solid var(--line);background:var(--card2);color:var(--muted);border-radius:999px;font:700 .62rem/1 var(--sans);padding:.28rem .5rem;cursor:pointer;flex:0 0 auto;} .ek-row.pan .ek-pan{background:var(--blue-bg);color:var(--blue);border-color:var(--blue-line);}
+  .ek-add{margin-top:1rem;border-top:1px solid var(--line2);padding-top:.7rem;} .ek-addl{font:700 .6rem/1 var(--mono);text-transform:uppercase;color:var(--muted);margin-bottom:.4rem;}
+  .ek-chips{display:flex;flex-wrap:wrap;gap:.35rem;} .ek-chip{border:1px dashed var(--line);background:var(--card);border-radius:999px;padding:.3rem .55rem;font:700 .74rem/1 var(--sans);cursor:pointer;color:var(--ink);}
+  .ek-addrow{display:flex;gap:.4rem;margin-top:.5rem;} .ek-addrow input{flex:1;border:1px solid var(--line);border-radius:9px;padding:.5rem .6rem;font:600 .85rem/1 var(--sans);background:var(--card);color:var(--ink);} .ek-addrow button{border:none;background:var(--ink);color:#fff;border-radius:9px;padding:0 .9rem;font:800 1rem/1 var(--sans);cursor:pointer;}
+  .ek-foot{margin-top:1rem;} .ek-bring{width:100%;border:none;border-radius:11px;padding:.8rem;background:var(--ai);color:#fff;font:800 .9rem/1 var(--sans);cursor:pointer;}
   /* Voting-Karten – Direkt-Variante (portiert aus voting-konzept.html) */
   .vlegend{font-size:.78rem;color:var(--muted);background:var(--card2);border:1px solid var(--line2);border-radius:.7rem;padding:.5rem .65rem;margin:.1rem 0 .6rem;line-height:1.4;} .vlegend b{color:var(--ink);}
   .vday{background:var(--card);border:1px solid var(--line);border-radius:1.1rem;padding:.75rem .7rem .6rem;margin:.2rem 0 .8rem;box-shadow:0 8px 22px -18px rgba(0,0,0,.5);}
@@ -428,7 +441,7 @@
   <header class="appbar" id="appbar" hidden>
     <span class="kw" id="kw">KW –</span>
     <button class="ab-brand" data-nav="week">🗓️ Diese Woche</button>
-    <span class="ab-ico"><button data-nav="kochbuch" title="Kochbuch">📖</button><button data-nav="profil" title="Profil">⚙️</button></span>
+    <span class="ab-ico"><button data-nav="einkauf" title="Einkauf">🛒</button><button data-nav="kochbuch" title="Kochbuch">📖</button><button data-nav="profil" title="Profil">⚙️</button></span>
   </header>
   <div class="cockpit" id="cockpit" hidden><span class="chef mid" id="ckav"><span class="cf">🧑‍🍳</span><i class="ring"></i><b class="steam">✨</b></span><div class="ck-body"><span class="ck-name" id="ckname">Koch</span><span class="ck-status" id="ckstatus">…</span><span class="ck-chat">Chat mit dem Koch</span></div><button class="ck-x" id="closeA" aria-label="Chat schließen">✕</button><p class="sub" id="plsub" hidden></p></div>
   <div class="stepper" id="stepper" hidden></div>
@@ -471,6 +484,10 @@
       <div class="card"><div class="chd">📖 Kochbuch</div><p class="cnote">Eure Rezept-Bibliothek – wächst mit jeder gekochten Woche. <b>Kommt im Rezept-Sprint.</b></p></div>
       <div class="kbgrid" id="kbgrid"></div>
     </div>
+  </div>
+
+  <div class="view" id="vEinkauf">
+    <div class="pl"><div id="einkaufBox"></div></div>
   </div>
 
   <div class="view" id="vChat">
@@ -752,16 +769,35 @@
   var navMode='week';
   function setF(label,act){var fa=document.getElementById('faction');if(!fa)return;fa.hidden=false;fa.textContent=label;fa.setAttribute('data-act',act);}
   function voterMissing(){var voted={};DATA.stimmen.forEach(function(s){voted[s.voter_id]=1;});var miss=DATA.persons.filter(function(p){return !voted[p.id];}).map(function(p){return p.name;});return miss.length?miss.join(', '):'';}
+  function normKey(s){return (s||'').toLowerCase().trim();}
+  function einkaufState(){var p=DATA.woche.plan=DATA.woche.plan||{};p.__einkauf=p.__einkauf||{bought:{},pantry:{},extra:[]};return p.__einkauf;}
+  function chosenVorschlag(t){var ch=(DATA.woche.plan||{})[t.tag];if(!ch)return null;var vs=t.vorschlaege||[];for(var i=0;i<vs.length;i++)if(optId(t.tag,vs[i],i)===ch.id)return vs[i];return null;}
+  function einkaufAgg(){var tage=(DATA.woche.vorschlaege&&DATA.woche.vorschlaege.tage)||[],map={};tage.forEach(function(t){var here=presentOn(t.tag),g=guestsOn(t.tag);if(!here.length&&!g.length)return;var v=chosenVorschlag(t);if(!v||!v.zutaten)return;v.zutaten.forEach(function(z){var k=normKey(z.name);if(!k)return;var e=map[k];if(!e)e=map[k]={key:k,name:z.name,menge:z.menge||'',kat:z.kategorie||'Sonstiges',tage:[]};if(e.tage.indexOf(t.tag)<0)e.tage.push(t.tag);});});return map;}
+  var EK_STAPLE={Milch:'Kühlung',Butter:'Kühlung',Eier:'Kühlung',Klopapier:'Sonstiges',Obst:'Gemüse'};
+  function einkaufBring(){var es=einkaufState(),map=einkaufAgg();(es.extra||[]).forEach(function(x){if(!map[x.key])map[x.key]={name:x.name,menge:'',tage:[]};});var lines=Object.keys(map).filter(function(k){return !es.bought[k]&&!es.pantry[k];}).map(function(k){return '• '+map[k].name+(map[k].menge?' ('+map[k].menge+')':'');});var txt='🛒 Einkauf diese Woche:\n'+(lines.join('\n')||'(alles erledigt 🎉)');if(navigator.share)navigator.share({title:'Einkaufsliste',text:txt}).catch(function(){});else alert(txt);}
+  function renderEinkauf(){var box=document.getElementById('einkaufBox');if(!box)return;var es=einkaufState();var map=einkaufAgg();
+    (es.extra||[]).forEach(function(x){if(!map[x.key])map[x.key]={key:x.key,name:x.name,menge:'',kat:x.kat||'Sonstiges',tage:[],extra:true};});
+    var keys=Object.keys(map);var open=keys.filter(function(k){return !es.bought[k]&&!es.pantry[k];}).length;
+    var KAT=['Gemüse','Kühlung','Backwaren','Vorrat','Sonstiges'];
+    var h='<div class="card"><div class="chd">🛒 Einkauf · diese Woche</div><p class="cnote">Automatisch aus dem Wochenplan · <b>'+open+'</b> offen. Abhaken macht Gerichte kochbar.</p></div>';
+    if(!keys.length){box.innerHTML=h+'<div class="card"><p class="cnote">Noch keine Zutaten — plant die Woche und holt Vorschläge (die Gerichte liefern ihre Zutaten).</p></div>';return;}
+    KAT.forEach(function(kat){var items=keys.filter(function(k){return (map[k].kat||'Sonstiges')===kat;});if(!items.length)return;h+='<div class="ek-cat">'+esc(kat)+'</div>';
+      items.forEach(function(k){var it=map[k],got=!!es.bought[k],pan=!!es.pantry[k];h+='<div class="ek-row'+(got?' got':'')+(pan?' pan':'')+'"><button class="ek-box" data-act="ekbuy" data-oid="'+esc(k)+'">'+(got?'✓':'')+'</button><span class="ek-n">'+esc(it.name)+(it.menge?' <span class="ek-mg">'+esc(it.menge)+'</span>':'')+(it.tage&&it.tage.length?' <span class="ek-tg">'+it.tage.join('·')+'</span>':'')+(pan?' <span class="ek-mg">🥫 im Vorrat</span>':'')+'</span>'+(it.extra?'<button class="ek-pan" data-act="ekdel" data-oid="'+esc(k)+'">✕</button>':'<button class="ek-pan" data-act="ekpantry" data-oid="'+esc(k)+'">'+(pan?'↩︎':'🥫 hab ich')+'</button>')+'</div>';});});
+    h+='<div class="ek-add"><div class="ek-addl">➕ Eigenes / Grundnahrung</div><div class="ek-chips">'+Object.keys(EK_STAPLE).map(function(s){return '<button class="ek-chip" data-act="ekstaple" data-oid="'+esc(s)+'">+ '+esc(s)+'</button>';}).join('')+'</div><div class="ek-addrow"><input id="ekin" placeholder="z.B. Öl, Zahnpasta…"><button data-act="ekaddfree">＋</button></div></div>';
+    h+='<div class="ek-foot"><button class="ek-bring" data-act="ekbring">🛒 An Bring senden / teilen</button></div>';
+    box.innerHTML=h;}
   function renderKochbuch(){var g=document.getElementById('kbgrid');if(!g)return;var rec=[['🍝','Pasta al Pomodoro'],['🍄','Pilz-Risotto'],['🍛','Kichererbsen-Curry'],['🍳','Shakshuka'],['🧆','Ofen-Falafel'],['🥗','Couscous-Salat']];g.innerHTML=rec.map(function(r){return '<div class="kbcard"><div class="kbh">'+r[0]+'</div><div class="kbn">'+r[1]+'</div></div>';}).join('');}
   function navTo(v){navMode=(v==='plan'||v==='week')?'week':v;var m=navMode;
     document.getElementById('vPlan').classList.toggle('on',m==='week');
     document.getElementById('vProfil').classList.toggle('on',m==='profil');
     document.getElementById('vKochbuch').classList.toggle('on',m==='kochbuch');
+    document.getElementById('vEinkauf').classList.toggle('on',m==='einkauf');
     document.querySelectorAll('.appbar .ab-ico button').forEach(function(b){b.classList.toggle('active',b.getAttribute('data-nav')===m);});
     var stp=document.getElementById('stepper'),cs=document.getElementById('ckstatus');
     if(m==='week'){renderPlanen();}
     else if(m==='profil'){renderProfil();if(cs)cs.innerHTML='⚙️ Euer Haushalt';if(stp)stp.innerHTML='<button class="backbar" data-act="goweek">← Zurück zur Woche</button>';var fa=document.getElementById('faction');if(fa){fa.className='faction ghost';setF('＋ Person','addperson');}}
     else if(m==='kochbuch'){renderKochbuch();if(cs)cs.innerHTML='📖 Euer Kochbuch';if(stp)stp.innerHTML='<button class="backbar" data-act="goweek">← Zurück zur Woche</button>';var fk=document.getElementById('faction');if(fk){fk.className='faction ghost';setF('＋ Rezept','addrezept');}}
+    else if(m==='einkauf'){renderEinkauf();if(cs)cs.innerHTML='🛒 Einkaufsliste';if(stp)stp.innerHTML='<button class="backbar" data-act="goweek">← Zurück zur Woche</button>';var fe=document.getElementById('faction');if(fe){fe.className='faction ghost';setF('🛒 An Bring','ekbring');}}
     if(coached&&m!=='week')hideCoach();}
   document.querySelectorAll('.appbar [data-nav]').forEach(function(b){b.addEventListener('click',function(){navTo(b.getAttribute('data-nav'));});});
   function refresh(){var w=isoWeek(new Date());
@@ -943,8 +979,10 @@
         return '<div class="wc open2"><div class="wc-head"><span class="wc-day"><span class="wc-tico">🍳</span>'+esc(t.tag)+'<span class="wc-wd">'+esc(wd)+'</span></span></div><div class="wc-oh">🤔 Noch offen — Gericht wählen</div><div class="wc-cands">'+(cands||'—')+'</div></div>';}
       var titel=ch.titel,exp=!!_expDays[t.tag],gek=ch.status==='gekocht',isToday=_live&&t.tag===todayTag()&&!gek;
       var mk=gek?'<div class="wc-mk cooked">✓ gekocht</div>':(isToday?'<div class="wc-mk today">heute</div>':(ch.moved?'<div class="wc-mk moved">↔ verschoben</div>':''));
+      var _v=chosenVorschlag(t),_es=einkaufState();
       var tags=(g.length?'<span class="wc-tg guest">👥 +'+g.length+' Gast'+(g.length>1?'e':'')+'</span>':'')+'<span class="wc-tg">🍽️ '+(here.length+g.length)+'</span>';
       var auf=optAufwand(t,ch);if(auf)tags+='<span class="wc-tg">⏲ '+esc(auf)+'</span>';
+      if(_v&&_v.zutaten&&_v.zutaten.length){var _mz=_v.zutaten.filter(function(z){var k=normKey(z.name);return !_es.bought[k]&&!_es.pantry[k];}).length;tags+=_mz?('<span class="wc-tg need">🛒 '+_mz+' fehlt</span>'):'<span class="wc-tg ok">✓ kochbar</span>';}
       var head='<div class="wc-head" data-act="wctoggle" data-day="'+esc(t.tag)+'"><span class="wc-day"><span class="wc-tico">🍳</span>'+esc(t.tag)+'<span class="wc-wd">'+esc(wd)+'</span></span>'+mk+'<span class="wc-disc">'+WCHEV+'</span></div>';
       var main='<div class="wc-m" data-act="wctoggle" data-day="'+esc(t.tag)+'"><span class="wc-ph" style="background:'+phGrad(titel)+'">'+emojiFor(titel)+'</span>'
         +'<span class="wc-i"><span class="wc-nm">'+esc(titel)+'</span><span class="wc-tags">'+tags+'</span></span>'
@@ -953,7 +991,8 @@
       if(exp){var altbtns=(t.vorschlaege||[]).map(function(v,i){var oid=optId(t.tag,v,i);return '<button class="wc-altb'+(ch.id===oid?' on':'')+'" data-act="override" data-day="'+esc(t.tag)+'" data-oid="'+esc(oid)+'">'+esc(v.titel)+'</button>';}).join('');
         var mv=_moveDay===t.tag?wcMovePicker(t.tag):'';
         var cookrow=(_live&&!gek)?'<div class="wc-arow"><button class="wc-cookbtn" data-act="cooked" data-day="'+esc(t.tag)+'">🍳 Als gekocht markieren</button></div>':((_live&&gek)?'<div class="wc-arow"><button class="wc-aj" data-act="cooked" data-day="'+esc(t.tag)+'">↩︎ doch nicht gekocht</button></div>':'');
-        exph='<div class="wc-exp"><div class="wc-strip"><span class="wc-ichip">🛒 Zutaten &amp; Rezept folgen</span></div>'+cookrow
+        var stripin=(_v&&_v.zutaten&&_v.zutaten.length)?_v.zutaten.map(function(z){var k=normKey(z.name);var hv=_es.bought[k]||_es.pantry[k];return '<span class="wc-ichip '+(hv?'ok':'need')+'">'+(hv?'✓':'🛒')+' '+esc(z.name)+'</span>';}).join(''):'<span class="wc-ichip">🛒 Zutaten folgen (nach dem Generieren)</span>';
+        exph='<div class="wc-exp"><div class="wc-strip">'+stripin+'</div>'+cookrow
           +'<div class="wc-arow"><button class="wc-aj" data-act="movedish" data-day="'+esc(t.tag)+'">📅 Verschieben</button>'
           +'<details class="wc-alt"><summary>↺ Gericht wechseln</summary><div class="wc-altwrap">'+altbtns+'</div></details></div>'+mv+'</div>';}
       return '<div class="wc'+(exp?' exp':'')+(isToday?' today':'')+(gek?' cooked':'')+'">'+head+main+exph+'</div>';}).join('');
@@ -973,7 +1012,7 @@
   function notDa(tag){if(!VOTER.id){askWhoAreYou();return;}ensureWoche().then(function(wid){rest('DELETE','woche_ereignisse?haushalt=eq.'+HH+'&person_id=eq.'+VOTER.id+'&wochentag=eq.'+tag+'&typ=in.(abwesenheit,anwesenheit)').then(function(){return post('woche_ereignisse',{woche_id:wid,person_id:VOTER.id,typ:'abwesenheit',wochentag:tag,text:'nicht dabei (Voting)',haushalt:HH});}).then(refresh);});}
   function setPlanDay(tag,oid){var arr=DATA.woche.vorschlaege.tage,t=arr.filter(function(x){return x.tag===tag;})[0];if(!t)return;var v=(t.vorschlaege||[]).filter(function(x,i){return optId(tag,x,i)===oid;})[0];if(!v)return;DATA.woche.plan=DATA.woche.plan||{};var _prev=DATA.woche.plan[tag]||{};DATA.woche.plan[tag]={id:oid,titel:v.titel,koch:_prev.koch,status:_prev.status};var wid=DATA.woche.id;if(wid)rest('PATCH','wochen?id=eq.'+wid,{plan:DATA.woche.plan});renderPlanen();if(_live)wcToast('↺ '+v.titel+' · Mitesser informiert');}
   function reopenVote(){DATA.woche.status='voten';var wid=DATA.woche.id;if(wid)rest('PATCH','wochen?id=eq.'+wid,{status:'voten'});renderPlanen();}
-  function einkauf(){var plan=DATA.woche.plan||{};var lines=DOW.map(function(d){return plan[d]?d+': '+plan[d].titel:null;}).filter(Boolean);var txt='🛒 Einkauf diese Woche (Gerichte):\n'+lines.join('\n')+'\n\n(Zutatenliste folgt im Rezept-Update.)';if(navigator.share)navigator.share({title:'Einkaufsliste',text:txt}).catch(function(){});else alert(txt);}
+  function einkauf(){navTo('einkauf');}
   function teilen(){var url=location.origin+location.pathname+'?h='+encodeURIComponent(HH)+'&vote=1';openShare(url,'🍽️ Was essen wir diese Woche? Stimm mit ab:');}
   function openShare(url,title){var ov=document.getElementById('shareov');if(!ov)return;
     var inp=document.getElementById('shareurl');inp.value=url;
@@ -1128,7 +1167,7 @@
   }
   (function(){var bt=document.getElementById('dbgAnim');if(bt)bt.addEventListener('click',debugGenToggle);window.genDemo=debugGenToggle;})();
   function doAct(act,day,oid,id){
-    if(act==='gen')generatePlan();else if(act==='vote')setVote(day,oid);else if(act==='who')setVoter(id);else if(act==='teilen')teilen();else if(act==='own')addOwn(day);else if(act==='regenday')regenDayStart(day);else if(act==='mealtoggle'){if(!VOTER.id){askWhoAreYou();return;}togglePresence(VOTER.id,day);}else if(act==='notda')notDa(day);else if(act==='none')setVote(day,'__none__');else if(act==='festlegen')festlegen();else if(act==='override')setPlanDay(day,oid);else if(act==='reopen')reopenVote();else if(act==='wctoggle'){_expDays[day]=!_expDays[day];renderPlanen();}else if(act==='confirmweek'){_confirming=true;renderPlanen();}else if(act==='confirmno'){_confirming=false;renderPlanen();}else if(act==='confirmyes')confirmWeek();else if(act==='reopenweek')reopenWeek();else if(act==='cooked')markCooked(day);else if(act==='cooktoday')markCooked(todayTag());else if(act==='setcook')cycleCook(day);else if(act==='movedish'){_moveDay=(_moveDay===day?null:day);renderPlanen();}else if(act==='movecancel'){_moveDay=null;renderPlanen();}else if(act==='moveto')moveDishTo(day,oid);else if(act==='einkauf')einkauf();else if(act==='govote'){vView='vote';renderPlanen();}else if(act==='goplan'){vView='plan';renderPlanen();}else if(act==='godecided'){vView=null;renderPlanen();}else if(act==='goweek'){navTo('week');}else if(act==='addperson'){navTo('profil');alert('Neue Person: über „＋ hinzufügen" im Personen-Block.');}else if(act==='addrezept'){alert('Rezepte kommen im Rezept-Sprint.');}
+    if(act==='gen')generatePlan();else if(act==='vote')setVote(day,oid);else if(act==='who')setVoter(id);else if(act==='teilen')teilen();else if(act==='own')addOwn(day);else if(act==='regenday')regenDayStart(day);else if(act==='mealtoggle'){if(!VOTER.id){askWhoAreYou();return;}togglePresence(VOTER.id,day);}else if(act==='notda')notDa(day);else if(act==='none')setVote(day,'__none__');else if(act==='festlegen')festlegen();else if(act==='override')setPlanDay(day,oid);else if(act==='reopen')reopenVote();else if(act==='wctoggle'){_expDays[day]=!_expDays[day];renderPlanen();}else if(act==='confirmweek'){_confirming=true;renderPlanen();}else if(act==='confirmno'){_confirming=false;renderPlanen();}else if(act==='confirmyes')confirmWeek();else if(act==='reopenweek')reopenWeek();else if(act==='cooked')markCooked(day);else if(act==='cooktoday')markCooked(todayTag());else if(act==='ekbuy'){var e1=einkaufState();e1.bought[oid]=!e1.bought[oid];persistPlan();renderEinkauf();}else if(act==='ekpantry'){var e2=einkaufState();e2.pantry[oid]=!e2.pantry[oid];persistPlan();renderEinkauf();}else if(act==='ekdel'){var e3=einkaufState();e3.extra=(e3.extra||[]).filter(function(x){return x.key!==oid;});delete e3.bought[oid];delete e3.pantry[oid];persistPlan();renderEinkauf();}else if(act==='ekstaple'){var e4=einkaufState(),k4=normKey(oid);e4.extra=e4.extra||[];if(!e4.extra.some(function(x){return x.key===k4;}))e4.extra.push({key:k4,name:oid,kat:EK_STAPLE[oid]||'Sonstiges'});persistPlan();renderEinkauf();}else if(act==='ekaddfree'){var _i=document.getElementById('ekin');if(_i&&_i.value.trim()){var e5=einkaufState(),n5=_i.value.trim(),k5=normKey(n5);e5.extra=e5.extra||[];if(!e5.extra.some(function(x){return x.key===k5;}))e5.extra.push({key:k5,name:n5,kat:'Sonstiges'});persistPlan();renderEinkauf();}}else if(act==='ekbring')einkaufBring();else if(act==='setcook')cycleCook(day);else if(act==='movedish'){_moveDay=(_moveDay===day?null:day);renderPlanen();}else if(act==='movecancel'){_moveDay=null;renderPlanen();}else if(act==='moveto')moveDishTo(day,oid);else if(act==='einkauf')einkauf();else if(act==='govote'){vView='vote';renderPlanen();}else if(act==='goplan'){vView='plan';renderPlanen();}else if(act==='godecided'){vView=null;renderPlanen();}else if(act==='goweek'){navTo('week');}else if(act==='addperson'){navTo('profil');alert('Neue Person: über „＋ hinzufügen" im Personen-Block.');}else if(act==='addrezept'){alert('Rezepte kommen im Rezept-Sprint.');}
   }
   document.getElementById('planwrap').addEventListener('click',function(e){var b=e.target.closest('[data-act]');if(!b)return;doAct(b.getAttribute('data-act'),b.getAttribute('data-day'),b.getAttribute('data-oid'),b.getAttribute('data-id'));});
   document.getElementById('stepper').addEventListener('click',function(e){var b=e.target.closest('[data-act]');if(!b||b.classList.contains('off'))return;doAct(b.getAttribute('data-act'));});
@@ -1385,6 +1424,7 @@
     var rg=DATA.regeln.filter(function(r){return r.typ!=='wunsch';});
     document.getElementById('pfRegeln').innerHTML=(rg.map(function(r){var wer=r.personen?r.personen.name:'Haushalt';return '<div class="rule"><span class="rtag">'+esc(TYPLBL[r.typ]||r.typ)+'</span>'+(r.wochentag?'<span class="rtag">'+esc(r.wochentag)+'</span>':'')+'<span><b>'+esc(wer)+'</b> — '+esc(r.text||'')+'</span><button class="del" data-act="delreg" data-id="'+r.id+'">✕</button></div>';}).join('')||'<span class="cnote">keine</span>')
       +'<div class="addrow" id="nr"><select class="nr-person"><option value="">Haushalt</option>'+DATA.persons.map(function(p){return '<option value="'+p.id+'">'+esc(p.name)+'</option>';}).join('')+'</select><select class="nr-typ"><option value="abwesenheit">abwesend</option><option value="hinweis">Hinweis</option></select><select class="nr-dow"><option value="">jeder Tag</option>'+DOW.map(function(d){return '<option>'+d+'</option>';}).join('')+'</select><input class="nr-text" placeholder="Beschreibung"><button class="btn-s" data-act="addreg">+ Regel</button></div>';}
+  document.getElementById('vEinkauf').addEventListener('click',function(e){var b=e.target.closest('[data-act]');if(!b)return;doAct(b.getAttribute('data-act'),b.getAttribute('data-day'),b.getAttribute('data-oid'),b.getAttribute('data-id'));});
   document.getElementById('vProfil').addEventListener('click',function(e){var b=e.target.closest('[data-act]');if(!b)return;var act=b.getAttribute('data-act'),id=b.getAttribute('data-id');
     if(act==='addperson'){var n=document.getElementById('np-name');if(n&&n.value.trim())post('personen',{name:n.value.trim(),haushalt:HH,sort:9}).then(refresh);}
     else if(act==='delperson'){if(confirm('Person entfernen?'))rest('DELETE','personen?id=eq.'+id).then(refresh);}
