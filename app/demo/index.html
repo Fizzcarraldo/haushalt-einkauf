@@ -383,6 +383,7 @@
   .foot-row{display:flex;gap:.5rem;align-items:stretch;}
   .faction{flex:1;border:none;border-radius:13px;background:var(--ai);color:#fff;font:800 .95rem/1 var(--sans);display:flex;align-items:center;justify-content:center;gap:.4rem;padding:.85rem;cursor:pointer;box-shadow:0 4px 14px color-mix(in oklab,var(--blue) 24%,transparent);}
   .faction.ghost{background:var(--green-bg);color:var(--green-ink);box-shadow:none;} .faction[hidden]{display:none;}
+  #faction[data-act=""]{opacity:.55;cursor:not-allowed;box-shadow:none;filter:grayscale(.25) saturate(.75);pointer-events:none;}  /* „Der Koch arbeitet …" = sichtbar disabled */
   .fchat{width:3.1rem;flex:0 0 auto;border:1px solid color-mix(in oklab,var(--green) 32%,var(--line));background:var(--card2);border-radius:13px;display:grid;place-items:center;font-size:1.25rem;cursor:pointer;position:relative;}
   .fchat::after{content:"";position:absolute;top:.35rem;right:.35rem;width:.42rem;height:.42rem;border-radius:50%;background:var(--ai);}
   .appfoot .coach{margin:0 0 .5rem;}
