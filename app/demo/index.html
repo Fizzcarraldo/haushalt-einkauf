@@ -806,11 +806,20 @@
       +'<div class="wc-m"><span class="wc-ph plain">🛒</span><span class="wc-i"><span class="wc-nm">Einkaufsliste</span><span class="wc-glance">'+c.done+'/'+c.total+' erledigt · Liste öffnen ›</span></span><span class="wc-cook"><span class="wc-cl">geht</span>'+who+'</span></div>'
       +'<div class="wc-progbar"><i style="width:'+pct+'%"></i></div></div>';}
   function einkaufBring(){var es=einkaufState(),map=einkaufAgg();(es.extra||[]).forEach(function(x){if(!map[x.key])map[x.key]={name:x.name,menge:'',tage:[]};});var lines=Object.keys(map).filter(function(k){return !es.bought[k]&&!es.pantry[k];}).map(function(k){return '• '+map[k].name+(map[k].menge?' ('+map[k].menge+')':'');});var txt='🛒 Einkauf diese Woche:\n'+(lines.join('\n')||'(alles erledigt 🎉)');if(navigator.share)navigator.share({title:'Einkaufsliste',text:txt}).catch(function(){});else alert(txt);}
+  var _zLoading=false;
+  function chosenDishesNeedingZ(){var res=[],seen={};((DATA.woche&&DATA.woche.vorschlaege&&DATA.woche.vorschlaege.tage)||[]).forEach(function(t){if(!(presentOn(t.tag).length||guestsOn(t.tag).length))return;var v=chosenVorschlag(t);if(v&&v.titel&&!(v.zutaten&&v.zutaten.length)&&!seen[v.titel]){seen[v.titel]=1;res.push(v.titel);}});return res;}
+  function ensureZutaten(){if(_zLoading)return;var need=chosenDishesNeedingZ();if(!need.length)return;_zLoading=true;
+    fetch(FN,{method:'POST',headers:H,body:JSON.stringify({zutaten:true,gerichte:need,haushalt:HH})}).then(function(r){return r.json();}).then(function(res){var z=(res&&res.zutaten)||{};
+      ((DATA.woche.vorschlaege&&DATA.woche.vorschlaege.tage)||[]).forEach(function(t){(t.vorschlaege||[]).forEach(function(v){if(z[v.titel]&&!(v.zutaten&&v.zutaten.length))v.zutaten=z[v.titel];});});
+      var wid=DATA.woche&&DATA.woche.id;if(wid)rest('PATCH','wochen?id=eq.'+wid,{vorschlaege:DATA.woche.vorschlaege});
+      _zLoading=false;renderPlanen();renderEinkauf();}).catch(function(){_zLoading=false;renderEinkauf();});}
   function renderEinkauf(){var box=document.getElementById('einkaufBox');if(!box)return;var es=einkaufState();var map=einkaufAgg();
     (es.extra||[]).forEach(function(x){if(!map[x.key])map[x.key]={key:x.key,name:x.name,menge:'',kat:x.kat||'Sonstiges',tage:[],extra:true};});
     var keys=Object.keys(map);var open=keys.filter(function(k){return !es.bought[k]&&!es.pantry[k];}).length;
     var KAT=['Gemüse','Kühlung','Backwaren','Vorrat','Sonstiges'];
     var h='<div class="card"><div class="chd">🛒 Einkauf · diese Woche</div><p class="cnote">Automatisch aus dem Wochenplan · <b>'+open+'</b> offen. Abhaken macht Gerichte kochbar.</p></div>';
+    var needZ=chosenDishesNeedingZ();
+    if(needZ.length||_zLoading){ensureZutaten();box.innerHTML=h+'<div class="card"><p class="cnote">🛒 Zutaten werden geholt … ('+(needZ.length||'…')+' Gericht'+(needZ.length===1?'':'e')+')</p></div>';return;}
     if(!keys.length){box.innerHTML=h+'<div class="card"><p class="cnote">Noch keine Zutaten — plant die Woche und holt Vorschläge (die Gerichte liefern ihre Zutaten).</p></div>';return;}
     h+='<div class="ek-who"><span>👤 Wer geht?</span>'+DATA.persons.map(function(p){return '<button class="ek-wb'+(es.owner===p.id?' on':'')+'" data-act="ekownerset" data-oid="'+esc(p.id)+'">'+esc(p.name)+'</button>';}).join('')+'</div>';
     KAT.forEach(function(kat){var items=keys.filter(function(k){return (map[k].kat||'Sonstiges')===kat;});if(!items.length)return;h+='<div class="ek-cat">'+esc(kat)+'</div>';
