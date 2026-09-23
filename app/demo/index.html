@@ -698,7 +698,7 @@
       c.innerHTML='<div class="chips"><button class="go" data-yes>👍 Ja, fast immer</button><button class="go" data-no style="background:var(--orange-bg);color:var(--orange);border-color:var(--orange-line)">📅 Manche sind regelmäßig weg</button></div>'
         +'<div class="cnote" style="margin-top:.4rem">Den Rest der Woche pflegt ihr später einfach auf „Diese Woche" – nur wenn mal was anders ist.</div>';
       var yes=c.querySelector('[data-yes]'),no=c.querySelector('[data-no]');
-      yes.addEventListener('click',function(){if(busy)return;me('meistens alle da');head(4,'done');stepDone();});
+      yes.addEventListener('click',function(){if(busy)return;me('meistens alle da');head(4,'done');stepOrg();});
       no.addEventListener('click',function(){if(busy)return;
         c.innerHTML='<div class="cnote" style="margin-bottom:.5rem">Tippt die Tage an, an denen jemand <b>regelmäßig weg</b> ist – der Rest gilt als „da".</div>'
           +names.map(function(n,i){return '<div class="wegrow" data-p="'+i+'"><span class="wegname">'+(i===0?'🧑 ':'👤 ')+esc(n)+'</span><span class="wegdays">'+DOW.map(function(d){return '<button class="dchip" data-d="'+d+'">'+d+'</button>';}).join('')+'</span></div>';}).join('')
@@ -708,9 +708,29 @@
         go.addEventListener('click',function(){if(busy)return;var proms=[];
           [].slice.call(c.querySelectorAll('.wegrow')).forEach(function(row){var pid=state.ids[names[+row.getAttribute('data-p')]];
             row.querySelectorAll('.dchip.on').forEach(function(ch){if(pid)proms.push(post('regeln',{person_id:pid,typ:'abwesenheit',wochentag:ch.getAttribute('data-d'),text:'regelmäßig abends weg',haushalt:HH}));});});
-          Promise.all(proms).then(function(){me('Rhythmus gesetzt');head(4,'done');stepDone();});});
+          Promise.all(proms).then(function(){me('Rhythmus gesetzt');head(4,'done');stepOrg();});});
         advanceFn=function(){go.click();};scr();});
       curHandler=function(t){me(t);};advanceFn=function(){yes.click();};});}
+  function stepOrg(){
+    ask('Und wie organisiert ihr <b>Kochen &amp; Einkaufen</b>? Damit belege ich später Verantwortliche und Einkäufe automatisch vor — und die Woche beginnt an eurem Einkaufstag.',function(b,c){
+      c.innerHTML='<div class="cnote" style="margin-bottom:.4rem">Wie oft geht ihr <b>einkaufen</b>?</div>'
+        +'<div class="chips" id="soRhy">'+[['einmal','1× die Woche'],['mehrmals','mehrmals'],['taeglich','täglich']].map(function(o){return '<button class="go" data-r="'+o[0]+'" style="background:var(--bg2);color:var(--fg)">'+o[1]+'</button>';}).join('')+'</div>'
+        +'<div class="cnote" style="margin:.7rem 0 .3rem">Oder <b>frei erzählen</b> (optional) — z.B. wer den Großeinkauf macht &amp; an welchem Tag:</div>'
+        +'<textarea class="org-ta" id="soFree" placeholder="z.B. „Ich geh samstags groß einkaufen, Frisches hol ich unterwegs mit"></textarea>'
+        +'<button class="go" data-go style="margin-top:.5rem">Fertig ✓</button>'
+        +'<button class="lnk" data-skip style="display:block;margin:.5rem auto 0">später einstellen</button>';
+      var chosen=null;
+      c.querySelectorAll('[data-r]').forEach(function(x){x.addEventListener('click',function(){chosen=x.getAttribute('data-r');c.querySelectorAll('[data-r]').forEach(function(y){y.style.outline='';});x.style.outline='2px solid var(--green)';});});
+      function finish(){head(4,'done');stepDone();}
+      c.querySelector('[data-skip]').addEventListener('click',function(){if(busy)return;me('später');finish();});
+      c.querySelector('[data-go]').addEventListener('click',function(){if(busy)return;
+        var free=(c.querySelector('#soFree').value||'').trim();
+        me(free||(chosen?('Einkauf: '+chosen):'ok'));
+        if(free){aiParse('organisation',free).then(function(pp){if(pp)applyOrg(pp,free);else if(chosen)hhSet('einkauf_strategie',chosen);}).catch(function(){if(chosen)hhSet('einkauf_strategie',chosen);});}
+        else if(chosen){hhSet('einkauf_strategie',chosen);}
+        finish();});
+      curHandler=function(t){var f=c.querySelector('#soFree');if(f)f.value=(f.value?f.value+' ':'')+t;};
+    });}
   function stepDone(){ask('Perfekt — ich hab alles eingetragen. <b>Bereit?</b> 🎉',function(b,c){c.innerHTML='<div class="chips"><button class="go golos" data-golos>Los geht\'s →</button></div>';var g=c.querySelector('[data-golos]');if(g)g.addEventListener('click',dockAndEnter);});}
 
   function sendText(){if(busy)return;var v=(input.value||'').trim();if(!v){if(advanceFn)advanceFn();return;}if(curHandler)curHandler(v);input.value='';scr();}
@@ -889,7 +909,7 @@
     document.getElementById('legend').innerHTML=persons.map(function(p){return '<span><span class="av">'+esc(initials(p.name))+'</span> '+esc(p.name)+(p.rolle==='kind'?' 🧒':'')+'</span>';}).join('')+'<span>👉 antippen = diese Woche da/weg</span>';
     var changed=DOW.filter(function(d){return overridesOn(d).length;}).length;
     document.getElementById('wwsub').innerHTML=changed?('📅 <b>'+changed+' Tag'+(changed>1?'e':'')+' diese Woche geändert</b> – der Rest läuft wie immer.'):'✓ Läuft <b>wie immer</b> – tippt nur an, was <b>diese Woche</b> anders ist.';
-    document.getElementById('agenda').innerHTML=DOW.map(function(d){var here=presentOn(d),hereIds={};here.forEach(function(p){hereIds[p.id]=1;});var g=guestsOn(d);var ov=overridesOn(d);
+    document.getElementById('agenda').innerHTML=weekOrder().map(function(d){var here=presentOn(d),hereIds={};here.forEach(function(p){hereIds[p.id]=1;});var g=guestsOn(d);var ov=overridesOn(d);
       var avs=persons.map(function(p){var on=hereIds[p.id];return '<span class="av'+(on?'':' off')+'" data-pid="'+p.id+'" data-day="'+d+'" title="antippen: diese Woche da/weg">'+esc(initials(p.name))+'</span>';}).join('')
         +g.map(function(x){return '<span class="av" style="background:var(--orange)">'+esc(initials(x.gast_name||'G'))+'</span>';}).join('');
       var st=(here.length||g.length)?'<span class="spill cook">Kochen</span>':'<span class="spill out">Auswärts</span>';
@@ -898,7 +918,7 @@
       return '<div class="dayblock">'+row+note+'</div>';}).join('');
     var grund=DATA.regeln.filter(function(r){return r.typ==='wunsch';}).map(function(r){return r.text;});
     var ctx=grund.length?'<li><b>🏠 Grundsätze:</b> <span class="sx">'+grund.map(esc).join(' · ')+'</span></li>':'';
-    var tp=DOW.map(function(d){var here=presentOn(d);if(!here.length)return '';var hard=[];here.forEach(function(p){(p.praeferenzen||[]).forEach(function(x){if(HART[x.art]&&hard.indexOf(x.wert)<0)hard.push(x.wert);});});
+    var tp=weekOrder().map(function(d){var here=presentOn(d);if(!here.length)return '';var hard=[];here.forEach(function(p){(p.praeferenzen||[]).forEach(function(x){if(HART[x.art]&&hard.indexOf(x.wert)<0)hard.push(x.wert);});});
       var names=here.map(function(p){return esc(p.name)+(p.rolle==='kind'?' 🧒':'');}).join(' & ');
       return '<li><b>'+d+':</b> '+names+(hard.length?' <span class="hx">⛔ '+hard.map(esc).join(', ')+'</span>':' <span class="sx">keine Einschränkung</span>')+'</li>';}).filter(Boolean).join('');
     document.getElementById('transp').innerHTML=ctx+(tp||'<li class="sx">—</li>');
@@ -988,7 +1008,7 @@
     var bar='<div class="votebar"><span class="vb-who">Du: <b>'+esc(vn)+'</b></span><span class="vb-switch">'+DATA.persons.map(function(p){return '<button class="vsw'+(p.id===VOTER.id?' on':'')+'" data-act="who" data-id="'+p.id+'" title="'+esc(p.name)+'">'+esc(initials(p.name))+'</button>';}).join('')+'</span><button class="btn-s vb-share" data-act="teilen">🔗 Link teilen</button></div>';
     var intro='<div class="vlegend">🖐️ Tipp an, was schmeckt — <b>mehrere ok</b>. 🏆 <b>führt</b> → wird gewählt, wenn du festlegst. Tipp auf deinen Avatar = <b>nicht dabei</b>.</div>';
     var meInHH=VOTER.id&&DATA.persons.some(function(p){return p.id===VOTER.id;});
-    var cards=(tage||[]).map(function(t){var here=presentOn(t.tag),g=guestsOn(t.tag);
+    var cards=(tage||[]).slice().sort(function(a,b){return oi(a.tag)-oi(b.tag);}).map(function(t){var here=presentOn(t.tag),g=guestsOn(t.tag);
       var meAway=meInHH&&!here.some(function(p){return p.id===VOTER.id;});
       if(!here.length&&!g.length)return '<div class="vday" data-tag="'+esc(t.tag)+'"><div class="vdh"><span class="dd">'+esc(t.tag)+'</span><span class="dw">niemand da</span></div><div class="cnote" style="text-align:center;padding:.5rem 0">🍽️ auswärts – kein Kochen</div>'+(meInHH?'<button class="dayfb" data-act="mealtoggle" data-day="'+esc(t.tag)+'">🙋 <b>Doch dabei?</b></button>':'')+'</div>';
       var dc=dayContext(t.tag),cons=dc?[].concat(dc.diaeten,dc.vermeiden):[];
@@ -1563,7 +1583,8 @@
     else if(act==='delpref'){rest('DELETE','praeferenzen?id=eq.'+id).then(refresh);}
     else if(act==='addgrund'){var g=document.getElementById('ng-text');if(g&&g.value.trim())post('regeln',{typ:'wunsch',text:g.value.trim(),haushalt:HH}).then(refresh);}
     else if(act==='delreg'){rest('DELETE','regeln?id=eq.'+id).then(refresh);}
-    else if(act==='addreg'){var r=document.getElementById('nr');var typ=r.querySelector('.nr-typ').value;var pv=r.querySelector('.nr-person').value;if(typ==='abwesenheit'&&!pv){alert('Bei „abwesend" bitte eine Person wählen – Abwesenheit ist immer personen-scharf.');return;}post('regeln',{person_id:pv||null,typ:typ,wochentag:r.querySelector('.nr-dow').value||null,text:r.querySelector('.nr-text').value.trim()||'—',haushalt:HH}).then(refresh);}});
+    else if(act==='addreg'){var r=document.getElementById('nr');var typ=r.querySelector('.nr-typ').value;var pv=r.querySelector('.nr-person').value;if(typ==='abwesenheit'&&!pv){alert('Bei „abwesend" bitte eine Person wählen – Abwesenheit ist immer personen-scharf.');return;}post('regeln',{person_id:pv||null,typ:typ,wochentag:r.querySelector('.nr-dow').value||null,text:r.querySelector('.nr-text').value.trim()||'—',haushalt:HH}).then(refresh);}
+    else doAct(act,b.getAttribute('data-day'),b.getAttribute('data-oid'),id);});
   function ensureWoche(){var w=isoWeek(new Date());return get('wochen?select=id&haushalt=eq.'+HH+'&jahr=eq.'+w.jahr+'&kw=eq.'+w.kw).then(function(rows){if(rows&&rows[0])return rows[0].id;return post('wochen',{jahr:w.jahr,kw:w.kw,haushalt:HH}).then(function(r){return r&&r[0]&&r[0].id;});});}
   document.getElementById('addGast').addEventListener('click',function(){var day=prompt('Gast an welchem Tag? (Mo–So)','Do');if(!day)return;day=day.trim();day=day.charAt(0).toUpperCase()+day.slice(1,2).toLowerCase();if(DOW.indexOf(day)<0){alert('Bitte Mo–So');return;}var name=(prompt('Name des Gasts (optional)','Oma')||'Gast');
     ensureWoche().then(function(wid){return post('woche_ereignisse',{woche_id:wid,typ:'gast',wochentag:day,gast_name:name,text:'Gast: '+name,haushalt:HH});}).then(refresh);});
