@@ -107,5 +107,43 @@
         "dinner": "Reste / flexibel"
       }
     ]
+  },
+  {
+    "id": "2026-10-04",
+    "label": "04.10.",
+    "url": "https://fizzcarraldo.github.io/haushalt-einkauf/wochen/2026-10-04/",
+    "forecast": 35,
+    "days": [
+      {
+        "date": "So 04.10.",
+        "dinner": "Kürbis-Risotto mit Salbei",
+        "lunch": "Brunch (siehe Voting)"
+      },
+      {
+        "date": "Mo 05.10.",
+        "dinner": "Thai Green Curry mit Hähnchen"
+      },
+      {
+        "date": "Di 06.10.",
+        "dinner": "🍽️ auswärts / unterwegs",
+        "lunch": "auswärts"
+      },
+      {
+        "date": "Mi 07.10.",
+        "dinner": "Hähnchen-Schawarma-Bowl mit Joghurtsauce"
+      },
+      {
+        "date": "Do 08.10.",
+        "dinner": "Bun Cha"
+      },
+      {
+        "date": "Fr 09.10.",
+        "dinner": "Hausgemachte Pizza"
+      },
+      {
+        "date": "Sa 10.10.",
+        "dinner": "Reste / flexibel"
+      }
+    ]
   }
 ]
