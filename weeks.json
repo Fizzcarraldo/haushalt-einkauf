@@ -145,5 +145,43 @@
         "dinner": "Reste / flexibel"
       }
     ]
+  },
+  {
+    "id": "2026-11-15",
+    "label": "15.11.",
+    "url": "https://fizzcarraldo.github.io/haushalt-einkauf/wochen/2026-11-15/",
+    "forecast": 55,
+    "days": [
+      {
+        "date": "So 15.11.",
+        "dinner": "Tom Kha Gai (Thai-Kokossuppe mit Hähnchen)",
+        "lunch": "Brunch (siehe Voting)"
+      },
+      {
+        "date": "Mo 16.11.",
+        "dinner": "Hähnchen-Satay mit Erdnusssauce & Reis"
+      },
+      {
+        "date": "Di 17.11.",
+        "dinner": "🍽️ auswärts / unterwegs",
+        "lunch": "auswärts"
+      },
+      {
+        "date": "Mi 18.11.",
+        "dinner": "Gebratener Reis mit Ei & Hähnchen"
+      },
+      {
+        "date": "Do 19.11.",
+        "dinner": "Massaman-Curry mit Hähnchen & Kartoffeln"
+      },
+      {
+        "date": "Fr 20.11.",
+        "dinner": "Ramen mit Hähnchen & Ei"
+      },
+      {
+        "date": "Sa 21.11.",
+        "dinner": "Reste / flexibel"
+      }
+    ]
   }
 ]
